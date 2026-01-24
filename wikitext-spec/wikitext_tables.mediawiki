@@ -1,0 +1,1211 @@
+<languages/>
+{{PD Help Page}}
+:<translate><!--T:1--> ''Tables'' redirects here; for information about database table structure, see <tvar name=1>{{ll|Manual:Database layout}}</tvar>.</translate>
+
+<translate><!--T:2--> '''Tables''' may be created in wiki pages.</translate>
+<translate><!--T:3--> As a general rule, it is best to avoid using a table unless you need one.</translate>
+<translate><!--T:4--> Table markup often complicates page editing.</translate><ref>
+<translate><!--T:5--> Tables can be created using either HTML table elements directly, or using wikicode formatting to define the table.</translate>
+<translate><!--T:6--> HTML table elements and their use are well described on various web pages and will not be discussed here.</translate>
+<translate><!--T:7--> The benefit of wikicode is that the table is constructed of character symbols which tend to make it easier to perceive the table structure in the article editing view compared to HTML table elements.</translate>
+</ref>
+
+<translate>
+== Wiki table markup summary == <!--T:8-->
+</translate>
+{| class="wikitable" style="width:60%"
+|style="padding:10px; white-space:nowrap; font-size:large"| <nowiki>{|</nowiki>
+|style="padding:5px"| <translate><!--T:9--> '''table start''', ''required''</translate>
+|-
+|style="padding:10px; white-space:nowrap; font-size:large"| <nowiki>|+</nowiki>
+|style="padding:5px"| <translate><!--T:10--> table '''caption''', ''optional;'' only between '''table start''' and '''table row'''</translate>
+|-
+|style="padding:10px; white-space:nowrap; font-size:large"| <nowiki>|-</nowiki>
+|style="padding:5px"| <translate><!--T:11--> '''table row''', ''optional on first row''—wiki engine assumes the first row</translate>
+|-
+|style="padding:10px; white-space:nowrap; font-size:large"| <nowiki>!</nowiki>
+|style="padding:5px"| <translate><!--T:12--> '''table header''' cell, ''optional.''</translate> <translate><!--T:13--> Consecutive '''table header''' cells may be added on same line separated by double marks (<code>!!</code>) or start on new lines, each with its own single mark (<code>!</code>).</translate>
+|-
+|style="padding:10px; white-space:nowrap; font-size:large"| <nowiki>|</nowiki>
+|style="padding:5px"| <translate><!--T:14--> '''table data''' cell, ''optional''.</translate> <translate><!--T:15--> Consecutive '''table data''' cells may be added on same line separated by double marks (<code><nowiki>||</nowiki></code>) or start on new lines, each with its own single mark (<code><nowiki>|</nowiki></code>).</translate>
+|-
+|style="padding:10px; white-space:nowrap; font-size:large"| <nowiki>|}</nowiki>
+|style="padding:5px"| <translate><!--T:379--> '''table end''', ''required''</translate>
+|}
+<translate>
+<!--T:16-->
+*The above marks must '''start on a new line''' except the double <code>||</code> and <code>!!</code> for optionally adding consecutive cells to a line. However, blank spaces at the beginning of a line are ignored.</translate>
+*'''<translate><!--T:17--> HTML attributes.</translate>''' <translate><!--T:18--> Each mark, except table end, optionally accepts one or more HTML attributes.</translate> <translate><!--T:19--> Attributes must be on the same line as the mark.</translate> <translate><!--T:20--> Separate attributes from each other with a single space.</translate>
+<translate>
+<!--T:21-->
+**Cells and caption (<code>|</code> or <code>||</code>, <code>!</code> or <code>!!</code>, and <code>|+</code>) hold content.</translate> <translate><!--T:22--> So separate any attributes from content with a single pipe (<code>|</code>).</translate> <translate><!--T:23--> Cell content may follow on same line or on following lines.</translate>
+<translate>
+<!--T:24-->
+**Table and row marks (<tvar name=1><code><nowiki>{|</nowiki></code></tvar> and <tvar name=2><code>|-</code></tvar>) do not directly hold content.</translate> <translate><!--T:25--> Do ''not'' add pipe (<code>|</code>) after their optional attributes.</translate> <translate><!--T:26--> If you erroneously add a pipe after attributes for the table mark or row mark the parser will delete it ''and'' your final attribute if it was touching the erroneous pipe!</translate>
+<translate>
+<!--T:27-->
+*'''Content''' may (a) follow its cell mark on the same line after any optional HTML attributes or (b) on lines below the cell mark.</translate> <translate><!--T:28--> Content that uses wiki markup that itself needs to start on a new line, such as lists, headings, or nested tables, must be on its own new line.</translate>
+<translate>
+<!--T:29-->
+**'''Pipe character as content.'''</translate> <translate><!--T:30--> To insert a pipe (<tvar name=1><code>|</code></tvar>) character into a table, use the <tvar name=2><syntaxhighlight lang=html inline><nowiki>|</nowiki></syntaxhighlight></tvar> escaping markup.</translate>
+
+<translate>
+==Basics== <!--T:31-->
+
+=== Create a table with editor toolbar === <!--T:449-->
+</translate>
+<translate><!--T:450--> In wikitext editor, place the caret where you want to insert a table.</translate>
+<translate><!--T:462--> Then, in the toolbar, press <tvar name=1><code>{{int|wikieditor-toolbar-section-advanced}}</code></tvar>, then choose <tvar name=2><span style="white-space: nowrap;">[[File:OOjs UI icon table.svg|class=skin-invert-image]] {{int|wikieditor-toolbar-tool-table}}</span></tvar> button.</translate>
+<translate><!--T:451--> A dialog opens.</translate>
+
+<translate><!--T:452--> From the dialog, you can choose whether to enable a table header row, to stylize the table with border and to make the table [[<tvar name=1>Special:MyLanguage/Help:Sortable tables</tvar>|sortable]].</translate>
+<translate><!--T:453--> A preview example is displayed.</translate>
+<translate><!--T:454--> You can also set row and column counts you need. Then, press <tvar name=1><code>{{int|wikieditor-toolbar-tool-table-insert}}</code></tvar> button.</translate>
+
+<translate>
+<!--T:455-->
+By default, the following code is generated:
+</translate>
+<div style="display:flex">
+<div style="width:45%; border:1px solid black; padding:0.5em">
+<h5 style="text-align:center"><translate><!--T:456--> Wikicode:</translate></h5>
+ {<nowiki/>| class="wikitable" style="margin:auto"
+ |+ {{int|wikieditor-toolbar-tool-table-example-caption}}
+ |-
+ ! {{int|wikieditor-toolbar-tool-table-example-header}} !! {{int|wikieditor-toolbar-tool-table-example-header}} !! {{int|wikieditor-toolbar-tool-table-example-header}}
+ |-
+ | {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}}
+ |-
+ | {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}}
+ |-
+ | {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}}
+ |}
+</div>
+<div style="width:45%; border:1px solid black; padding:0.5em; margin-left:2ex">
+<h5 style="text-align:center; margin-bottom:1em"><translate><!--T:457--> Result:</translate></h5>
+{| class="wikitable" style="margin:auto"
+|+ {{int|wikieditor-toolbar-tool-table-example-caption}}
+|-
+! {{int|wikieditor-toolbar-tool-table-example-header}} !! {{int|wikieditor-toolbar-tool-table-example-header}} !! {{int|wikieditor-toolbar-tool-table-example-header}}
+|-
+| {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}}
+|-
+| {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}}
+|-
+| {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}} || {{int|wikieditor-toolbar-tool-table-example}}
+|}
+</div>
+</div>
+
+<translate>
+=== Minimal syntax === <!--T:458-->
+
+<!--T:32-->
+The following table lacks borders and good spacing but shows the simplest wiki markup table structure.
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:404--> You type</translate>
+!style="width:50%"| <translate><!--T:405--> You get</translate>
+|-
+|style="padding:5px"|
+<pre>
+{|
+| <translate nowrap><!--T:33--> Orange</translate>
+| <translate nowrap><!--T:34--> Apple</translate>
+|-
+| <translate nowrap><!--T:35--> Bread</translate>
+| <translate nowrap><!--T:36--> Pie</translate>
+|-
+| <translate nowrap><!--T:37--> Butter</translate>
+| <translate nowrap><!--T:38--> Ice cream</translate>
+|}
+</pre>
+|style="padding:5px"|
+{|
+| <translate><!--T:39--> Orange</translate>
+| <translate><!--T:40--> Apple</translate>
+|-
+| <translate><!--T:41--> Bread</translate>
+| <translate><!--T:42--> Pie</translate>
+|-
+| <translate><!--T:43--> Butter</translate>
+| <translate><!--T:44--> Ice cream</translate>
+|}
+|}
+
+<translate><!--T:45--> The cells in the same row can be listed on one line separated by <code>||</code> (two pipe symbols).</translate>
+<translate><!--T:46--> If the text in the cell should contain a line break, use <tvar name=br>{{tag|br|single}}</tvar> instead.</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:406--> You type</translate>
+!style="width:50%"| <translate><!--T:407--> You get</translate>
+|-
+|style="padding:5px"|
+<pre>
+{|
+| <translate nowrap><!--T:47--> Orange</translate>||<translate nowrap><!--T:392--> Apple</translate>||<translate nowrap><!--T:393--> more</translate>
+|-
+| <translate nowrap><!--T:48--> Bread</translate>||<translate nowrap><!--T:394--> Pie</translate>||<translate nowrap><!--T:395--> more</translate>
+|-
+| <translate nowrap><!--T:49--> Butter</translate>||<translate nowrap><!--T:396--> Ice<br/>cream</translate>||<translate nowrap><!--T:403--> and<br/>more</translate>
+|}
+</pre>
+|style="padding:5px"|
+{|
+| <translate><!--T:50--> Orange</translate> || <translate><!--T:397--> Apple</translate> || <translate><!--T:398--> more</translate>
+|-
+| <translate><!--T:51--> Bread</translate> || <translate><!--T:399--> Pie</translate> || <translate><!--T:400--> more</translate>
+|-
+| <translate><!--T:52--> Butter</translate> || <translate><!--T:401--> Ice<br/>cream</translate> || <translate><!--T:402--> and<br/>more</translate>
+|}
+|}
+
+<translate>
+<!--T:53-->
+Extra spaces within cells in the wiki markup, as in the wiki markup below, do not affect the actual table rendering.
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:408--> You type</translate>
+!style="width:50%"| <translate><!--T:409--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{|
+|  <translate nowrap><!--T:54--> Orange</translate> || <translate nowrap><!--T:380--> Apple</translate> || <translate nowrap><!--T:381--> more</translate>
+|-
+|   <translate nowrap><!--T:55--> Bread</translate> || <translate nowrap><!--T:382--> Pie</translate> || <translate nowrap><!--T:383--> more</translate>
+|-
+|   <translate nowrap><!--T:56--> Butter</translate> || <translate nowrap><!--T:384--> Ice cream</translate> || <translate nowrap><!--T:385--> and more</translate>
+|}
+</pre>
+| style="padding: 5px;"|
+{|
+|  <translate><!--T:57--> Orange</translate> || <translate><!--T:386--> Apple</translate> || <translate><!--T:387--> more</translate>
+|-
+|   <translate><!--T:58--> Bread</translate> || <translate><!--T:388--> Pie</translate> || <translate><!--T:389--> more</translate>
+|-
+|   <translate><!--T:59--> Butter</translate> || <translate><!--T:390--> Ice cream</translate> || <translate><!--T:391--> and more</translate>
+|}
+|}
+
+<translate>
+<!--T:60-->
+You can have longer text or more complex wiki syntax inside table cells, too:
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:410--> You type</translate>
+!style="width:50%"| <translate><!--T:411--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{|
+|Lorem ipsum dolor sit amet,
+consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt
+ut labore et dolore magna aliquyam erat,
+sed diam voluptua.
+
+At vero eos et accusam et justo duo dolores
+et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum
+dolor sit amet.
+|
+* Lorem ipsum dolor sit amet
+* consetetur sadipscing elitr
+* sed diam nonumy eirmod tempor invidunt
+|}
+</pre>
+| style="padding: 5px;"|
+{|
+|Lorem ipsum dolor sit amet,
+consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt
+ut labore et dolore magna aliquyam erat,
+sed diam voluptua.
+
+At vero eos et accusam et justo duo dolores
+et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum
+dolor sit amet.
+|
+* Lorem ipsum dolor sit amet
+* consetetur sadipscing elitr
+* sed diam nonumy eirmod tempor invidunt
+|}
+|}
+
+<translate>
+=== Table headers === <!--T:61-->
+</translate>
+<translate><!--T:62--> Table headers can be created by using "<tvar name="1"><code>!</code></tvar>" (exclamation mark) instead of "<tvar name="2"><code>|</code></tvar>" (pipe symbol).</translate>
+<translate><!--T:63--> Headers usually show up bold and centered by default.</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:64--> You type</translate>
+!style="width:50%"| <translate><!--T:65--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{|
+!style="text-align:left"| <translate nowrap><!--T:66--> Item</translate>
+! <translate nowrap><!--T:67--> Amount</translate>
+! <translate nowrap><!--T:68--> Cost</translate>
+|-
+| <translate nowrap><!--T:69--> Orange</translate>
+|10
+|7.00
+|-
+| <translate nowrap><!--T:70--> Bread</translate>
+|4
+|3.00
+|-
+| <translate nowrap><!--T:71--> Butter</translate>
+|1
+|5.00
+|-
+!<translate nowrap><!--T:72--> Total</translate>
+|
+|15.00
+|}
+</pre>
+| style="padding: 5px;"|
+{|
+! style="text-align:left;"| <translate><!--T:73--> Item</translate>
+! <translate><!--T:74--> Amount</translate>
+! <translate><!--T:75--> Cost</translate>
+|-
+| <translate><!--T:76--> Orange</translate>
+|10
+|7.00
+|-
+| <translate><!--T:77--> Bread</translate>
+|4
+|3.00
+|-
+| <translate><!--T:78--> Butter</translate>
+|1
+|5.00
+|-
+! <translate><!--T:79--> Total</translate>
+|
+|15.00
+|}
+|}
+
+{{note|1=<translate><!--T:80--> When using attributes as in the heading 'Item' a vertical bar '<tvar name=1><nowiki>|</nowiki></tvar>' is used for separation.</translate> <translate><!--T:81--> Not an exclamation character '!'.</translate>}}
+
+<translate>
+===Caption=== <!--T:82-->
+
+<!--T:83-->
+A '''table caption''' can be added to the top of any table as follows.
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:84--> You type</translate>
+!style="width:50%"| <translate><!--T:85--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{|
+|+<translate nowrap><!--T:86--> Food complements</translate>
+|-
+| <translate nowrap><!--T:87--> Orange</translate>
+| <translate nowrap><!--T:88--> Apple</translate>
+|-
+| <translate nowrap><!--T:89--> Bread</translate>
+| <translate nowrap><!--T:90--> Pie</translate>
+|-
+| <translate nowrap><!--T:91--> Butter</translate>
+| <translate nowrap><!--T:92--> Ice cream</translate>
+|}
+</pre>
+| style="padding: 5px;"|
+{|
+|+ <translate><!--T:93--> Food complements</translate>
+|-
+| <translate><!--T:94--> Orange</translate>
+| <translate><!--T:95--> Apple</translate>
+|-
+| <translate><!--T:96--> Bread</translate>
+| <translate><!--T:97--> Pie</translate>
+|-
+| <translate><!--T:98--> Butter</translate>
+| <translate><!--T:99--> Ice cream</translate>
+|}
+|}
+
+<translate>
+=== class="wikitable" === <!--T:100-->
+
+<!--T:101-->
+Basic styling (light gray background, borders, padding and align left) can be achieved by adding class="wikitable".
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:102--> You type</translate>
+!style="width:50%"| <translate><!--T:103--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+|+<translate nowrap><!--T:104--> Food complements</translate>
+|-
+| <translate nowrap><!--T:105--> Orange</translate>
+| <translate nowrap><!--T:106--> Apple</translate>
+|-
+| <translate nowrap><!--T:107--> Bread</translate>
+| <translate nowrap><!--T:108--> Pie</translate>
+|-
+| <translate nowrap><!--T:109--> Butter</translate>
+| <translate nowrap><!--T:110--> Ice cream</translate>
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+|+ <translate><!--T:111--> Food complements</translate>
+|-
+| <translate><!--T:112--> Orange</translate>
+| <translate><!--T:113--> Apple</translate>
+|-
+| <translate><!--T:114--> Bread</translate>
+| <translate><!--T:115--> Pie</translate>
+|-
+| <translate><!--T:116--> Butter</translate>
+| <translate><!--T:117--> Ice cream</translate>
+|}
+|}
+
+<translate>
+===HTML colspan and rowspan=== <!--T:118-->
+
+<!--T:119-->
+You can use HTML '''colspan''' and '''rowspan''' attributes on cells for advanced layout.
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:412--> You type</translate>
+!style="width:50%"| <translate><!--T:413--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+!colspan="6"| <translate nowrap><!--T:120--> Shopping List</translate>
+|-
+|rowspan="2"| <translate nowrap><!--T:121--> Bread & Butter</translate>
+| <translate nowrap><!--T:122--> Pie</translate>
+| <translate nowrap><!--T:123--> Buns</translate>
+| <translate nowrap><!--T:124--> Danish</translate>
+|colspan="2"| <translate nowrap><!--T:125--> Croissant</translate>
+|-
+| <translate nowrap><!--T:126--> Cheese</translate>
+|colspan="2"| <translate nowrap><!--T:127--> Ice cream</translate>
+| <translate nowrap><!--T:128--> Butter</translate>
+| <translate nowrap><!--T:129--> Yogurt</translate>
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+!colspan="6"| <translate><!--T:130--> Shopping List</translate>
+|-
+|rowspan="2"| <translate><!--T:131--> Bread & Butter</translate>
+| <translate><!--T:132--> Pie</translate>
+| <translate><!--T:133--> Buns</translate>
+| <translate><!--T:134--> Danish</translate>
+|colspan="2"| <translate><!--T:135--> Croissant</translate>
+|-
+| <translate><!--T:136--> Cheese</translate>
+|colspan="2"| <translate><!--T:137--> Ice cream</translate>
+| <translate><!--T:138--> Butter</translate>
+| <translate><!--T:139--> Yogurt</translate>
+|}
+|}
+
+<translate>
+=== Note about large tables (noresize class) === <!--T:463-->
+</translate>
+<translate><!--T:464--> The use of the wrapping <tvar name=1><code>div.noresize</code></tvar> will ensure your table is optimized for mobile and is extremely important for large tables e.g. tables with more than 4 columns or large columns.</translate>
+<translate><!--T:465--> Failure to use this element will cause your content to overlap UI elements e.g. the Vector 2022 sidebar or to break mobile display.</translate>
+<translate><!--T:466--> This will cause the table to have a horizontal scroll bar when the table is too big for the content.</translate>
+
+<translate>
+<!--T:467-->
+You type:
+</translate>
+
+<pre>
+<div class="noresize">
+{| class="wikitable"
+! colspan="6" |Shopping List
+|-
+| rowspan="2" |Areallyreallyreallyreallylongstringwillcauseyourtableto
+| Pie
+| Buns
+| Danish
+| colspan="2" |Croissantsmaycausetexttoincreasethesizeofyourcolumnsoitbreaksoutofthecontent area if you do not wrap the table with noresize.
+|-
+| Cheese
+| colspan="2" |Ice cream
+| Butter
+| Yogurt
+|}
+</div>
+</pre>
+
+<translate>
+<!--T:468-->
+You get:</translate>
+<div class="noresize">
+{| class="wikitable"
+! colspan="6" |Shopping List
+|-
+| rowspan="2" |Areallyreallyreallyreallylongstringwillcauseyourtableto
+| Pie
+| Buns
+| Danish
+| colspan="2" |Croissantsmaycausetexttoincreasethesizeofyourcolumnsoitbreaksoutofthecontent area if you do not wrap the table with noresize.
+|-
+| Cheese
+| colspan="2" |Ice cream
+| Butter
+| Yogurt
+|}
+</div>
+
+<translate>
+== HTML attributes == <!--T:140-->
+</translate>
+<translate><!--T:141--> You can add '''HTML attributes''' to tables.</translate>
+<translate><!--T:142--> For the authoritative source on HTML attributes, see [<tvar name=url>https://www.w3.org/TR/html401/struct/tables.html</tvar> the W3C's HTML Specification page on tables].</translate>
+
+<translate>
+=== Attributes on tables === <!--T:143-->
+
+<!--T:144-->
+Placing attributes after the table start tag (<tvar name="1"><code>{|</code></tvar>) applies attributes to the entire table.</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:145--> You type</translate>
+!style="width:50%"| <translate><!--T:146--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable" style="text-align: center; color: green;"
+| <translate nowrap><!--T:147--> Orange</translate>
+| <translate nowrap><!--T:148--> Apple</translate>
+|12,333.00
+|-
+| <translate nowrap><!--T:149--> Bread</translate>
+| <translate nowrap><!--T:150--> Pie</translate>
+|500.00
+|-
+| <translate nowrap><!--T:151--> Butter</translate>
+| <translate nowrap><!--T:152--> Ice cream</translate>
+|1.00
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable" style="text-align: center; color: green;"
+| <translate><!--T:153--> Orange</translate>
+| <translate><!--T:154--> Apple</translate>
+|12,333.00
+|-
+| <translate><!--T:155--> Bread</translate>
+| <translate><!--T:156--> Pie</translate>
+|500.00
+|-
+| <translate><!--T:157--> Butter</translate>
+| <translate><!--T:158--> Ice cream</translate>
+|1.00
+|}
+|}
+
+<translate>
+=== Attributes on cells === <!--T:159-->
+</translate>
+<translate><!--T:160--> You can put attributes on individual '''cells'''.</translate>
+<translate><!--T:161--> For example, numbers may look better aligned right.</translate>
+
+{| style="width:100%"
+! style="width: 50%;"| <translate><!--T:162--> You type</translate>
+! style="width: 50%;"| <translate><!--T:163--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+| <translate nowrap><!--T:164--> Orange</translate>
+| <translate nowrap><!--T:165--> Apple</translate>
+| style="text-align:right;" | 12,333.00
+|-
+| <translate nowrap><!--T:166--> Bread</translate>
+| <translate nowrap><!--T:167--> Pie</translate>
+| style="text-align:right;" | 500.00
+|-
+| <translate nowrap><!--T:168--> Butter</translate>
+| <translate nowrap><!--T:169--> Ice cream</translate>
+| style="text-align:right;" | 1.00
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+| <translate><!--T:170--> Orange</translate>
+| <translate><!--T:171--> Apple</translate>
+| style="text-align:right;" | 12,333.00
+|-
+| <translate><!--T:172--> Bread</translate>
+| <translate><!--T:173--> Pie</translate>
+| style="text-align:right;" | 500.00
+|-
+| <translate><!--T:174--> Butter</translate>
+| <translate><!--T:175--> Ice cream</translate>
+| style="text-align:right;" | 1.00
+|}
+|}
+
+<translate><!--T:176--> You can also use '''cell''' attributes when you are listing multiple '''cells''' on a single line.</translate>
+<translate><!--T:177--> Note that the '''cells''' are separated by <tvar name="1"><code>||</code></tvar>, and within each '''cell''' the attribute(s) and value are separated by <tvar name="2"><code>|</code></tvar>.</translate>
+
+{| style="width:100%"
+! style="width: 50%;"| <translate><!--T:178--> You type</translate>
+! style="width: 50%;"| <translate><!--T:179--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+| <translate nowrap><!--T:180--> Orange</translate> || <translate nowrap><!--T:373--> Apple</translate>     || style="text-align:right;" | 12,333.00
+|-
+| <translate nowrap><!--T:181--> Bread</translate> || <translate nowrap><!--T:374--> Pie</translate>       || style="text-align:right;" | 500.00
+|-
+| <translate nowrap><!--T:182--> Butter</translate> || <translate nowrap><!--T:375--> Ice cream</translate> || style="text-align:right;" | 1.00
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+| <translate><!--T:183--> Orange</translate> || <translate><!--T:376--> Apple</translate>     || style="text-align:right;" | 12,333.00
+|-
+| <translate><!--T:184--> Bread</translate> || <translate><!--T:377--> Pie</translate>       || style="text-align:right;" | 500.00
+|-
+| <translate><!--T:185--> Butter</translate> || <translate><!--T:378--> Ice cream</translate> || style="text-align:right;" | 1.00
+|}
+|}
+
+<translate>
+===Attributes on rows=== <!--T:186-->
+
+<!--T:187-->
+You can put attributes on individual '''rows''', too.
+</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:188--> You type</translate>
+! style="width: 50%;"|<translate><!--T:189--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+| <translate nowrap><!--T:190--> Orange</translate>
+| <translate nowrap><!--T:191--> Apple</translate>
+| style="text-align:right;"| 12,333.00
+|-
+| <translate nowrap><!--T:192--> Bread</translate>
+| <translate nowrap><!--T:193--> Pie</translate>
+| style="text-align:right;"| 500.00
+|- style="font-style: italic; color: green;"
+| <translate nowrap><!--T:194--> Butter</translate>
+| <translate nowrap><!--T:195--> Ice cream</translate>
+| style="text-align:right;"| 1.00
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+| <translate><!--T:196--> Orange</translate>
+| <translate><!--T:197--> Apple</translate>
+| style="text-align:right;"| 12,333.00
+|-
+| <translate><!--T:198--> Bread</translate>
+| <translate><!--T:199--> Pie</translate>
+| style="text-align:right;"| 500.00
+|- style="font-style: italic; color: green;"
+| <translate><!--T:200--> Butter</translate>
+| <translate><!--T:201--> Ice cream</translate>
+| style="text-align:right;"| 1.00
+|}
+|}
+
+<translate>
+===Attributes on caption and headers=== <!--T:249-->
+
+<!--T:250-->
+Attributes can be added to the caption and headers as follows.
+</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:251--> You type</translate>
+! style="width: 50%;"|<translate><!--T:252--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+|+ style="caption-side:bottom; color:#e76700;"|<translate nowrap><!--T:253--> ''Food complements''</translate>
+|-
+!style="color:green"| <translate nowrap><!--T:445--> Fruits</translate>
+!style="color:red"| <translate nowrap><!--T:446--> Fats</translate>
+|-
+| <translate nowrap><!--T:254--> Orange</translate>
+| <translate nowrap><!--T:258--> Butter</translate>
+|-
+| <translate nowrap><!--T:256--> Pear</translate>
+| <translate nowrap><!--T:257--> Pie</translate>
+|-
+| <translate nowrap><!--T:255--> Apple</translate>
+| <translate nowrap><!--T:259--> Ice cream</translate>
+|}
+</pre>
+|style="padding:5px"|
+{| class="wikitable"
+|+ style="caption-side:bottom; color:#e76700;"|<translate><!--T:260--> ''Food complements''</translate>
+|-
+!style="color:green"| <translate><!--T:447--> Fruits</translate>
+!style="color:red"| <translate><!--T:448--> Fats</translate>
+|-
+| <translate><!--T:261--> Orange</translate>
+| <translate><!--T:265--> Butter</translate>
+|-
+| <translate><!--T:263--> Pear</translate>
+| <translate><!--T:264--> Pie</translate>
+|-
+| <translate><!--T:262--> Apple</translate>
+| <translate><!--T:266--> Ice cream</translate>
+|}
+|}
+
+<translate>
+===Border width=== <!--T:214-->
+
+<!--T:215-->
+If "border-width:" has only one number, it is for all four border sides:
+</translate>
+
+{| style="width:100%"
+|-
+! style="width:50%" | <translate><!--T:216--> You type</translate>
+! style="width:50%" | <translate><!--T:217--> You get</translate>
+|-
+| style="padding: 5px;" |
+<pre>
+{|style="border-style: solid; border-width: 20px"
+|
+<translate nowrap><!--T:218--> Hello</translate>
+|}
+</pre>
+| style="padding: 20px;"|
+{|style="border-style: solid; border-width: 20px"
+|
+<translate><!--T:219--> Hello</translate>
+|}
+|}
+
+<translate>
+<!--T:220-->
+If "border-width:" has more than one number, the four numbers are for '''top, right, bottom, left (REMEMBER clockwise order <tvar name=clockwise>&uarr;&rarr;&darr;&larr;</tvar>)''':
+</translate>
+
+{| style="width:100%"
+|-
+! style="width:50%" | <translate><!--T:221--> You type</translate>
+! style="width:50%" | <translate><!--T:222--> You get</translate>
+|-
+| style="padding: 5px;" |
+<pre>
+{|style="border-style: solid; border-width: 10px 20px 100px 0"
+|
+<translate nowrap><!--T:223--> Hello</translate>
+|}
+</pre>
+| style="padding: 20px;"|
+{|style="border-style: solid; border-width: 10px 20px 100px 0"
+|
+<translate><!--T:224--> Hello</translate>
+|}
+|}
+
+<translate>
+<!--T:225-->
+:When there are fewer than 4 values :
+</translate>
+:* <translate><!--T:439--> three values i.e. <tvar name=3val><code>top</code>, <code>right</code>, <code>bottom</code></tvar>: then the default value for <tvar name=left><code>left</code></tvar> is the one of <tvar name=right><code>right</code></tvar> (second value). Width is then the same on left and right side.</translate>
+:* <translate><!--T:440--> two values i.e. <tvar name=2val><code>top</code>, <code>right</code></tvar>: then the default value for <tvar name=bottom><code>bottom</code></tvar> is the one of <tvar name=top><code>top</code></tvar> (first value), and <tvar name=left><code>left</code></tvar> by default is assigned the value of <tvar name=right><code>right</code></tvar> (second value). Width on top is then the same as on bottom; width on left is the same as on right.</translate>
+:* <translate><!--T:441--> one value i.e. <tvar name=1val><code>top</code></tvar>: then the default value for <tvar name=right><code>right</code></tvar> is the one of <tvar name=top><code>top</code></tvar> and it is the same for <tvar name=bottom><code>bottom</code></tvar> and <tvar name=left><code>left</code></tvar>. The fourth width are the same and build a regular border. This is a writing shortcut.</translate>
+
+<translate>
+<!--T:226-->
+Another method to define the widths of the four sides of a cell is to use ''"border-left", "border-right", "border-top" and "border-bottom"'':
+</translate>
+<div style="width: 100%; overflow:auto;">
+{| style="width:100%"
+|-
+! style="width:50%" | <translate><!--T:227--> You type</translate>
+! style="width:50%" | <translate><!--T:228--> You get</translate>
+|-
+| style="padding: 5px;" |
+<pre>
+{|style="border-left:solid 10px black;border-right:solid 20px black;border-top:solid 30px black;border-bottom:solid 40px black; margin:auto"
+|
+<translate nowrap><!--T:229--> Hello</translate>
+|}
+</pre>
+| style="padding: 20px;"|
+{|style="border-left:solid 10px black;border-right:solid 20px black;border-top:solid 30px black;border-bottom:solid 40px black; margin:auto"
+|
+<translate><!--T:230--> Hello</translate>
+|}
+|}
+</div>
+
+{{Note|1=<nowiki/>
+<translate><!--T:231--> The HTML attributes (such as "width=", "border=", "cellspacing=", "cellpadding=") do not need any length unit (the pixel unit is assumed).</translate>
+<translate><!--T:414--> They are also invalid in HTML 5.</translate>
+
+<translate>
+<!--T:438-->
+"Cellpadding" is for setting the space between the cell wall and the cell content.</translate><ref>[https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/table#cellpadding HTML table cellpadding Attribute]</ref>
+
+<translate>
+<!--T:232-->
+The CSS style properties (which override the HTML attributes) require an explicit length unit (if the value is not 0) such as "px" for the pixel.</translate>
+}}
+
+<translate>
+===With HTML attributes and CSS styles=== <!--T:233-->
+
+<!--T:234-->
+<tvar name="1">{{ll|Manual:CSS|CSS}}</tvar> style attributes can be added with or without other HTML attributes.
+</translate>
+
+{| style="width:100%"
+!style="width:50%"| <translate><!--T:235--> You type</translate>
+!style="width:50%"| <translate><!--T:236--> You get</translate>
+|-
+|style="padding:5px"|
+<pre>
+{| class="wikitable" style="color:green; background-color:#ffffcc;" cellpadding="10"
+| <translate nowrap><!--T:237--> Orange</translate>
+| <translate nowrap><!--T:238--> Apple</translate>
+|-
+| <translate nowrap><!--T:239--> Bread</translate>
+| <translate nowrap><!--T:240--> Pie</translate>
+|-
+| <translate nowrap><!--T:241--> Butter</translate>
+| <translate nowrap><!--T:242--> Ice cream</translate>
+|}
+</pre>
+|style="padding:5px"|
+{| class="wikitable" style="color:green; background-color:#ffffcc;" cellpadding="10"
+| <translate><!--T:243--> Orange</translate>
+| <translate><!--T:244--> Apple</translate>
+|-
+| <translate><!--T:245--> Bread</translate>
+| <translate><!--T:246--> Pie</translate>
+|-
+| <translate><!--T:247--> Butter</translate>
+| <translate><!--T:248--> Ice cream</translate>
+|}
+|}
+
+<translate>
+===Padding=== <!--T:442-->
+</translate>
+<translate><!--T:461--> It represents the internal margin between the contents and the border of the cell.</translate>
+{| style="width:100%;"
+! style="width: 50%;"| <translate><!--T:443--> You type</translate>
+! style="width: 50%;"| <translate><!--T:444--> You get</translate>
+|-style="vertical-align:top"
+| style="padding:10px" |
+<pre>
+{|class=wikitable
+| style="padding: 10px" | <translate nowrap><!--T:428--> Example of <tvar name=1>style="padding:10px"</tvar></translate>
+|-
+| style="padding: 50px" | <translate nowrap><!--T:429--> Example of <tvar name=1>style="padding:50px"</tvar></translate><br/><br/><translate nowrap><!--T:430--> Specify the padding on '''EACH CELL'''</translate>
+|-
+| style="padding:100px" | <translate nowrap><!--T:431--> Example of <tvar name=1>style="padding:100px"</tvar></translate>
+|}
+</pre>
+|
+{|class=wikitable
+| style="padding: 10px" | <translate><!--T:432--> Example of <tvar name=1>style="padding:10px"</tvar></translate>
+|-
+| style="padding: 50px" | <translate><!--T:433--> Example of <tvar name=1>style="padding:50px"</tvar></translate><br/><br/><translate><!--T:434--> Specify the padding on '''EACH CELL'''</translate>
+|-
+| style="padding:100px" | <translate><!--T:435--> Example of <tvar name=1>style="padding:100px"</tvar></translate>
+|}
+|}
+
+<translate>
+===Column width=== <!--T:267-->
+
+<!--T:268-->
+'''Column width''' can be added as follows.
+
+<!--T:269-->
+You type:
+</translate>
+
+<pre>
+{| class="wikitable" style="width: 85%;"
+| colspan="2" | <translate nowrap><!--T:270--> This column width is 85% of the screen width</translate>
+|-
+| style="width: 30%"| <translate nowrap><!--T:271--> '''This column is 30% counted from 85% of the screen width'''</translate>
+| style="width: 70%"| <translate nowrap><!--T:272--> '''This column is 70% counted from 85% of the screen width'''</translate>
+|}
+</pre>
+
+<translate>
+<!--T:273-->
+You get:</translate>
+{| class="wikitable" style="width: 85%;"
+| colspan="2" | <translate><!--T:274--> This column width is 85% of the screen width</translate>
+|-
+| style="width: 30%"| <translate><!--T:275--> '''This column is 30% counted from 85% of the screen width'''</translate>
+| style="width: 70%"| <translate><!--T:276--> '''This column is 70% counted from 85% of the screen width'''</translate>
+|}
+
+<translate>
+===Accessibility of table header cells=== <!--T:277-->
+</translate>
+<translate><!--T:278--> Table header cells do not explicitly specify which table data cells they apply to (those on their right on the same row, or those below them on the same column).</translate>
+<translate><!--T:279--> When the table is rendered in a visual 2D environment, this is usually easy to infer.</translate>
+
+<translate><!--T:280--> However when tables are rendered on non-visual media, you can help the browser to determine which table header cell applies to the description of any selected cell (in order to repeat its content in some accessibility helper) using a scope="row" or scope="col" attribute on table header cells.</translate>
+<translate><!--T:281--> In most cases with simple tables, you'll use scope="col" on all header cells of the first row, and scope="row" on the first cell of the following rows:</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:282--> You type</translate>
+! style="width: 50%;"|<translate><!--T:283--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+|-
+! scope="col"| <translate nowrap><!--T:284--> Item</translate>
+! scope="col"| <translate nowrap><!--T:285--> Quantity</translate>
+! scope="col"| <translate nowrap><!--T:286--> Price</translate>
+|-
+! scope="row"| <translate nowrap><!--T:287--> Bread</translate>
+| 0.3 kg
+| $0.65
+|-
+! scope="row"| <translate nowrap><!--T:288--> Butter</translate>
+| 0.125 kg
+| $1.25
+|-
+! scope="row" colspan="2"| <translate nowrap><!--T:289--> Total</translate>
+| $1.90
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+|-
+! scope="col"| <translate><!--T:290--> Item</translate>
+! scope="col"| <translate><!--T:291--> Quantity</translate>
+! scope="col"| <translate><!--T:292--> Price</translate>
+|-
+! scope="row"| <translate><!--T:293--> Bread</translate>
+| 0.3 kg
+| $0.65
+|-
+! scope="row"| <translate><!--T:294--> Butter</translate>
+| 0.125 kg
+| $1.25
+|-
+! scope="row" colspan="2"| <translate><!--T:295--> Total</translate>
+| $1.90
+|}
+|}
+
+<translate>
+== Alignment == <!--T:296-->
+
+=== Table alignment === <!--T:297-->
+</translate>
+<translate><!--T:298--> Table alignment is achieved by using CSS.</translate>
+<translate><!--T:299--> The table alignment is controlled by margins.</translate>
+<translate><!--T:300--> A fixed margin on one side will make the table to be aligned to that side, if on the opposite side the margin is defined as ''auto''.</translate>
+<translate><!--T:301--> To have a table center aligned, you should set both margins to ''auto''</translate>
+
+<translate>
+<!--T:302-->
+For example, a right-aligned table:
+</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:303--> You type</translate>
+! style="width: 50%;"|<translate><!--T:304--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable" style="margin-left: auto; margin-right: 0px;"
+| <translate nowrap><!--T:305--> Orange</translate>
+| <translate nowrap><!--T:306--> Apple</translate>
+|-
+| <translate nowrap><!--T:307--> Bread</translate>
+| <translate nowrap><!--T:308--> Pie</translate>
+|-
+| <translate nowrap><!--T:309--> Butter</translate>
+| <translate nowrap><!--T:310--> Ice cream</translate>
+|}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit, sed diam nonummy nibh euismod tincidunt ut
+laoreet dolore magna aliquam erat volutpat. Ut wisi
+enim ad minim veniam, quis nostrud exerci tation
+ullamcorper suscipit lobortis nisl ut aliquip ex ea
+commodo consequat.
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable" style="margin-left: auto; margin-right: 0px;"
+| <translate><!--T:311--> Orange</translate>
+| <translate><!--T:312--> Apple</translate>
+|-
+| <translate><!--T:313--> Bread</translate>
+| <translate><!--T:314--> Pie</translate>
+|-
+| <translate><!--T:315--> Butter</translate>
+| <translate><!--T:316--> Ice cream</translate>
+|}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit, sed diam nonummy nibh euismod tincidunt ut
+laoreet dolore magna aliquam erat volutpat. Ut wisi
+enim ad minim veniam, quis nostrud exerci tation
+ullamcorper suscipit lobortis nisl ut aliquip ex ea
+commodo consequat.
+|}
+
+<translate>
+<!--T:317-->
+And a center-aligned table:
+</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:318--> You type</translate>
+! style="width: 50%;"|<translate><!--T:319--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable" style="margin: auto;"
+| <translate nowrap><!--T:320--> Orange</translate>
+| <translate nowrap><!--T:321--> Apple</translate>
+|-
+| <translate nowrap><!--T:322--> Bread</translate>
+| <translate nowrap><!--T:323--> Pie</translate>
+|-
+| <translate nowrap><!--T:324--> Butter</translate>
+| <translate nowrap><!--T:325--> Ice cream</translate>
+|}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit, sed diam nonummy nibh euismod tincidunt ut
+laoreet dolore magna aliquam erat volutpat. Ut wisi
+enim ad minim veniam, quis nostrud exerci tation
+ullamcorper suscipit lobortis nisl ut aliquip ex ea
+commodo consequat.
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable" style="margin: auto;"
+| <translate><!--T:326--> Orange</translate>
+| <translate><!--T:327--> Apple</translate>
+|-
+| <translate><!--T:328--> Bread</translate>
+| <translate><!--T:329--> Pie</translate>
+|-
+| <translate><!--T:330--> Butter</translate>
+| <translate><!--T:331--> Ice cream</translate>
+|}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit, sed diam nonummy nibh euismod tincidunt ut
+laoreet dolore magna aliquam erat volutpat. Ut wisi
+enim ad minim veniam, quis nostrud exerci tation
+ullamcorper suscipit lobortis nisl ut aliquip ex ea
+commodo consequat.
+|}
+
+<translate>
+=== Table floating around text === <!--T:332-->
+</translate>
+<translate><!--T:333--> If you align a table to the right or the left side of the page, the text that comes after the table starts at the end of it, leaving an empty space around the table.</translate>
+<translate><!--T:334--> You can make the text to be wrapped around the table by making the table to ''float'' around the text instead of just aligning it.</translate>
+<translate><!--T:335--> This can be achieved using the <tvar name="1"><code>float</code></tvar> CSS attribute, which can specify whether the table floats to the right side or to the left.</translate>
+<translate><!--T:336--> When using ''float'', margins don't control table alignment and can be used to specify the margin between the table and the surrounding text.</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:337--> You type</translate>
+! style="width: 50%;"|<translate><!--T:338--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable" style="float:right; margin-left: 10px;"
+| <translate nowrap><!--T:339--> Orange</translate>
+| <translate nowrap><!--T:340--> Apple</translate>
+|-
+| <translate nowrap><!--T:341--> Bread</translate>
+| <translate nowrap><!--T:342--> Pie</translate>
+|-
+| <translate nowrap><!--T:343--> Butter</translate>
+| <translate nowrap><!--T:344--> Ice cream</translate>
+|}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit, sed diam nonummy nibh euismod tincidunt ut
+laoreet dolore magna aliquam erat volutpat. Ut wisi
+enim ad minim veniam, quis nostrud exerci tation
+ullamcorper suscipit lobortis nisl ut aliquip ex ea
+commodo consequat. Duis autem vel eum iriure dolor
+in hendrerit in vulputate velit esse molestie consequat,
+vel illum dolore eu feugiat nulla facilisis at vero
+eros et accumsan et iusto odio dignissim qui blandit
+praesent luptatum zzril delenit augue duis dolore te
+feugait nulla facilisi.
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable" style="float:right; margin-left: 10px;"
+| <translate><!--T:345--> Orange</translate>
+| <translate><!--T:346--> Apple</translate>
+|-
+| <translate><!--T:347--> Bread</translate>
+| <translate><!--T:348--> Pie</translate>
+|-
+| <translate><!--T:349--> Butter</translate>
+| <translate><!--T:350--> Ice cream</translate>
+|}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit, sed diam nonummy nibh euismod tincidunt ut
+laoreet dolore magna aliquam erat volutpat. Ut wisi
+enim ad minim veniam, quis nostrud exerci tation
+ullamcorper suscipit lobortis nisl ut aliquip ex ea
+commodo consequat. Duis autem vel eum iriure dolor
+in hendrerit in vulputate velit esse molestie consequat,
+vel illum dolore eu feugiat nulla facilisis at vero
+eros et accumsan et iusto odio dignissim qui blandit
+praesent luptatum zzril delenit augue duis dolore te
+feugait nulla facilisi.
+|}
+
+<translate>
+=== Cell contents alignment === <!--T:351-->
+</translate>
+<translate><!--T:352--> The alignment of cell contents can be controlled with 2 different CSS properties: <tvar name="1"><code>text-align</code></tvar> and <tvar name="2"><code>vertical-align</code></tvar>.</translate>
+<translate><!--T:353--> <tvar name="1"><code>text-align</code></tvar> can be specified at the table, row or individual cells, while <tvar name="2"><code>vertical-align</code></tvar> only can be specified at individual rows or cells.</translate>
+
+{| style="width:100%"
+! style="width: 50%;"|<translate><!--T:354--> You type</translate>
+! style="width: 50%;"|<translate><!--T:355--> You get</translate>
+|-
+| style="padding: 5px;"|
+<pre>
+{| class="wikitable"
+|- style="vertical-align:top;"
+| style="height:100px; width:100px; text-align:left;" | A
+| style="height:100px; width:100px; text-align:center;" | B
+| style="height:100px; width:100px; text-align:right;" | C
+|- style="vertical-align:middle;"
+| style="height:100px; width:100px; text-align:left;" | D
+| style="height:100px; width:100px; text-align:center;" | E
+| style="height:100px; width:100px; text-align:right;" | F
+|- style="vertical-align:bottom;"
+| style="height:100px; width:100px; text-align:left;" | G
+| style="height:100px; width:100px; text-align:center;" | H
+| style="height:100px; width:100px; text-align:right;" | I
+|}
+</pre>
+| style="padding: 5px;"|
+{| class="wikitable"
+|- style="vertical-align:top;"
+| style="height:100px; width:100px; text-align:left;" | A
+| style="height:100px; width:100px; text-align:center;" | B
+| style="height:100px; width:100px; text-align:right;" | C
+|- style="vertical-align:middle;"
+| style="height:100px; width:100px; text-align:left;" | D
+| style="height:100px; width:100px; text-align:center;" | E
+| style="height:100px; width:100px; text-align:right;" | F
+|- style="vertical-align:bottom;"
+| style="height:100px; width:100px; text-align:left;" | G
+| style="height:100px; width:100px; text-align:center;" | H
+| style="height:100px; width:100px; text-align:right;" | I
+|}
+|}
+
+<translate>
+==Caveats== <!--T:356-->
+
+===Negative numbers=== <!--T:357-->
+</translate>
+<translate><!--T:358--> If you start a cell on a new line with a negative number with a minus sign (or a parameter that evaluates to a negative number), your table can get broken, because the characters <tvar name="1"><code>|-</code></tvar> will be parsed as the wiki markup for table row, not table cell.</translate>
+<translate><!--T:359--> To avoid this, insert a space before the value (<tvar name="1"><code>| -6</code></tvar>) or use in-line cell markup (<tvar name="2"><code>|| -6</code></tvar>).</translate>
+
+<translate>
+===CSS vs attributes=== <!--T:360-->
+
+<!--T:361-->
+Table borders specified through CSS rather than the border attribute will render incorrectly in a small subset of text browsers.
+
+===Common attributes for columns, column groups and row groups=== <!--T:362-->
+</translate>
+<translate><!--T:363--> The MediaWiki syntax for tables currently offers no support for specifying common attributes for columns (with the HTML element <tvar name=col>{{tag|col|single}}</tvar>), column groups (HTML element <tvar name=colgroup>{{tag|colgroup|content=}}</tvar>) and row groups (HTML elements <tvar name=thead>{{tag|thead|content=}}</tvar>, <tvar name=tbody>{{tag|tbody|content=}}</tvar> and <tvar name=tfoot>{{tag|tfoot|content=}}</tvar>).</translate>
+<translate><!--T:364--> Those standard HTML elements are not accepted even in their HTML or XHTML syntax.</translate>
+
+<translate>
+<!--T:365-->
+All the rows and cells (header or data) of the table are rendered within a single implicit row group (HTML element <tvar name=1>{{tag|tbody|content=}}</tvar>) without any attributes or styles.
+
+== Tables and the Visual Editor (VE) == <!--T:415-->
+</translate>
+:''<translate><!--T:416--> See also:</translate> {{ll|Help:VisualEditor/User guide#Editing tables}}''
+
+<translate><!--T:417--> See <tvar name=1>[[Phab: T108245]]: "Fully support basic table editing in the visual editor"</tvar>.</translate>
+<translate><!--T:418--> See the list of tasks. Finished tasks are <s>struck</s>. It can be difficult to figure out from the technical language there what exactly has been improved, or what features have been added. Please add explanatory info below.</translate>
+
+<translate>
+=== Can now move or delete columns and rows === <!--T:419-->
+</translate>
+<translate><!--T:420--> Click on a column or row header.</translate>
+<translate><!--T:421--> Then click on the arrow.</translate>
+<translate><!--T:422--> From the popup menu click on "Move" or "Delete".</translate>
+
+<translate>
+=== Insert blank row or column === <!--T:423-->
+
+<!--T:424-->
+From the same popup menu click on "Insert".
+
+=== Copy table from web page to Visual Editor === <!--T:425-->
+</translate>
+<translate><!--T:426--> It is possible to copy and paste a table from a web page directly into the [[w:WP:Visual Editor|Visual Editor]] (VE).</translate>
+<translate><!--T:427--> To do so safely, use a sandbox and check the table for proper coding in wikitext source mode and proper display in the Visual Editor and in preview mode.</translate>
+
+<translate>
+== Helping tools == <!--T:459-->
+
+<!--T:460-->
+* [<tvar name=url>https://excel2wiki.toolforge.org/</tvar> Excel2Wiki] allows you to copy a spreadsheet from Excel, Apache OpenOffice, LibreOffice, or Gnumeric to convert it into wikicode table.
+
+==See also== <!--T:366-->
+
+<!--T:367-->
+* [[<tvar name=1>Special:MyLanguage/Help:Sorting#Sorting rows of a table</tvar>|Sorting rows of a table]]</translate>
+<translate>
+<!--T:437-->
+* [[w:Help:Tables]]</translate>
+<translate>
+<!--T:370-->
+* [<tvar name="url">http://www.tablesgenerator.com/mediawiki_tables</tvar> A visual tool that helps generate tables]
+
+==Notes== <!--T:372-->
+</translate>
+<references/>
+
+[[Category:Help{{#translation:}}|Tables]]

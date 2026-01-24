@@ -1,0 +1,475 @@
+<languages/>
+{{PD Help Page|imported=yes}}
+<translate>
+<!--T:1-->
+'''Cite''' makes it possible to add footnotes to a page.
+
+<!--T:87-->
+See <tvar name=1>{{ll|Extension:Cite}}</tvar> for technical details.
+
+== Usage == <!--T:96-->
+
+<!--T:97-->
+The basic concept of the <tvar name=1>{{tag|ref|open}}</tvar> tag is that it inserts the text enclosed by the ref tags as a footnote in a designated section, which you indicate with the placeholder tag <tvar name=2>{{tag|references|single}}</tvar>.
+
+<!--T:98-->
+Additional placeholder tags <tvar name=1>{{tag|references|single}}</tvar> can be inserted in the text, and all <tvar name=2>{{tag|ref|open}}</tvar> tags up to that point, in that group, will be inserted there.
+
+<!--T:99-->
+If you forget to include <tvar name=1>{{tag|references|single}}</tvar> in the article, the footnotes will not disappear, but the references will be displayed at the end of the page.
+</translate>
+
+<translate><!--T:100--> This page itself uses footnotes, such as the one at the end of this sentence.</translate><ref group="note">
+<translate><!--T:217--> This footnote is used as an example in the "Usage" section.</translate>
+</ref>
+<translate><!--T:218--> If you [<tvar name=url>{{fullurl:{{FULLPAGENAME}}|action=edit}}</tvar> view the source] of this page by clicking "Edit this page", you can see a working example of footnotes.</translate>
+
+{{anchor|Example}}
+{| class="wikitable"
+! style="width: 50%;" | <translate><!--T:102--> Wikitext</translate>
+! <translate><!--T:103--> Rendering</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<translate nowrap><!--T:104--> The Sun is pretty big.</translate><ref><translate nowrap><!--T:219--> E. Miller, ''The Sun'', (New York: Academic Press, 2005), 23–25.</translate></ref> <translate nowrap><!--T:220--> The Moon, however, is not so big.</translate><ref><translate nowrap><!--T:221--> R. Smith, "Size of the Moon", ''Scientific American'', 46 (April 1978): 44–46.</translate></ref>
+
+<translate nowrap>
+==Notes== <!--T:105-->
+</translate>
+<references />
+</syntaxhighlight>
+|
+<translate><!--T:222--> The Sun is pretty big.</translate><ref><translate><!--T:223--> E. Miller, ''The Sun'', (New York: Academic Press, 2005), 23–25.</translate></ref> <translate><!--T:224--> The Moon, however, is not so big.</translate><ref><translate><!--T:225--> R. Smith, "Size of the Moon", ''Scientific American'', 46 (April 1978): 44–46.</translate></ref>
+
+{{Fake heading|sub=2|<translate><!--T:106--> Notes</translate>}}
+<references />
+|}
+
+{{Anchor|named-refs}}
+<translate>
+=== Multiple uses of the same footnote === <!--T:206-->
+</translate>
+<translate><!--T:207--> To give a footnote a unique identifier, use {{<tvar name=1>tmpl|0={{tag|ref|open|params={{attr|name|"''$1''"}} }}</tvar>|name}}.</translate>
+<translate><!--T:208--> You can then refer to the same footnote again by using a ref tag with the same name.</translate>
+<translate><!--T:209--> The text inside the second tag doesn't matter, because the text already exists in the first reference.</translate>
+<translate><!--T:210--> You can either copy the whole footnote, or you can use a terminated empty ref tag that looks like this: {{<tvar name=1>tmpl|0={{tag|ref|single|params={{attr|name|"''$1''"}} }}</tvar>|name}}.</translate>
+<translate><!--T:314--> Names are unique within their [[<tvar name=1>#Grouped references</tvar>|group]], not global&mdash;that is, a reference <tvar name=2>{{tag|ref|params={{attr|group|"note"}} {{attr|name|"source-a"}}}}</tvar> can only be re-used as <tvar name=3>{{tag|ref|single|params={{attr|group|"note"}} {{attr|name|"source-a"}}}}</tvar>.</translate>
+
+<translate>
+<!--T:211-->
+In the following example, the same source is cited three times.
+</translate>
+
+{| class="wikitable"
+!style="width: 50%;"| <translate><!--T:107--> Wikitext</translate>
+! <translate><!--T:108--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<translate nowrap><!--T:109--> This is an example of multiple references to the same footnote.</translate><ref name="multiple"><translate nowrap><!--T:226--> Remember that when you refer to the same footnote multiple times, the text from the first reference is used.</translate></ref>
+
+<translate nowrap><!--T:110--> Such references are particularly useful if different statements come from the same source.</translate><ref name="multiple" /> <translate nowrap><!--T:227--> Any reused tag should not contain extra content, that will spawn an error.</translate> <translate nowrap><!--T:228--> Only use empty tags in this role.</translate>
+
+<translate nowrap><!--T:111--> A concise way to make multiple references is to use empty ref tags, which have a slash at the end.</translate>
+<translate nowrap><!--T:229--> Although this may reduce redundant work, please be aware that if a future editor removes the first reference, this will result in the loss of all references using the empty ref tags.</translate><ref name="multiple" />
+
+<translate nowrap>
+==Notes== <!--T:112-->
+</translate>
+<references />
+</syntaxhighlight>
+|
+<translate><!--T:230--> This is an example of multiple references to the same footnote.</translate><ref name="multiple"><translate><!--T:231--> Remember that when you refer to the same footnote multiple times, the text from the first reference is used.</translate></ref>
+
+<translate><!--T:113--> Such references are particularly useful when citing sources, if different statements come from the same source</translate><ref name="multiple" /> <translate><!--T:232--> Any reused tag should not contain extra content, that will spawn an error.</translate>
+<translate><!--T:233--> Only use empty tags in this role.</translate>
+
+<translate><!--T:114--> A concise way to make multiple references is to use empty ref tags, which have a slash at the end.</translate> <translate><!--T:234--> Although this may reduce redundant work, please be aware that if a future editor removes the first reference, this will result in the loss of all references using the empty ref tags.</translate><ref name="multiple" />
+
+{{Fake heading|sub=2|<translate><!--T:115--> Notes</translate>}}
+<references />
+|}
+
+{{Note|1=<translate><!--T:116--> Note that identifiers used in the <tvar name=1>''name''</tvar> attribute require alphabetic characters; solely relying on numerals will generate an error message.</translate> <translate><!--T:235--> Quotation marks are always preferred for names, and are mandatory when the name includes a space, punctuation or other mark.</translate> <translate><!--T:236--> It is recommended that names be kept simple and restricted to the ASCII character set.</translate>
+}}
+
+{{anchor|references-tag}}
+<translate nowrap>
+=== The <tvar name=1>{{tag|references|single}}</tvar> tag === <!--T:117-->
+</translate>
+<translate><!--T:118--> The <tvar name=1>{{tag|references|single}}</tvar> tag inserts the text of all the citations which have been defined in <tvar name=2>{{tag|ref|open}}</tvar> tags up to that point in the page.</translate>
+<translate><!--T:237--> For example, based on the citations above, there should be reference for the <tvar name=1>''note''</tvar> group.</translate>
+
+{| class="wikitable"
+!style="width: 50%;"| <translate><!--T:119--> Wikitext</translate>
+! <translate><!--T:120--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<references group="note"/>
+</syntaxhighlight>
+|<references group="note"/>
+|}
+
+<translate><!--T:121--> The reference list [[<tvar name=1>Special:MyLanguage/Contributors (2015-2021)/Projects/Columns for references</tvar>|can have a responsive width]] (displaying in some cases the references in several columns).</translate>
+<translate><!--T:238--> In that case, the <tvar name=1><code>responsive</code></tvar> attribute is used to configure that behavior.</translate>
+<translate><!--T:239--> On wikis with the default configuration, this will happen on every page; on others, you need to activate it.</translate> <translate><!--T:325--> On wikis with the default configuration, the responsive behavior can be disabled with <tvar name=1><syntaxhighlight lang=html inline><references responsive="0" /></syntaxhighlight></tvar>.</translate>
+
+<translate><!--T:124--> If a page includes more than one <tvar name=1>{{tag|references|single}}</tvar> list, each list includes the <tvar name=2>{{tag|ref|open}}</tvar> tags defined after the previous references list.</translate>
+<translate><!--T:202--> If these references lists are produced by templates, each one lists the ref tags defined before the first references list, and there is an error message saying that there is a ref tag but not a references list.</translate>
+
+<translate>
+===Grouped references=== <!--T:125-->
+
+<!--T:126-->
+This may be disabled by <tvar name=1><syntaxhighlight lang=php inline>$wgAllowCiteGroups = false;</syntaxhighlight></tvar> if desired.
+
+<!--T:127-->
+The following example generates separate reference lists for citations and miscellaneous footnotes:
+</translate>
+
+{| class="wikitable"
+!style="width: 50%;"| <translate><!--T:128--> Wikitext</translate>
+! <translate><!--T:129--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<translate nowrap><!--T:130--> According to scientists, the Sun is pretty big.</translate><ref><translate nowrap><!--T:240--> E. Miller, ''The Sun'', (New York: Academic Press, 2005), 23–25.</translate></ref> <translate nowrap><!--T:241--> In fact, it is very big.</translate><ref group="footnotes"> <translate nowrap><!--T:242--> Take their word for it.</translate> <translate nowrap><!--T:243--> Don't look directly at the sun!</translate></ref>
+
+<translate nowrap>
+==Notes== <!--T:131-->
+</translate>
+<references group="footnotes" />
+
+<translate nowrap>
+==References== <!--T:132-->
+</translate>
+<references />
+</syntaxhighlight>
+| <translate><!--T:244--> According to scientists, the Sun is pretty big.</translate><ref><translate><!--T:245--> E. Miller, ''The Sun'', (New York: Academic Press, 2005), 23–25.</translate></ref> <translate><!--T:246--> In fact, it is very big.</translate><ref group="footnotes"> <translate><!--T:247--> Take their word for it.</translate> <translate><!--T:248--> Don't look directly at the sun!</translate></ref>
+
+{{Fake heading|sub=2|<translate><!--T:133--> Notes</translate>}}
+<references group="footnotes" />
+
+{{Fake heading|sub=2|<translate><!--T:134--> References</translate>}}
+<references />
+|}
+
+<translate>
+<!--T:135-->
+The anonymous group works as before, while references destined for the named group will only show up in the designated <tvar name=1>{{tag|references|single}}</tvar> element.
+</translate>
+
+{{Note|1=<translate><!--T:136--> Note that identifiers used in the <tvar name=1>''group''</tvar> attribute require alphabetic characters; solely relying on numerals will generate an error message.</translate> <translate><!--T:249--> Quotation marks are always preferred for names, and are mandatory when the name includes a space, punctuation or other mark.</translate> <translate><!--T:250--> It is recommended that names be kept simple and restricted to the ASCII character set.</translate>}}
+
+<translate><!--T:304--> The rendering of a given group can be customized across the wiki by creating {{<tvar name=1>tmpl|0={{blue|MediaWiki:Cite_link_label_group-&lt;$1>}}</tvar>|name}} and listing the used signs in the order they appear, separated by spaces or newlines.</translate>
+<translate><!--T:305--> For example, if <tvar name=1>{{blue|MediaWiki:Cite_link_label_group-lower-alpha}}</tvar> is created with the content <tvar name=2><pre>a b c d e f g h i j k l m n o p q r s t u v w x y z</pre></tvar> then the first <tvar name=3><syntaxhighlight lang="wikitext" inline><ref group="lower-alpha">...</ref></syntaxhighlight></tvar> renders <tvar name=4><sup>[a]</sup></tvar>, the second one renders <tvar name=5><sup>[b]</sup></tvar>, and so on, the 26th renders <tvar name=6><sup>[z]</sup></tvar>.</translate>
+<translate><!--T:306--> Attempting to use more footnotes in a custom-rendered group than the number of signs defined will fall back to the numeric labels. The 27th will render as simply <tvar name=1><sup>[1.27]</sup></tvar>, and so on.</translate>
+
+<translate>
+<!--T:307-->
+The following group names are often defined as custom groups by the following messages respectively:
+</translate>
+
+{| class="wikitable sortable"
+! <translate><!--T:308--> group name</translate> || <translate><!--T:309--> message</translate>
+|-
+| <code>upper-alpha</code> || [[MediaWiki:Cite link label group-upper-alpha]]
+|-
+| <code>lower-alpha</code> || [[MediaWiki:Cite link label group-lower-alpha]]
+|-
+| <code>upper-roman</code> || [[MediaWiki:Cite link label group-upper-roman]]
+|-
+| <code>lower-roman</code> || [[MediaWiki:Cite link label group-lower-roman]]
+|-
+| <code>lower-greek</code> || [[MediaWiki:Cite link label group-lower-greek]]
+|}
+
+{{Note|1=<translate><!--T:302--> The <tvar name=1>[[Special:PrefixIndex/MediaWiki:Cite link label group|Cite link label group]]</tvar> pages are ''not'' created by default.</translate> <translate><!--T:303--> If a wiki does not configure them, markup such as <tvar name=1><syntaxhighlight lang=html inline><ref group="lower-alpha">...</ref></syntaxhighlight></tvar> will render as <sup>lower-alpha 1</sup>.</translate>}}
+
+{{Anchor|book referencing}}
+<translate>
+=== Citing different parts of the same source === <!--T:137-->
+</translate>
+<translate><!--T:138--> When several parts from the same work are used as references in an article, you can cluster them in the reference section.</translate>
+<translate><!--T:251--> This gives readers a way to identify which references originate from the same source.</translate>
+<translate><!--T:252--> It also allows you to cite different parts of the same source without repeating the entire source every time.</translate>
+
+{| class="wikitable"
+! style="width: 50%;" | <translate><!--T:139--> Wikitext</translate>
+! <translate><!--T:140--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<translate nowrap><!--T:141--> According to scientists, the Sun is pretty big.</translate><ref name="Miller"><translate nowrap><!--T:253--> E. Miller, ''The Sun'', (New York: Academic Press, 2005).</translate></ref> <translate nowrap><!--T:254--> In fact, it is very big.</translate><ref name="Miller" details="p. 123"</ref> <translate nowrap><!--T:255--> Take their word for it.</translate> <translate nowrap><!--T:256--> Don't look directly at the sun!</translate><ref name="Miller" details="p. 42"/>
+
+<translate nowrap>
+==References== <!--T:142-->
+</translate>
+<references />
+</syntaxhighlight>
+| <translate><!--T:257--> According to scientists, the Sun is pretty big.</translate><sup>[1]</sup> <translate><!--T:258--> In fact, it is very big.</translate><sup>[1.1]</sup> <translate><!--T:259--> Take their word for it.</translate> <translate><!--T:301--> Don't look directly at the sun!</translate><sup>[1.2]</sup>
+
+{{Fake heading|sub=2|<translate><!--T:143--> References</translate>}}
+
+<translate><!--T:144--> 1. E. Miller, ''The Sun'', (New York: Academic Press, 2005)</translate><br/>
+&nbsp;&nbsp;&nbsp;1.1 ↑ p. 123<br/>
+&nbsp;&nbsp;&nbsp;1.2 ↑ p. 42<br/>
+|}
+
+{{Note|1=<translate><!--T:147--> This feature doesn't yet work on wikis outside testwiki, [[:de:WP:Technische Wünsche/Topwünsche/Subreferenzierung|German Wikipedia]] and the beta cluster, which is why the above example is a mock.</translate> <translate><!--T:203--> You can follow the project update at [[<tvar name=1>m:Special:MyLanguage/WMDE Technical Wishes/Sub-referencing</tvar>|m:WMDE Technical Wishes/Sub-referencing]].</translate>}}
+
+{{Anchor|list-defined-references}}
+<translate>
+===Separating references from text=== <!--T:148-->
+</translate>
+<translate><!--T:149--> In-text references make it easy to copy the text to another page; on the other hand, they make it hard to read.</translate>
+<translate><!--T:260--> References containing a lot of data, quotes or elaborate citation templates can make up a significantly larger fraction of the source than the text that will actually be visible.</translate>
+<translate><!--T:261--> To avoid this, you can move some or all of the references into the <tvar name=1>{{tag|references|single}}</tvar> section, to the place where they will actually appear to the reader.</translate>
+
+{| class="wikitable"
+! style="width: 50%;" | <translate><!--T:150--> Wikitext</translate>
+! <translate><!--T:151--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+
+<translate nowrap><!--T:152--> According to scientists, the Sun is pretty big.</translate><ref name="miller" /> <translate nowrap><!--T:262--> The Moon, however, is not so big.</translate><ref name="smith" />
+
+<translate nowrap>
+==Notes== <!--T:153-->
+</translate>
+<references>
+<ref name="miller"><translate nowrap><!--T:263--> E. Miller, ''The Sun'', (New York: Academic Press, 2005), 23–25.</translate></ref>
+<ref name="smith"><translate nowrap><!--T:264--> R. Smith, "Size of the Moon", ''Scientific American'', 46 (April 1978): 44–46.</translate></ref>
+</references>
+</syntaxhighlight>
+|
+<translate><!--T:265--> According to scientists, the Sun is pretty big.</translate><ref name="miller" /> <translate><!--T:266--> The Moon, however, is not so big.</translate><ref name="smith" />
+{{Fake heading|sub=2|<translate><!--T:267--> Notes</translate>}}
+<references>
+<ref name="miller"><translate><!--T:268--> E. Miller, ''The Sun'', (New York: Academic Press, 2005), 23–25.</translate></ref>
+<ref name="smith"><translate><!--T:269--> R. Smith, "Size of the Moon", ''Scientific American'', 46 (April 1978): 44–46.</translate></ref>
+</references>
+|}
+
+<translate>
+<!--T:154-->
+Thus, the code above will have the same output as the [[<tvar name=1>#Example</tvar>|first example]] above, although the numbering and order of the references will not in general be the same.
+
+<!--T:315-->
+If a [[<tvar name=3>#Grouped references</tvar>|group]] is set with <tvar name="1">{{tag|references|open|params={{attr|group}}}}</tvar>, it does ''not'' also need to be specified on each child <tvar name="2">{{tag|ref|single}}</tvar>.
+
+===Substitution and embedded parser functions=== <!--T:155-->
+</translate>
+<translate><!--T:156--> Since Cite's <tvar name=1>{{tag|ref|open}}</tvar> tag is parsed before MediaWiki's parser functions (e.g. <tvar name=2><code><nowiki>{{#</nowiki>ifexpr:&hellip;<nowiki>}}</nowiki></code></tvar>) or variables (e.g. <tvar name=3><code>{<nowiki/>{PAGENAME}}</code></tvar>) or before <tvar name=4><code>subst:</code></tvar>, these will not work inside of citation references.</translate>
+<translate><!--T:205--> Instead, you have to use the [[<tvar name=1>Special:MyLanguage/Help:Magic words#Miscellaneous</tvar>|magic word <tvar name=2><code><nowiki>{{#</nowiki>tag:&hellip;<nowiki>}}</nowiki></code></tvar>]].</translate>
+
+{| class="wikitable"
+! style="width: 50%;" | <translate><!--T:157--> Wikitext</translate>
+! <translate><!--T:158--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+Foo<ref><translate nowrap><!--T:159--> This is not working, see {{<tvar name=1>cite journal|url=https://www.google.com |author= |date= |accessdate={{subst:#time:Y-m-d|now}}</tvar>|title=Search}}</translate></ref> bar baz…
+Foo{{#tag:ref|<translate nowrap><!--T:270--> Whereas this does, see {{<tvar name=1>cite journal|url=https://www.google.com |author= |date= |accessdate={{subst:#time:Y-m-d|now}}</tvar>|title=Search}}</translate>}} bar baz…
+<references />
+</syntaxhighlight>
+|
+Foo<ref><translate><!--T:160--> This is not working, see {{<tvar name=1>cite journal|url=https://www.google.com |author= |date= |accessdate={{subst:#time:Y-m-d|now}}</tvar>|title=Search}}</translate></ref> bar baz…
+Foo{{#tag:ref|<translate><!--T:272--> Whereas this does, see {{<tvar name=1>cite journal|url=https://www.google.com |author= |date= |accessdate=2021-03-11</tvar>|title=Search}}</translate>}} bar baz…
+
+<references />
+|}
+
+<translate>
+=== Adding an automatic heading before the references list === <!--T:161-->
+</translate>
+<translate><!--T:162--> Up to MediaWiki 1.28, one could use the system message <tvar name=1><code>MediaWiki:Cite references prefix</code></tvar> to define a wiki-wide heading which would be automatically inserted before each references list.</translate> <translate><!--T:273--> In MediaWiki 1.29, [[<tvar name=1>gerrit:c/mediawiki/extensions/Cite/+/229852</tvar>|this system message was removed]].</translate> <translate><!--T:274--> A hacky way to enter a headline now is to add the following code to <tvar name=1><code>MediaWiki:Common.js</code></tvar>:</translate>
+
+<syntaxhighlight lang="javascript" copy>
+$(document).ready(function(){
+    $('.mw-references-wrap').before('<h2><translate nowrap><!--T:275--> References</translate></h2>');
+});
+</syntaxhighlight>
+
+<translate>
+<!--T:310-->
+Note that this adds the header unconditionally, i.e. if you already have the header it gets added again thus creating duplicated headers.
+
+<!--T:163-->
+If you only need a ''text'' heading (no link or other active elements) you could add the following to <tvar name=1><code>MediaWiki:Common.css</code></tvar> (Chrome 4, IE9, FF 3.5, Safari 3.1, Opera 7):
+</translate>
+
+<syntaxhighlight lang="css" copy>
+.mw-references-wrap::before {
+  content: "Blue references";
+  color: #0645ad;
+  text-decoration: none;
+  background: none;
+  font-style: italic;
+  font-size: 100%;
+  font-weight: bold;
+  line-height: 1.6;
+  direction: ltr;
+  font-family: sans-serif;
+}
+</syntaxhighlight>
+
+<translate>
+=== Merging two texts into a single reference === <!--T:164-->
+</translate>
+<translate><!--T:197--> A typical Wikisource issue are references that span multiple pages in the source material.</translate>
+<translate><!--T:198--> These can be merged using a {{<tvar name=1>tmpl|0={{tag|ref|open|params={{attr|name|"''$1''"}} }}</tvar>|name}} tag for the first part of the reference, and tagging the following parts with a tag {{<tvar name=2>tmpl|0={{tag|ref|open|params={{attr|follow|"''$1''"}} }}</tvar>|name}} using the same name.</translate>
+
+<translate>
+<!--T:165-->
+Example:
+</translate>
+
+{| class="wikitable"
+! style="width: 50%;" | <translate><!--T:166--> Wikitext</translate>
+! <translate><!--T:167--> Result</translate>
+|- style="vertical-align: top;"
+|<syntaxhighlight lang="wikitext">
+<translate nowrap><!--T:168--> This is an example of merging multiple texts into the same footnote.</translate><ref name="main"><translate nowrap><!--T:276--> Remember that all the texts will be included into the reference containing the <tvar name=1>name="…"</tvar> attribute.</translate></ref>
+
+<ref follow="main"><translate nowrap><!--T:169--> Simply include the additional text in a tag with the <tvar name=1>follow="…"</tvar> attribute, matching the first ref's name.</translate></ref>
+
+<translate nowrap>
+==References== <!--T:170-->
+</translate>
+<references/>
+</syntaxhighlight>
+|
+<translate><!--T:277--> This is an example of merging multiple texts into the same footnote.</translate><ref name="main"><translate><!--T:278--> Remember that all the texts will be included in the reference containing the <tvar name=1>name="…"</tvar> attribute.</translate></ref>
+
+<ref follow="main"><translate><!--T:171--> Simply include the additional text in a tag with the <tvar name=1>follow="…"</tvar> attribute, matching the first ref's name.</translate></ref>
+
+'''<translate><!--T:172--> References</translate>'''
+<references/>
+|}
+
+<translate><!--T:173--> When using this syntax, take care that the "<tvar name=1>follow</tvar>" part of the footnote is included on the same page as the first part of the reference.</translate>
+
+<translate><!--T:279--> Note that reference names cannot start with a number, so always include some text like, <tvar name=2><syntaxhighlight lang=html inline><ref name="p32"></syntaxhighlight></tvar> and <tvar name=3><syntaxhighlight lang=html inline><ref follow="p32"></syntaxhighlight></tvar>.</translate>
+
+<translate>
+== Customization == <!--T:174-->
+
+<!--T:199-->
+The format of the output of <tvar name=1>{{tag|ref|open}}</tvar> and <tvar name=2>{{tag|references|open}}</tvar> is almost completely customizable through MediaWiki [[<tvar name=3>Special:MyLanguage/Help:System message</tvar>|messages]], that can be modified, for example, through the MediaWiki namespace depending on the configuration of the wiki.
+
+<!--T:175-->
+For a list of messages that control the output of <tvar name=ref>{{tag|ref|open}}</tvar> and <tvar name=references>{{tag|references|open}}</tvar> and the values, if any, that are passed to them ($1, $2, $3 ...), see [<tvar name=url>https://www.mediawiki.org/w/index.php?title=Special%3AAllMessages&prefix=Cite_ref&filter=all&lang=en&limit=300</tvar> an up-to-date listing of the default values] that can be obtained directly from MediaWiki.
+
+<!--T:324-->
+To understand what each parameter means, you can look up the message on [<tvar name=url>https://translatewiki.net/wiki/Special:Translate/ext-cite?language=qqq&filter=&action=page</tvar> translatewiki.net].
+
+===Set references to use <tvar name=1>^</tvar> and letters === <!--T:177-->
+</translate>
+<translate><!--T:178--> To replace the default uparrow (<tvar name=1>&uarr;</tvar>) with caret (<tvar name=2>^</tvar>), modify the following [[<tvar name=3>Special:MyLanguage/Help:System message</tvar>|system message]].</translate>
+<translate><!--T:297--> All of these pages can be found on <tvar name=1>[{{fullurl:Special:AllMessages|prefix=cite_r}} Special:AllMessages]</tvar>.</translate>
+; [[MediaWiki:Cite reference backlink symbol]] :
+
+{| class="wikitable"
+! <translate><!--T:179--> From</translate>
+! <translate><!--T:180--> To</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+↑
+</syntaxhighlight>
+|<syntaxhighlight lang="wikitext">
+^
+</syntaxhighlight>
+|}
+
+; [[MediaWiki:Cite references link many format]]:
+
+<translate>
+<!--T:212-->
+Replacing $2 with $3 changes the links from 1.0, 1.1, 1.2 to a, b, c etc…
+</translate>
+
+{| class="wikitable"
+! <translate><!--T:215--> From</translate>
+! <translate><!--T:216--> To</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<sup>[[#$1|$2]]</sup>
+</syntaxhighlight>
+|<syntaxhighlight lang="wikitext">
+<sup>[[#$1|$3]]</sup>
+</syntaxhighlight>
+|}
+
+<translate><!--T:181--> Searching for these pages for the first time will result in no matches.</translate>
+<translate><!--T:298--> Simply click "Create this page" to edit the code.</translate> <translate><!--T:299--> The changes will not show up until a page with references is rebuilt.</translate>
+
+<translate>
+=== Set reference and reference number highlighting === <!--T:182-->
+</translate>
+
+{{Note|1=<translate><!--T:183--> Starting with <tvar name=1>{{ll|MediaWiki 1.25/wmf22|MediaWiki 1.26}}</tvar> the selectors for highlighting are now incorporated into <tvar name=2><code>[[phab:diffusion/ECIT/browse/master/modules/ext.cite.css;530ef0ab9ccda7a5adef8547b2f5c644e156e636|Cite/modules/ext.cite.css]]</code></tvar>.</translate> <translate><!--T:184--> Thus that portion of the CSS code below no longer needs to be added manually.</translate>}}
+
+<translate>
+<!--T:185-->
+Add the following code to the <tvar name=1><code>MediaWiki:Common.css</code></tvar> page.
+</translate>
+
+<syntaxhighlight lang="css" copy>
+/* <translate nowrap><!--T:300--> make the Cite extension list of references look smaller and highlight clicked reference in blue</translate> */
+ol.references { font-size: 90%; }
+ol.references li:target { background-color: #ddeeff; }
+sup.reference:target { background-color: #ddeeff; }
+</syntaxhighlight>
+
+<translate>
+=== Hide square brackets around footnote numbers === <!--T:316-->
+</translate>
+'''<translate><!--T:317--> New approach</translate>''' - <translate><!--T:318--> Square brackets are wrapped in a span like <tvar name=1><code><span class="cite-bracket">[</span></code></tvar>, so customization can be accomplished using site-wide or user-specific CSS.</translate>
+<translate><!--T:319--> The recommended rule for sites wishing to omit square brackets is to hide the brackets visually, but leave them in the enabled HTML so that they're included when copying and pasting content:</translate>
+
+<syntaxhighlight lang="css">
+.reference .cite-bracket { font-size: 0; }
+</syntaxhighlight>
+
+'''<translate><!--T:320--> Old approach</translate>''' - <translate><!--T:321--> Customize the <tvar name=1><code>MediaWiki:cite_reference_link</code></tvar> message to omit square brackets.</translate>
+<translate><!--T:322--> This can also be done by adding a span around the brackets, but this is already available now, see above.</translate>
+
+<translate>
+<!--T:323-->
+Note that customizations using this older approach may interfere with the new styles unless the span is added.
+
+==Broken references== <!--T:186-->
+</translate>
+
+<translate><!--T:14--> If the <tvar name=ref>{{tag|ref|open}}</tvar> or <tvar name=references>{{tag|references|single}}</tvar> tags are used incorrectly, the Cite extension will add an error message to the page, and will add the page itself to the "<tvar name=category>{{int|cite-tracking-category-cite-error}}</tvar>" category.</translate>
+<translate><!--T:187--> These error messages will appear in the user interface language, either in the article content or in the References section.</translate>
+<translate><!--T:188--> For example:</translate>
+
+{| class="wikitable"
+! style="width: 50%;" | <translate><!--T:189--> Wikitext</translate>
+! <translate><!--T:190--> Result</translate>
+|-
+|<syntaxhighlight lang="wikitext">
+<translate nowrap><!--T:191--> This is an example of a references error message.</translate><ref broken><translate nowrap><!--T:192--> Intended text.</translate></ref>
+
+<translate nowrap>
+==Notes== <!--T:193-->
+</translate>
+<references />
+</syntaxhighlight>
+|
+<translate><!--T:194--> This is an example of a references error message.</translate><ref broken>
+<translate><!--T:195--> Intended text.</translate>
+</ref>
+
+{{Fake heading|sub=2|<translate><!--T:196--> Notes</translate>}}
+<references />
+|}
+
+<translate>
+<!--T:204-->
+See the [[<tvar name=1>Specs/HTML/Extensions/Cite#Error representation</tvar>|spec for Parsoid's Cite error representation]].
+
+== See also == <!--T:94-->
+
+<!--T:95-->
+* [[w:Help:Cite link labels|Help:Cite link labels]]
+</translate>
+
+[[Category:Extension help{{#translation:}}|Cite]]

@@ -1,0 +1,224 @@
+<languages/>
+{{PD Help Page|imported=yes}}
+<div style="font-style: italic; padding-left: 1.6em; margin-bottom: 0.5em;">
+<translate><!--T:10--> For help with URLs in wikitext, see <tvar name=1>{{ll|Help:Links}}</tvar>.</translate>
+<translate><!--T:4--> This page is about various URLs of project pages.</translate>
+</div>
+
+<translate>
+== URLs in external links == <!--T:1-->
+
+=== Form of the URL === <!--T:79-->
+
+<!--T:11-->
+A [[<tvar name=1>Special:MyLanguage/Help:Link</tvar>|link]] in external link style can be of the forms:
+</translate>
+;<translate><!--T:80--> ''target'':</translate> <translate><!--T:74--> <tvar name=1><nowiki>https://mediawiki.org/</nowiki></tvar> renders as <tvar name=2>https://mediawiki.org</tvar></translate>
+;<translate><!--T:75--> [ ''target'' ''label'' ], with a blank space in between</translate>: <translate><!--T:76--> <tvar name=1><nowiki>[https://mediawiki.org/ wikimedia]</nowiki></tvar> renders as <tvar name=2>[https://mediawiki.org wikimedia]</tvar> (see also {{<tvar name=4>ll|Help:Links#Piped links</tvar>|Piped links}})</translate>
+;<translate><!--T:81--> [ ''target'' ]:</translate> <translate><!--T:77--> "<tvar name=1><nowiki>[https://mediawiki.org]</nowiki></tvar> and <tvar name=2><nowiki>[https://www.w3.org/TR/url/]</nowiki></tvar>" renders as "<tvar name=3>[https://mediawiki.org/]</tvar> and <tvar name=4>[https://www.w3.org/TR/url/]</tvar>". Each link displays a serial number 1, 2, 3, ...</translate>
+
+<translate><!--T:12--> The target is a URL which can start with <tvar name=1><code><nowiki>https://</nowiki></code>, <code><nowiki>https://</nowiki></code></tvar>, or <tvar name=2><code><nowiki>ftp://</nowiki></code></tvar>.</translate>
+<translate><!--T:13--> Within square brackets the URL can also start with <tvar name=1><code><nowiki>//</nowiki></code></tvar> (no schema at all), a [[w:Uniform_resource_locator#Protocol-relative_URLs | Protocol-relative URL]] that uses the same protocol (http or https) as the current web page.</translate>
+
+<translate><!--T:14--> <tvar name=1><code>file://</code></tvar> does not work by default. If enabled it only works in MSIE. To enable it, add a <tvar name=2>[[Special:MyLanguage/Manual:$wgUrlProtocols|$wgUrlProtocols]]</tvar> entry to <tvar name=3>[[Special:MyLanguage/LocalSettings.php|LocalSettings.php]]</tvar>; see the <tvar name=4><code>$wgUrlProtocols</code></tvar> in <tvar name=5>DefaultSettings.php</tvar> for example.</translate>
+
+<translate>
+=== Allowed characters === <!--T:82-->
+</translate>
+<translate><!--T:15--> All [[<tvar name=1>Special:MyLanguage/Help:Special characters</tvar>|character]]s of the URL must be among:</translate>
+
+ A-Z a-z 0-9 :._\/~%-+&amp;#?!=()@
+
+<translate><!--T:16--> If a URL contains a different character you must convert it; for example, <tvar name=1><code>^</code></tvar> has to be written <tvar name=2><code>%5e</code></tvar>, the hexadecimal [[w:ASCII|ASCII]] value with a percent sign in front.</translate>
+<translate><!--T:5--> You can also write a blank space as an underscore.</translate>
+
+<translate>
+=== Character conversion === <!--T:83-->
+</translate>
+       "   #   $   %   &amp;<!-- -->   '  (   )   *   ,   ;
+ %20 %22 %23 %24 %25 %26 <!--     -->%27 %28 %29 %2a %2c %3b
+
+  <   >   ?   [   ]   ^   `   {   |   }
+ %3c %3e %3f %5b %5d %5e %60 %7b %7c %7d
+
+<translate><!--T:7--> For the other characters either the code or the character can be used in internal and external links, they are equivalent.</translate>
+<translate><!--T:8--> The system does a conversion when needed.</translate>
+<translate><!--T:9--> E.g.</translate>
+
+  <nowiki>[[m:%C3%80_propos_de_M%C3%A9ta]]</nowiki>
+
+<translate><!--T:17--> is rendered as <tvar name=4>[[m:%C3%80_propos_de_M%C3%A9ta|m:%C3%80_propos_de_M%C3%A9ta]]</tvar>, almost like [[<tvar name=2>m:À propos de Méta</tvar>|m:À propos de Méta]], which leads to the page on <tvar name=3>meta.wikimedia.org</tvar> with in the address bar the URL</translate>
+https://meta.wikimedia.org/wiki/%C3%80_propos_de_M%C3%A9ta
+
+<translate>
+<!--T:18-->
+while <tvar name=1>https://meta.wikimedia.org/wiki/À_propos_de_Méta</tvar> leads to the same.
+
+=== Parser function <tvar name=1>[[Special:MyLanguage/Help:Parser_function#URLENCODE|urlencode]]</tvar> === <!--T:84-->
+</translate>
+*<code><nowiki>{{urlencode:"#$%&'()*,;?[]^`{} }}</nowiki></code> → {{urlencode:"#$%&'()*,;?[]^`{} }} [//mediawiki.org/w/index.php?title=Special:ExpandTemplates&wpInput=%22%7B%7Burlencode%3A%22%23%24%25%26%27%28%29%2A%2C%3B%3F%5B%5D%5E%60%7B%7D%7D%7D%22&removecomments=true]
+*<code><nowiki>{{urlencode:<}}</nowiki></code> → {{urlencode:<}} [//mediawiki.org/w/index.php?title=Special:ExpandTemplates&wpInput=%7B%7Burlencode%3A%3C%7D%7D&removecomments=true]
+*<code><nowiki>{{urlencode:>}}</nowiki></code> → {{urlencode:>}} [//mediawiki.org/w/index.php?title=Special:ExpandTemplates&wpInput=%7B%7Burlencode%3A%3E%7D%7D&removecomments=true]
+*<code><nowiki>{{urlencode:{{!}} }}</nowiki></code> → {{urlencode:{{!}} }} [//meta.mediawiki.org/w/index.php?title=Special:ExpandTemplates&wpInput=%7B%7Burlencode%3A%7B%7B%21%7D%7D%7D%7D&removecomments=true]
+
+<translate>
+<!--T:20-->
+There is an external [<tvar name=1>https://wikiurl.miteff.com/</tvar> online converter] for encoding custom URLs to mediawiki format.
+
+<!--T:21-->
+See also (in Wikipedia): [[w:Internationalized domain names|Internationalized domain names]] and [[w:Punycode|Punycode]].
+
+=== Percent-encoding === <!--T:2-->
+
+<!--T:22-->
+For ASCII characters (up to decimal <tvar name=1>127</tvar>, hex. <tvar name=2>7F</tvar>) percent-encoding simply means adding <tvar name=3>'''%'''</tvar> to the hex value, e.g. for a tilde <tvar name=4>'''~'''</tvar> (decimal <tvar name=5>126</tvar>, hex <tvar name=6>7E</tvar>) it's <tvar name=7>%7E</tvar>.</translate>
+<translate><!--T:23--> Otherwise (non-ASCII) convert it first to UTF-8 and then percent-encode it.</translate>
+
+<translate><!--T:85--> Here are the steps to follow with an example:</translate>
+# <translate><!--T:24--> Convert the character to Unicode, e.g. <tvar name=1>Latin-1 192</tvar> (hex. <tvar name=2>C0</tvar>) to <tvar name=3>À (u+00C0)</tvar>, or windows-1252 <tvar name=4>131</tvar> (hex. <tvar name=5>8B</tvar>) to <tvar name=6>Š (u+0160)</tvar>.</translate>
+# <translate><!--T:25--> Convert Unicode to bits, <tvar name=1>00000000 11000000 (u+00C0)</tvar>, or <tvar name=2>00000001 01100000 (u+0160)</tvar>.</translate>
+# <translate><!--T:26--> Build groups of six bits from the right adding leading zeros if necessary until the rest are zeros: <tvar name=1>000011 000000 (u+00C0)</tvar>, or <tvar name=2>000101 100000 (u+0160)</tvar>.</translate>
+# <translate><!--T:27--> Add <tvar name=1>'''10'''</tvar> in front of all but the leftmost group. 2 bits + 6 bits = 8bits, also known as octet.</translate>
+# <translate><!--T:28--> If there are only two groups, and the first (left) starts with 0:</translate>
+## <translate><!--T:29--> Add <tvar name=1>'''11'''</tvar> to the left: <tvar name=2>'''11''' 000011 '''10''' 0000000 (u+00C0)</tvar>, or <tvar name=3>'''11''' 000101 '''10''' 100000 (u+0160)</tvar>.</translate>
+## <translate><!--T:30--> Convert the octets to hex., add percent in front, ready: <tvar name=1>%C3%80 (u+00C0)</tvar>, or <tvar name=2>%C5%A0 (u+0160)</tvar>.</translate>
+# <translate><!--T:31--> If the first (left) of two groups starts with 1:</translate>
+#: <translate><!--T:32--> Add <tvar name=1>'''111''' 00000 '''10'''</tvar> to the left, then percent-encode three octets, <tvar name=2>%E0%??%??</tvar></translate>
+# <translate><!--T:33--> If there are three groups, the first (left) starting with <tvar name=1>00</tvar> (<tvar name=2>000001</tvar> up to <tvar name=3>001111</tvar>):</translate>
+#: <translate><!--T:34--> Replace <tvar name=1>00</tvar> by <tvar name=2>'''111''' 0</tvar>, percent-encode three octets, ready, result <tvar name=3>%E?%??%??</tvar>.</translate>
+# <translate><!--T:35--> Otherwise it's at least <tvar name=1>010000 000000 000000 (u+10000)</tvar> needing '''four''' UTF-8 octets:</translate>
+#: <translate><!--T:36--> <tvar name=1>'''1111''' 0000 '''10''' 010000 '''10''' 000000 '''10''' 000000</tvar> would be <tvar name=2>%F0%90%80%80</tvar>.</translate>
+
+<translate>
+== URLs of pages within the projects == <!--T:3-->
+
+<!--T:37-->
+See [[w:Wikipedia:URLs]]. On other projects everything works the same, except that the domain names vary:
+</translate>
+*<translate><!--T:38--> <tvar name=1>xx.wikipedia.org</tvar> with <tvar name=2>xx</tvar> the language code, see [[<tvar name=3>m:Complete list of language Wikipedias available</tvar>|Complete list of language Wikipedias available]] in Meta-wiki</translate>
+*<translate><!--T:39--> <tvar name=1>meta.wikimedia.org</tvar> (<tvar name=2>meta.wikipedia.org</tvar> redirects there)</translate>
+*xx.wiktionary.org
+*xx.wikiquote.org
+*xx.wikibooks.org
+*xx.wikisource.org
+*sep11.wikipedia.org
+
+<translate><!--T:40--> A URL starting with <tvar name=1>www.wikipedia.org</tvar> redirects to the corresponding one starting with en; only <tvar name=1>www.wikipedia.org</tvar> itself leads to a portal page instead of the main page of the English Wikipedia:</translate> https://www.wikipedia.org
+
+<translate><!--T:41-->
+In projects outside Wikimedia the "w/" in URLs like
+<tvar name=1>https://www.wikipedia.org/w/wiki.phtml?title=Main_Page&action=history</tvar> is sometimes not used, sometimes different, e.g.:</translate>
+* https://www.sourcewatch.org/index.php?title=SourceWatch&action=history
+* https://wikitravel.org/en/index.php?title=Main_Page&action=history
+<translate>
+=== Use in templates === <!--T:42-->
+
+<!--T:43-->
+For use in templates, note that all URLs on e.g. the English Wikipedia  can be written in the form:
+</translate> <code><nowiki>https://</nowiki>en.wikipedia.org/w/index.php?title={{{1}}}</code>
+
+<translate><!--T:44--> This requires <tvar name=1><code><nowiki>{{{1}}}</nowiki></code></tvar> to be written with underscores and escape codes (if applicable), or can be escaped with <tvar name=3>[[#Parser_function_urlencode|urlencode]]</tvar> as <tvar name=2><code><nowiki>{{urlencode:{{{1}}}}}</nowiki></code></tvar>.</translate>
+
+<translate><!--T:45--> To benefit from the conversion carried out by magic word ''<tvar name=1>[[Special:MyLanguage/Help:Magic_words#URL data|fullurl]]</tvar>'', two parameters are needed:</translate> <code><nowiki>{{fullurl:{{{1}}}|{{{2}}}}}</nowiki></code>
+
+<translate><!--T:46--> (see template [[m:Template talk:Url 2p|Url 2p]] on meta).</translate>
+<translate><!--T:47--> An example with the second parameter in fullurl fixed is <tvar name=1>{{tiw|ed}}</tvar> containing the link <tvar name=2><code><nowiki>[{{fullurl:Template:{{{1}}}|action=edit}} {{MediaWiki:Edit}} {{{2|{{{1}}}}}}].</nowiki></code></tvar></translate>
+
+<translate>
+<!--T:48-->
+This works for a link in external link style to a page in the same project. We can use localurl for a link to a project which uses the same string in the URL between the server name and the question mark (<tvar name=1>[[Special:MyLanguage/Manual:$wgScript|$wgScript]]</tvar>, on Wikimedia "<tvar name=2><code><nowiki>/w/index.php</nowiki></code></tvar>"), but not for links to other projects.
+
+== Old versions of pages == <!--T:49-->
+
+<!--T:50-->
+All old versions of all pages are numbered (with [[<tvar name=1>Special:MyLanguage/Manual:Old_table</tvar>|oldid]]) approximately in the order of becoming an old version, i.e. in chronological order of the next edit of the same page.
+
+<!--T:51-->
+* <tvar name=1>https://www.mediawiki.org/w/index.php?title=Help:Link&oldid=53587</tvar> - normal link to old page
+* <tvar name=2>https://www.mediawiki.org/w/index.php?oldid=53587</tvar> - no page name in the URL, goes to the correct page
+* <tvar name=3>https://www.mediawiki.org/w/index.php?title=Help:Link&oldid=53588</tvar> - number and name do not correspond; the name is ignored
+* <tvar name=4>https://www.mediawiki.org/w/index.php?title=abc&oldid=53587</tvar> - non-existing page name; oldid is ignored, works like going to a non-existing page, except for the links to assumed previous and next versions, and on editing, for the warning of editing an old version of a page.
+
+<!--T:52-->
+See also [[<tvar name=1>Special:MyLanguage/Help:Page history#Linking_to_a_specific_version_of_a_page</tvar>|Linking to specific versions of a page]].
+
+== New pages == <!--T:53-->
+
+<!--T:54-->
+Pages are numbered with page_id (see <tvar name=2>{{ll|Manual:page table}}</tvar>) in order of creation.
+</translate>
+*<translate><!--T:55--> <tvar name=1>https://www.mediawiki.org/w/index.php?title=x&curid=9906</tvar> - gives the page with correct full name</translate>
+
+<translate>
+<!--T:56-->
+Conversely, most [[<tvar name=1>Special:MyLanguage/API:query</tvar>|Query API]] output provides page names as well as page ID's, e.g. <tvar name=2>https://meta.wikimedia.org/w/query.php?titles=Hilfe:Zeitleiste</tvar>
+
+<!--T:57-->
+Page versions get a number "oldid" as soon as they are created; they are produced by variable <tvar name=1><nowiki>{{REVISIONID}}</nowiki></tvar>. The URL is like in the previous section.
+
+== Edit == <!--T:58-->
+
+<!--T:59-->
+Examples:
+
+<!--T:60-->
+*Edit the whole page: <tvar name=1>https://www.mediawiki.org/w/index.php?title=Help:URL&action=edit</tvar>
+*Edit the 5th section: <tvar name=2>https://www.mediawiki.org//wiki/Help:URL?action=edit&section=5</tvar>
+*Add at the end: <tvar name=3>https://www.mediawiki.org//w/wiki.phtml?title=Help:URL&action=edit&section=new</tvar>
+
+== Purge == <!--T:61-->
+
+<!--T:62-->
+In some cases of caching problems, to update a page it can help to  use <tvar name=1><code>action=purge</code></tvar>, in a URL like:
+</translate>
+
+<pre>{{SERVER}}{{localurl:{{NAMESPACE}}:{{PAGENAMEE}}|action=purge}}</pre>
+
+<translate><!--T:63--> This results in:</translate>
+
+<code>{{SERVER}}{{localurl:{{NAMESPACE}}:{{PAGENAMEE}}|action=purge}}</code>
+
+<translate>
+== Parameter <tvar name=1>uselang</tvar> == <!--T:78-->
+
+<!--T:65-->
+In some cases it is helpful to link to another Wikimedia project by using the "<tvar name=3>&uselang</tvar>" parameter, in a URL like <tvar name=1>https://commons.wikimedia.org/w/index.php?title=Glavna_stran&uselang=sl</tvar>. This allows specifying the language (hereby 'sl' for Slovenian) of the interface messages that will be displayed when opening the page '<tvar name=2>Glavna stran</tvar>' in the Commons project.
+
+== Miscellaneous actions == <!--T:66-->
+
+<!--T:67-->
+You can fetch the raw wikitext of a page using a URL like
+</translate>
+
+<pre>{{SERVER}}{{localurl:{{NAMESPACE}}:{{PAGENAMEE}}|action=raw}}</pre>
+
+<translate><!--T:68--> which results here in:</translate>
+
+<code>{{SERVER}}{{localurl:{{NAMESPACE}}:{{PAGENAMEE}}|action=raw}}</code>
+
+<translate><!--T:69--> Other actions are <tvar name=1><code>view</code>, <code>watch</code>, <code>unwatch</code>, <code>delete</code>, <code>revert</code>, <code>rollback</code>, <code>unprotect</code>, <code>info</code>, <code>markpatrolled</code>, <code>validate</code>, <code>render</code>, <code>deletetrackback</code>, <code>history</code></tvar>.</translate>
+<translate><!--T:70--> (These rarely need to be entered explicitly, as the useful ones are prelinked at various tabs and buttons. Several of these actions require administrator privileges. Other users do not have the link; if they try the URL they get an error.)</translate>
+
+<translate>
+== Kinds of dead links == <!--T:71-->
+
+<!--T:72-->
+There can be various kinds of errors in the URL. With some the server is not even reached, with others the server takes some action. The server may also go to the correct page and just ignore a wrong parameter or anchor.
+</translate>
+
+*{{SERVER}}{{localurl:%abc}}
+*https://meta.wikimedia.or/
+*{{SERVER}}abc
+*https://met.mediawiki.org
+*{{SERVER}}/abc
+*https://meta.wikimedia.org/w/index.php?title=Help:URL&action=abc
+*https://meta.wikimedia.org/w/index.php?title=Help:URL&act=abc
+*https://meta.wikimedia.org/w/index.php?title=Help:URL#abc
+
+<translate>
+==See also== <!--T:73-->
+</translate>
+* {{ll|Manual:Parameters to index.php}}
+* {{ll|Help:Namespaces}}
+* {{ll|Manual:Short URL}}
+* {{wg|UrlProtocols}}

@@ -1,0 +1,720 @@
+<languages/>
+{{PD Help Page|imported=yes}}
+
+<translate>
+<!--T:1-->
+This page deals with creating lists in MediaWiki.
+
+== List basics == <!--T:2-->
+
+<!--T:3-->
+<tvar name=mw>{{ll|MediaWiki}}</tvar> offers three types of lists: '''unordered lists''', '''ordered lists''' and  '''definition''' lists.
+
+=== Basically === <!--T:143-->
+</translate>
+
+; <translate><!--T:144--> Unordered lists</translate>
+: <translate><!--T:145--> Each item is on a new line starting with an asterisk <code>*</code> e.g. <code>* item</code>.</translate>
+; <translate><!--T:146--> Ordered lists</translate>
+: <translate><!--T:147--> Each item is on a new line starting with a hash <code>#</code> e.g. <code># item</code>.</translate>
+; <translate><!--T:148--> Definition lists</translate>
+: <translate><!--T:149--> Each item has two parts: the '''term''' and the '''description'''</translate>
+: <translate><!--T:150--> The ''term'' is on a new line starting with a semicolon <code>;</code> e.g. <code>; term</code>.</translate>
+: <translate><!--T:151--> The ''description'' follows on the same line after a colon <code>:</code> e.g.<code>; term :  description</code>,</translate>
+: <translate><!--T:152--> or the ''description'' starts its own line with a colon <code>:</code> e.g. <code>:  description</code> (there can be several descriptions per term, each one starting with a colon on a new line).</translate>
+
+<translate>
+=== A little bit further === <!--T:153-->
+
+<!--T:155-->
+In the following table you will find some examples for both methods:
+</translate>
+
+{|class="wikitable"
+! <translate><!--T:4--> Wikitext</translate> !! <translate><!--T:5--> Rendering</translate>
+|-  <ins>Sandbox</ins>
+|<pre><translate nowrap>
+<!--T:6-->
+* Lists are easy to do:
+** start every line
+* with a star
+** more stars mean
+*** deeper levels</translate></pre>
+||
+<translate>
+<!--T:7-->
+* Lists are easy to do:
+** start every line
+* with a star
+** more stars mean
+*** deeper levels</translate>
+|-
+|<pre><translate nowrap>
+<!--T:8-->
+* A newline
+* in a list
+marks the end of the list.
+Of course
+* you can
+* start again.</translate></pre>
+|
+<translate>
+<!--T:9-->
+* A newline
+* in a list
+marks the end of the list.
+Of course
+* you can
+* start again.</translate>
+|-
+|<pre><translate nowrap>
+<!--T:10-->
+# Numbered lists are good
+## very organized
+## easy to follow</translate></pre>
+|
+<translate>
+<!--T:11-->
+# Numbered lists are good
+## very organized
+## easy to follow</translate>
+|-
+|<pre><translate nowrap>
+<!--T:12-->
+* You can also
+** break lines<br>inside lists<br>like this</translate></pre>
+|
+<translate>
+<!--T:13-->
+* You can also
+** break lines<br>inside lists<br>like this</translate>
+|-
+|<pre><translate nowrap>
+<!--T:14-->
+; Definition lists
+; term : definition
+; semicolon plus term
+: colon plus definition</translate></pre>
+|
+<translate>
+<!--T:15-->
+; Definition lists
+; term : definition
+; semicolon plus term
+: colon plus definition</translate>
+|-
+|<pre><translate nowrap>
+<!--T:16-->
+; Mixed definition lists
+; item 1 : definition
+:; sub-item 1 plus term
+:: two colons plus definition
+:; sub-item 2 : colon plus definition
+; item 2
+: back to the main list</translate></pre>
+|
+<translate>
+<!--T:17-->
+; Mixed definition lists
+; item 1 : definition
+:; sub-item 1 plus term
+:: two colons plus definition
+:; sub-item 2 : colon plus definition
+; item 2
+: back to the main list</translate>
+|-
+|<pre><translate nowrap>
+<!--T:18-->
+* Or create mixed lists
+*# and nest them
+*#* like this
+*#*; definitions
+*#*: work:
+*#*; apple
+*#*; banana
+*#*: fruits</translate></pre>
+|
+<translate>
+<!--T:19-->
+* Or create mixed lists
+*# and nest them
+*#* like this
+*#*; definitions
+*#*: work:
+*#*; apple
+*#*; banana
+*#*: fruits</translate>
+|}{{-}}
+
+<translate>
+== Multiple line in lists == <!--T:20-->
+
+<!--T:21-->
+For simplicity, list items in wiki markup cannot be longer than a paragraph. A following blank line will end the list and reset the counter on ordered lists. Separating unordered list items usually has no noticeable effects.
+</translate>
+
+<translate><!--T:22--> Paragraphs can be forced in lists by using HTML tags.</translate>
+<translate><!--T:156--> If you want to put more than one line of text, add two line break symbols, <tvar name=1><syntaxhighlight lang=html inline><br /><br /></syntaxhighlight></tvar>, and you will get the desired effect.</translate>
+<translate><!--T:157--> Wrapping text in <tvar name=1>{{tag|p}}</tvar> will render that text in a new paragraph, which will start on its own line when rendered.</translate>
+
+<translate>
+==Continuing a list item after a sub-item== <!--T:24-->
+
+<!--T:168-->
+[[<tvar name=1>phab:T15642</tvar>|MediaWiki does not support continuing a list item after a sub-list]], unless the whole list is marked up with HTML.
+
+=== Workarounds === <!--T:164-->
+
+<!--T:26-->
+In the case of an unnumbered first-level list in wikitext code this limitation can be overcome by splitting the list into multiple lists; indented text between the partial lists may visually serve as part of a list item after a sublist; however:
+</translate>
+
+* <translate><!--T:165--> This is semantically different</translate>
+* <translate><!--T:166--> This may display (depending on CSS) unwanted vertical space between each list (in which case, for uniformity, every first-level list item could be made a separate list)</translate>
+* <translate><!--T:167--> This causes numbering to restart from 1 in numbered lists.</translate>
+
+{| class="wikitable"
+! <translate><!--T:136--> Wikitext</translate> !! <translate><!--T:137--> Rendering</translate>
+|-
+|
+<syntaxhighlight lang=html><ol>
+  <li><translate nowrap><!--T:28--> list item</translate> A1
+    <ol>
+      <li><translate nowrap><!--T:29--> list item</translate> B1</li>
+      <li><translate nowrap><!--T:30--> list item</translate> B2</li>
+    </ol><translate nowrap><!--T:31--> continuing list item</translate> A1
+  </li>
+  <li><translate nowrap><!--T:32--> list item</translate> A2</li>
+</ol></syntaxhighlight>
+| <ol>
+  <li><translate><!--T:33--> list item</translate> A1
+    <ol>
+      <li><translate><!--T:34--> list item</translate> B1</li>
+      <li><translate><!--T:35--> list item</translate> B2</li>
+    </ol><translate><!--T:36--> continuing list item</translate> A1
+  </li>
+  <li><translate><!--T:37--> list item</translate> A2</li>
+</ol>
+|- style="font-weight:bold;text-align:center;"
+| colspan="2" | vs.
+|-
+|<pre><translate nowrap>
+<!--T:38-->
+#list item A1
+##list item B1
+##list item B2
+#:continuing list item A1
+#list item A2</translate></pre>
+|
+<translate>
+<!--T:39-->
+#list item A1
+##list item B1
+##list item B2
+#:continuing list item A1
+#list item A2</translate>
+|}
+
+<translate>
+<!--T:40-->
+One level deeper, with a sublist item continuing after a sub-sublist, one gets even more blank lines; however, the continuation of the first-level list is not affected:
+</translate>
+
+{| class="wikitable"
+! <translate><!--T:138--> Wikitext</translate> !! <translate><!--T:139--> Rendering</translate>
+|-
+|
+<pre><translate nowrap>
+<!--T:41-->
+#list item A1
+##list item B1
+###list item C1
+##:continuing list item B1
+##list item B2
+#list item A2
+</translate></pre>
+
+|
+<translate>
+<!--T:42-->
+#list item A1
+##list item B1
+###list item C1
+##:continuing list item B1
+##list item B2
+#list item A2
+</translate>
+
+|}
+
+<translate>
+<!--T:43-->
+See also <tvar name=1>{{tim|List demo}}</tvar>.
+
+== Changing the list type == <!--T:44-->
+
+=== Per list === <!--T:134-->
+
+<!--T:45-->
+The list type (which type of marker appears before the list item) can be changed in CSS by setting the <tvar name=1>[http://www.w3.org/TR/REC-CSS2/generate.html#lists list-style-type]</tvar> property:
+</translate>
+
+{|class="wikitable"
+! <translate><!--T:46--> Wikitext</translate> !! <translate><!--T:47--> Rendering</translate>
+|-
+|
+<syntaxhighlight lang=html><ol style="list-style-type:lower-roman">
+  <li><translate nowrap><!--T:48--> About the author</translate></li>
+  <li><translate nowrap><!--T:49--> Foreword to the first edition</translate></li>
+  <li><translate nowrap><!--T:50--> Foreword to the second edition</translate></li>
+</ol></syntaxhighlight>
+|<ol style="list-style-type:lower-roman">
+  <li><translate><!--T:51--> About the author</translate></li>
+  <li><translate><!--T:52--> Foreword to the first edition</translate></li>
+  <li><translate><!--T:53--> Foreword to the second edition</translate></li>
+</ol>
+|-
+|
+<syntaxhighlight lang=html><ol style="list-style-type:lower-alpha">
+  <li><translate nowrap><!--T:54--> About the author</translate></li>
+  <li><translate nowrap><!--T:55--> Foreword to the first edition</translate></li>
+  <li><translate nowrap><!--T:56--> Foreword to the second edition</translate></li>
+</ol></syntaxhighlight>
+|<ol style="list-style-type:lower-alpha">
+  <li><translate><!--T:57--> About the author</translate></li>
+  <li><translate><!--T:58--> Foreword to the first edition</translate></li>
+  <li><translate><!--T:59--> Foreword to the second edition</translate></li>
+</ol>
+|}
+
+<translate>
+=== Site-wide === <!--T:159-->
+</translate>
+<translate><!--T:160--> The standard #, ##, ### wikitext can be used alongside CSS in [[MediaWiki:Common.css]] to produce the usual system of numbered lists (1, 2, 3; then a, b, c; then i, ii, iii):</translate>
+
+<syntaxhighlight lang="css">
+ol {
+	list-style-type: decimal;
+}
+ol li > ol {
+	list-style-type: lower-alpha;
+}
+ol li > ol li > ol {
+	list-style-type: lower-roman;
+}
+</syntaxhighlight>
+
+<translate><!--T:161--> The first <tvar name=1><code>ol</code></tvar> above is the default, so not necessary unless some other list-style-type is required.</translate>
+
+{| class="wikitable"
+!<translate><!--T:162--> Wikitext</translate>
+!<translate><!--T:163--> Rendering</translate>
+|-
+|
+<pre>
+#list item A1
+##list item B1
+###list item C1
+###list item C2
+##list item B2
+#list item A2
+</pre>
+|
+<ol style="list-style-type: decimal"><li>list item A1
+<ol style="list-style-type: lower-alpha"><li>list item B1
+<ol style="list-style-type: lower-roman"><li>list item C1</li>
+<li>list item C2</li></ol>
+<li>list item B2</li></ol></li>
+<li>list item A2</li></ol>
+|}
+
+<translate>
+==Extra indentation of lists== <!--T:60-->
+
+<!--T:61-->
+In a numbered list in a large font, some browsers do not show more than two digits, unless extra indentation is applied (if there are multiple colons: for each colon). This can be done with CSS:
+</translate>
+
+<syntaxhighlight lang=css>
+ol { margin-left: 2cm}
+</syntaxhighlight>
+
+<translate>
+<!--T:62-->
+or alternatively, like below.
+</translate>
+
+{|class="wikitable"
+! <translate><!--T:63--> Wikitext</translate> !! <translate><!--T:64--> Rendering</translate>
+! style="width: 40%" | <translate><!--T:65--> Comments</translate>
+|-
+|
+ <pre>
+:#abc
+:#def
+:#ghi
+ </pre>
+|
+:#abc
+:#def
+:#ghi
+| <translate><!--T:66--> A list of one or more lines starting with a colon creates a [<tvar name=link1>http://www.w3.org/TR/html4/struct/lists.html#edef-DL</tvar> description list] without definition terms, and with the items as definition descriptions, hence indented. However, if the colons are in front of the codes "*" or "#" of an unordered or ordered list, the list is treated as one definition description, so the whole list is indented.</translate>
+|-
+|
+ <syntaxhighlight lang=html>
+<ul>
+  <ol>
+    <li>abc</li>
+    <li>def</li>
+    <li>ghi</li>
+  </ol>
+</ul>
+</syntaxhighlight>
+|
+<ul>
+  <ol>
+    <li>abc</li>
+    <li>def</li>
+    <li>ghi</li>
+  </ol>
+</ul>
+| <translate><!--T:67--> MediaWiki translates an unordered list (ul) without any list items (li) into a div with a <tvar name=margin-left><code>style="margin-left: 2em"</code></tvar>, causing  indentation of the contents. This is '''the most versatile method''', as it allows starting with a number other than 1, see below.</translate>
+|-
+|
+ <syntaxhighlight lang=html>
+<ul>
+#abc
+#def
+#ghi
+</ul>
+</syntaxhighlight>
+|
+<ul>
+#abc
+#def
+#ghi
+</ul>
+| <translate><!--T:68--> Like above, with the content of the "unordered list without any list items", which itself is an ordered list, expressed with # codes. The HTML produced, and hence the rendering, is the same. This is the '''recommended''' method when starting the list at 1.</translate>
+|}
+
+<translate>
+== Specifying a starting value == <!--T:70-->
+
+<!--T:71-->
+Specifying a starting value is possible with HTML syntax.
+</translate>
+
+{| style="width:100%"
+| style="width: 50%" |
+<syntaxhighlight lang=html>
+<ol start="9">
+<li><translate nowrap><!--T:72--> Amsterdam</translate></li>
+<li><translate nowrap><!--T:73--> Rotterdam</translate></li>
+<li><translate nowrap><!--T:74--> The Hague</translate></li>
+</ol>
+</syntaxhighlight>
+|
+<ol start="9">
+<li><translate><!--T:75--> Amsterdam</translate></li>
+<li><translate><!--T:76--> Rotterdam</translate></li>
+<li><translate><!--T:77--> The Hague</translate></li>
+</ol>
+|}
+
+<translate><!--T:78--> Or:</translate>
+
+{| style="width:100%"
+| style="width: 50%" |
+<syntaxhighlight lang=html>
+<ol>
+<li value="9"><translate nowrap><!--T:79--> Amsterdam</translate></li>
+<li value="8"><translate nowrap><!--T:80--> Rotterdam</translate></li>
+<li value="7"><translate nowrap><!--T:81--> The Hague</translate></li>
+</ol>
+</syntaxhighlight>
+|
+<ol>
+<li value="9"><translate><!--T:82--> Amsterdam</translate></li>
+<li value="8"><translate><!--T:83--> Rotterdam</translate></li>
+<li value="7"><translate><!--T:84--> The Hague</translate></li>
+</ol>
+|}
+<!--
+FIXME: this is just a hack and doesn't always work, see https://bugzilla.wikimedia.org/show_bug.cgi?id=21631
+
+The HTML <code>&lt;li value="</code>...<code>"&gt;</code> syntax may be combined with the wikicode <code>#</code> markup, as follows:
+
+{| style="width:100%"
+| style="width: 50%" |
+<pre>
+#<li value=10>Saint Petersburg
+#Petrograd
+#Leningrad
+</pre>
+|
+#<li value=10>Saint Petersburg
+#Petrograd
+#Leningrad
+|}
+-->
+
+<translate>
+== Comparison with a table == <!--T:85-->
+
+<!--T:86-->
+Apart from providing automatic numbering, the numbered list also aligns the contents of the items, comparable with using table syntax:
+</translate>
+
+<pre>
+{|
+|-
+| align=right |  9.|| <translate nowrap><!--T:87--> Amsterdam</translate>
+|-
+| align=right | 10.|| <translate nowrap><!--T:88--> Rotterdam</translate>
+|-
+| align=right | 11.|| <translate nowrap><!--T:89--> The Hague</translate>
+|}
+</pre>
+
+<translate><!--T:133--> gives:</translate>
+
+{|
+|-
+| align=right |  9.|| <translate><!--T:90--> Amsterdam</translate>
+|-
+| align=right | 10.|| <translate><!--T:91--> Rotterdam</translate>
+|-
+| align=right | 11.|| <translate><!--T:92--> The Hague</translate>
+|}
+
+<translate>
+<!--T:93-->
+This non-automatic numbering has the advantage that if a text refers to the numbers, insertion or deletion of an item does not disturb the correspondence.
+
+== Multi-column lists == <!--T:94-->
+
+<!--T:95-->
+See also <tvar name=coltemplates>[[:Template:Col-begin]], [[:Template:Col-break]], [[:Template:Col-end]]</tvar>.
+
+=== Multi-column bulleted list === <!--T:96-->
+</translate>
+
+<syntaxhighlight lang=html>
+<div style="column-count:2">
+<translate nowrap>
+<!--T:97-->
+* apple
+* carpet
+* geography
+* mountain
+* nowhere
+* postage
+* ragged
+* toast
+</translate>
+</div>
+</syntaxhighlight>
+
+<translate><!--T:98--> gives:</translate>
+
+<div style="column-count:2">
+<translate>
+<!--T:99-->
+* apple
+* carpet
+* geography
+* mountain
+* nowhere
+* postage
+* ragged
+* toast
+</translate>
+</div>
+
+<syntaxhighlight lang=html>
+<div style="column-count:3">
+<translate nowrap>
+<!--T:100-->
+* apple
+* carpet
+* geography
+* mountain
+* nowhere
+* postage
+* ragged
+* toast
+</translate>
+</div>
+</syntaxhighlight>
+
+<translate><!--T:101--> gives:</translate>
+
+<div style="column-count:3">
+<translate>
+<!--T:102-->
+* apple
+* carpet
+* geography
+* mountain
+* nowhere
+* postage
+* ragged
+* toast
+</translate>
+</div>
+
+<translate>
+===Multi-column numbered list=== <!--T:103-->
+</translate>
+
+<syntaxhighlight lang=html>
+<div style="column-count:3">
+<translate nowrap>
+<!--T:104-->
+#apple
+#carpet
+#geography
+#mountain
+#nowhere
+#postage
+#ragged
+#toast
+</translate>
+</div>
+</syntaxhighlight>
+
+<translate><!--T:105--> gives:</translate>
+
+<div style="column-count:3">
+<translate>
+<!--T:106-->
+#apple
+#carpet
+#geography
+#mountain
+#nowhere
+#postage
+#ragged
+#toast
+</translate>
+</div>
+
+<translate>
+<!--T:107-->
+Below a starting value is specified, with HTML-syntax (for the first column either wiki-syntax or HTML-syntax can be used).
+
+<!--T:108-->
+In combination with the extra indentation explained in the previous section:
+</translate>
+
+<syntaxhighlight lang=html>
+{| valign="top"
+|-
+|<ul><ol start="125"><li>a</li><li>bb</li><li>ccc</li></ol></ul>
+|<ul><ol start="128"><li>ddd</li><li>ee</li><li>f</li></ol></ul>
+|}
+</syntaxhighlight>
+
+<translate><!--T:109--> gives</translate>
+
+{| valign="top"
+|-
+|<ul><ol start="125"><li>a</li><li>bb</li><li>ccc</li></ol></ul>
+|<ul><ol start="128"><li>ddd</li><li>ee</li><li>f</li></ol></ul>
+|}
+
+<translate>
+<!--T:110-->
+Using <tvar name=templatelink1>{{tim|multi-column numbered list}}</tvar> the computation of the starting values can be automated, and only the first starting value and the number of items in each column except the last has to be specified. Adding an item to, or removing an item from a column requires adjusting only one number, the number of items in that column, instead of changing the starting numbers for all subsequent columns.
+</translate>
+
+<syntaxhighlight lang=html>
+{{Multi-column numbered list|125|a<li>bb<li>ccc|3|<li>ddd<li>ee<li>f}}
+</syntaxhighlight>
+
+<translate><!--T:111--> gives:</translate>
+
+{{Multi-column numbered list|125|a<li>bb<li>ccc|3|<li>ddd<li>ee<li>f}}
+
+<syntaxhighlight lang=html>
+{{Multi-column numbered list|lst=lower-alpha|125|a<li>bb<li>ccc|3|<li>ddd<li>ee|2|<li>f}}
+</syntaxhighlight>
+
+<translate><!--T:112--> gives:</translate>
+
+{{Multi-column numbered list|lst=lower-alpha|125|a<li>bb<li>ccc|3|<li>ddd<li>ee|2|<li>f}}
+
+<syntaxhighlight lang=html>
+{{Multi-column numbered list|lst=lower-roman|125|a<li>bb<li>ccc|3|<li>ddd<li>ee|2|<li>f}}
+</syntaxhighlight>
+
+<translate><!--T:113--> gives:</translate>
+
+{{Multi-column numbered list|lst=lower-roman|125|a<li>bb<li>ccc|3|<li>ddd<li>ee|2|<li>f}}
+
+<syntaxhighlight lang=html>
+{{Multi-column numbered list|lst=disc||a<li>bb<li>ccc||<li>ddd<li>ee||<li>f}}
+</syntaxhighlight>
+
+<translate><!--T:114--> gives:</translate>
+
+{{Multi-column numbered list|lst=disc||a<li>bb<li>ccc||<li>ddd<li>ee||<li>f}}
+
+<translate>
+== Streamlined style or horizontal style == <!--T:115-->
+
+<!--T:116-->
+It is also possible to present short lists using very basic formatting, such as:
+</translate>
+
+<pre><translate nowrap><!--T:117--> ''Title of list:'' example 1, example 2, example 3</translate></pre>
+
+<translate>
+<!--T:118-->
+''Title of list:'' example 1, example 2, example 3
+
+<!--T:119-->
+This style requires less space on the page, and is preferred if there are only a few entries in the list, it can be read easily, and a direct edit point is not required. The list items should start with a lowercase letter unless they are proper nouns.
+
+==Tables== <!--T:120-->
+</translate>
+<translate><!--T:121--> A one-column table is very similar to a list, but it allows sorting. If the wikitext itself is already sorted with the same sortkey, this advantage does not apply.</translate>
+<translate><!--T:135--> A multiple-column table allows sorting on any column.</translate>
+
+<translate>
+<!--T:122-->
+See also [[w:Wikipedia:When to use tables|When to use tables]].
+
+== Changing unordered lists to ordered ones == <!--T:123-->
+
+<!--T:124-->
+With the CSS
+</translate>
+
+<syntaxhighlight lang=css>
+ul { list-style: decimal }
+</syntaxhighlight>
+
+<translate>
+<!--T:125-->
+unordered lists are changed to ordered ones. This applies (as far as the CSS selector does not restrict this) to all ul-lists in the HTML source code:
+
+<!--T:126-->
+*those produced with *
+*those with <tvar name=ul>{{tag|ul|open}}</tvar> in the wikitext
+*those produced by the system
+
+<!--T:127-->
+Since each special page, like other pages, has a class based on the pagename, one can separately specify for each type whether the lists should be ordered. See also [[<tvar name=link1>Special:MyLanguage/Help:User contributions#User styles</tvar>|User contributions]] and [[<tvar name=link2>Special:MyLanguage/Help:What links here#User styles</tvar>|What links here]].
+
+<!--T:128-->
+However, it does not seem possible to make all page history lists ordered (unless one makes ''all'' lists ordered), because the class name is based on the page for which the history is viewed.
+
+==See also== <!--T:129-->
+</translate>
+
+* <translate><!--T:130--> [[w:Help:List|Wikipedia help page about lists]]</translate>
+* [[d:Module:Sort_definition_list|Module:Sort definition list]] – <translate><!--T:132--> A [[Scribunto]] module that allows to sort definition lists by the term defined, useful on multilingual wikis. </translate>
+
+[[Category:List{{#translation:}}]]
+[[Category:Help{{#translation:}}]]

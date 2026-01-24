@@ -1,0 +1,827 @@
+<languages/>
+{{PD Help Page}}
+<translate>
+<!--T:211-->
+Links are used to reference pages within MediaWiki, other wikis, or external websites.
+
+<!--T:1-->
+There are five types of hypertext links in MediaWiki:
+
+<!--T:2-->
+# '''[[<tvar name=internal>#Internal links</tvar>|Internal links]]''' to other pages in the same wiki (commonly called "wikilinks")</translate>
+<translate>
+<!--T:125-->
+# '''[[<tvar name=external>#External links</tvar>|External links]]''' to pages at other websites</translate>
+<translate>
+<!--T:126-->
+# '''[[<tvar name=external2>#External links to internal pages</tvar>|External links to internal pages]]''' in the same wiki</translate>
+<translate>
+<!--T:127-->
+# '''[[<tvar name=interwiki>#Interwiki links</tvar>|Interwiki links]]''' to other websites using special prefixes registered in advance</translate>
+<translate>
+<!--T:128-->
+# '''[[<tvar name=interlang>#Interlanguage links</tvar>|Interlanguage links]]''' to other wikis registered as different language versions of the current wiki</translate>
+
+<translate>
+<!--T:87-->
+Please note that this list does not include [[<tvar name=1>Special:MyLanguage/Help:Categories</tvar>|category links]] and [[<tvar name=2>Special:MyLanguage/Help:Images</tvar>|file links]], which are used to place pages into categories and display images or other media files, respectively.
+</translate>
+__TOC__
+
+{{anchor|Wikilinks}}
+<translate>
+== Internal links == <!--T:3-->
+</translate>
+<translate><!--T:4--> To [[<tvar name=1>Special:MyLanguage/Help:Editing pages</tvar>|create]] a so-called internal link to a page on the same wiki (a "wikilink"), use double square brackets wiki markup, {{<tvar name=2>tmpl|0=<code><nowiki>[[</nowiki>$1<nowiki>]]</nowiki></code></tvar>|like this}}.</translate>
+<translate><!--T:129--> When you preview or save your changes, you will see a link that can be followed to the target page.</translate>
+<translate><!--T:130--> If the page exists, the link is displayed in blue (like the word "create" in the first sentence of this paragraph); if the page does not exist, the link appears red (so the {{<tvar name=1>tmpl|0=<code><nowiki>[[</nowiki>$1<nowiki>]]</nowiki></code></tvar>|like this}} link is actually rendered {{<tvar name=2>tmpl|0=[[$1]]</tvar>|like this}}).</translate>
+<translate><!--T:155--> Note that the colors could be different if the color scheme of the wiki has been changed from the default.</translate>
+<translate><!--T:131--> Following such a "redlink" to a missing page (whether or not it is actually red) will usually enable the user to create the page.</translate>
+
+<translate>
+<!--T:88-->
+To markup any arbitrary string of text (not necessarily a page title) as a link, use a "vertical bar" or "pipe" character, like this: {{<tvar name=1>tmpl|0=<code><nowiki>[[</nowiki>Help:Categories{{!}}$1<nowiki>]]</nowiki></code></tvar>|category links}} results in the link {{<tvar name=2>tmpl|0=[[Help:Categories|$1]]</tvar>|category links}}.
+</translate>
+
+<translate><!--T:5--> The first letter of the link target is usually not case-sensitive (unless the wiki is configured otherwise), meaning links can be capitalized or not (so [[How to contribute]] and [[how to contribute]] are equivalent).</translate>
+<translate><!--T:212--> However, the case of every ''subsequent'' letter must match the target page exactly (so [[How to contribute]] and [[How To Contribute]] are ''not'' equivalent).</translate>
+<translate><!--T:213--> Spaces in the page title may be represented as underscores (so [[How to contribute]] and [[How_to_contribute]] are again equivalent), but using underscores in links will make them visible in the page text (but this can be prevented by using a "pipe").</translate>
+
+<translate><!--T:89--> If the page title you are linking to is that of the page you are editing, the result is not a hyperlink at all but simply bold text (for example, on this page the markup <tvar name=1><code><nowiki>[[</nowiki>{{FULLPAGENAME}}]]</code></tvar> gives the result <tvar name=2>[[{{FULLPAGENAME}}]]</tvar>).</translate>
+<translate><!--T:145--> If you're trying to create a wikilink to the current page, you probably want to link to a specific ''section'' or to an ''anchor'' within the page; see the examples below.</translate>
+
+<translate>
+<!--T:90-->
+MediaWiki uses the <tvar name=1>{{ll|Manual:pagelinks table|pagelinks}}</tvar> table to keep track of internal wikilinks.
+</translate>
+
+<translate><!--T:214--> Unlike external links, internal links do not support the use of URL query parameters.</translate>
+<translate><!--T:215--> The addition of HTML attributes is not supported by either internal or external links.</translate>
+
+{| border="1" class="wikitable"
+! <translate><!--T:116--> Name</translate>/<translate><!--T:6--> Description</translate>
+! <translate><!--T:117--> Syntax</translate>
+! <translate><!--T:118--> Result</translate>
+
+|-
+| <translate><!--T:9--> Internal link</translate>
+|<syntaxhighlight lang="mediawiki">
+[[Main Page]]
+
+[[Help:Contents]]
+
+[[Extension:DynamicPageList (Wikimedia)]]
+</syntaxhighlight>
+|
+[[Main Page]]
+
+[[Help:Contents]]
+
+[[Extension:DynamicPageList (Wikimedia)]]
+
+|-
+| <translate><!--T:10--> Piped link</translate>
+|
+<syntaxhighlight lang="mediawiki">[[Help:Editing pages|editing help]]</syntaxhighlight>
+
+<translate><!--T:115--> Links to a section/anchor within the target page.</translate>
+<syntaxhighlight lang="mediawiki">[[Help:Editing pages#Preview|previewing]]</syntaxhighlight>
+
+<translate><!--T:18--> Piped link to an anchor on the same page</translate>
+<syntaxhighlight lang="mediawiki">[[#See also|different text]]</syntaxhighlight>
+
+<translate><!--T:11--> See also [[<tvar name=meta>Special:MyLanguage/Help:Links#Piped links</tvar>|Help:Piped link]].</translate>
+|
+[[Help:Editing pages|editing help]]
+
+[[Help:Editing pages#Preview|previewing]]
+
+[[#See also|different text]]
+|-
+| <translate><!--T:353--> [[w:Help:Pipe trick|Pipe trick]]</translate>
+|<syntaxhighlight lang="mediawiki">
+[[Manual:Extensions|]]
+
+[[User:John Doe|]]
+
+[[Extension:DynamicPageList (Wikimedia)|]]
+
+[[Extension:DynamicPageList (disambiguation)|]]
+</syntaxhighlight>
+<translate><!--T:142--> The transformation done by the pipe trick can result in the same text for different link targets, as seen in the DynamicPageList examples.</translate>
+|
+{{ll|Manual:Extensions|Extensions}}
+
+[[User:John Doe|John Doe]]
+
+[[Extension:DynamicPageList (Wikimedia)|DynamicPageList]]
+
+[[Extension:DynamicPageList (disambiguation)|DynamicPageList]]
+
+|-
+|<span id="linktrail"></span><translate><!--T:13--> Word-ending links</translate>
+|<syntaxhighlight lang="mediawiki">
+[[Help]]s
+
+[[Help]]ing
+
+[[Help]]ers
+
+[[Help]]almostanylettersyoulikehere
+
+[[Help]]BUTnotalways
+</syntaxhighlight>
+<translate><!--T:91--> Follows so-called "linktrail rules" [[<tvar name=loc>Special:MyLanguage/Localisation</tvar>|localised]] per [[<tvar name=msgxx>Special:MyLanguage/MessagesXx.php</tvar>|each language]].</translate>
+|
+[[Help]]s
+
+[[Help]]ing
+
+[[Help]]ers
+
+[[Help]]almostanylettersyoulikehere
+
+[[Help]]BUTnotalways
+
+|-
+| <translate><!--T:14--> Avoiding word-ending links</translate>
+|<syntaxhighlight lang="mediawiki">
+[[Help]]<nowiki />ful advice
+
+[[wikipedia:GNU General Public License|GPL]]<nowiki />v3
+</syntaxhighlight>
+|
+[[Help]]<nowiki />ful advice
+
+[[wikipedia:GNU General Public License|GPL]]<nowiki />v3
+
+|-
+| <translate><!--T:17--> Link to an anchor on the same page</translate>
+|<syntaxhighlight lang="mediawiki">[[#See also]]</syntaxhighlight>
+<translate><!--T:77--> Anchors are provided automatically on [[<tvar name=formatting>Special:MyLanguage/Help:Formatting</tvar>|section headings]] and to the [[<tvar name=1>#top</tvar>|top]] (<tvar name=2><code><nowiki>[[#top]]</nowiki></code></tvar>) of the page.</translate>
+|[[#See also]]
+
+|-
+| <translate><!--T:19--> Setting an anchor for incoming links</translate>
+|<syntaxhighlight lang=html>
+<div id="Unique anchor name 1">optional text</div>
+
+<span id="Unique anchor name 2">optional text</span>
+</syntaxhighlight>
+
+<translate><!--T:92--> Rendered [[w:HTML element#Document body elements|block-level and inline]], respectively.</translate>
+<translate><!--T:132--> Doing this would allow for <code><nowiki>[[#Unique anchor name 1]]</nowiki></code> on the same page or <code><nowiki>[[</nowiki>{{FULLPAGENAME}}#Unique anchor name 1]]</code> on a different page.</translate>
+<translate><!--T:133--> Omit the "optional text" for an invisible anchor.</translate>
+
+<translate>
+<!--T:97-->
+Setting an anchor in a section heading
+</translate>
+
+<syntaxhighlight lang=html>
+==<span id="Alternate Section Title"></span>Section heading==
+</syntaxhighlight>
+
+<translate><!--T:98--> Note the placement.</translate>
+<translate><!--T:134--> This must be a "span" tag, not a "div".</translate>
+<translate><!--T:135--> (Such anchors allow sections to be retitled without breaking incoming links.)</translate>
+
+|
+<div id="<translate nowrap><!--T:93--> Unique anchor name 1</translate>"><translate><!--T:94--> optional text</translate></div>
+
+<span id="<translate nowrap><!--T:95--> Unique anchor name 2</translate>"><translate><!--T:96--> optional text</translate></span>
+
+<div style="color: #000000; background: none; overflow: hidden; page-break-after: avoid; font-size: 1.5em; font-family: Georgia,Times,serif; margin-top: 1em; margin-bottom: 0.25em; line-height: 1.3; padding: 0; border-bottom: 1px solid #AAAAAA;"><span id="Alternate Section Title"></span>Section heading</div>
+|-
+| <translate><!--T:20--> Link to an anchor at another page</translate>
+|<syntaxhighlight lang=mediawiki>[[Help:Images#Supported media types for images]]</syntaxhighlight>
+|[[Help:Images#Supported media types for images]]
+
+|-
+| <translate><!--T:21--> Link to the current page's talk page</translate>
+|<syntaxhighlight lang=mediawiki>[[{{TALKPAGENAME}}|Discussion]]</syntaxhighlight>
+<translate><!--T:22--> See also [[<tvar name=page-names>Special:MyLanguage/Help:Magic_words#Page_names</tvar>|Help:Magic words#Page names]]</translate>
+|[[{{TALKPAGENAME}}|Discussion]]
+
+|-
+|{{anchor|Subpage_feature}}<translate><!--T:23--> Link to a subpage</translate>
+|<syntaxhighlight lang=mediawiki>[[/example]]</syntaxhighlight>
+<translate><!--T:78--> Shortcut for <tvar name=1><syntaxhighlight lang="mediawiki" inline>[[Help:Links/example|/example]]</syntaxhighlight></tvar>.</translate> <translate><!--T:122--> See also <tvar name=1>{{ll|Help:Subpages}}</tvar>.</translate>
+|[[Help:Links/example|/example]]
+
+|-
+| <translate><!--T:24--> Link to a subpage without the leading slash</translate>
+|<syntaxhighlight lang=mediawiki>[[/example/]]</syntaxhighlight>
+<translate><!--T:99--> Shortcut for <tvar name=1><syntaxhighlight lang="mediawiki" inline>[[Help:Links/example|example]]</syntaxhighlight></tvar>.</translate>
+|[[Help:Links/example|example]]
+
+|-
+| <translate><!--T:120--> Link to a subpage of parent page for current page.</translate> <translate><!--T:123--> Can only be used on subpages.</translate>
+|<syntaxhighlight lang=mediawiki>[[../example2]]</syntaxhighlight>
+<translate><!--T:121--> Shortcut for <tvar name=1><syntaxhighlight lang="mediawiki" inline>[[Help:Links/example2|example2]]</syntaxhighlight></tvar> if you post the link on <tvar name=2><syntaxhighlight lang="mediawiki" inline>[[Help:Links/example|example]]</syntaxhighlight></tvar> page.</translate>
+|[[Help:Links/example2|example2]]
+
+|-
+| <translate><!--T:25--> Visible link to a category page</translate>
+|<syntaxhighlight lang=mediawiki>[[:Category:Help]]</syntaxhighlight>
+<translate><!--T:114--> Without the leading colon the link would not be visible and the page would instead be placed into the category; this is a very common mistake.</translate>
+<translate><!--T:26--> See also <tvar name=1>{{ll|Help:Categories}}</tvar>.</translate>
+|[[:Category:Help]]
+
+|-
+| <translate><!--T:27--> Visible link to an image or media file</translate>
+|id="file-links"|<syntaxhighlight lang=mediawiki>
+[[:File:Example.jpg]]
+
+[[:File:Example.jpg|file label]]
+
+[[Media:Example.jpg]]
+
+[[Media:Example.jpg|file label]]
+</syntaxhighlight>
+
+<translate><!--T:100--> Without the leading colon on the "File:" examples, the images would actually be displayed.</translate>
+<translate><!--T:124--> See also <tvar name=1>{{ll|Help:Images}}</tvar>.</translate>
+
+<translate>
+<!--T:112-->
+The <tvar name=1><code>Media:</code></tvar> prefix is used to link directly to the uploaded file, rather than the file-information page.</translate>
+|
+[[:File:Example.jpg]]
+
+[[:File:Example.jpg|file label]]
+
+[[Media:Example.jpg]]
+
+[[Media:Example.jpg|file label]]
+
+|-
+| <translate><!--T:29--> Link to a page specific to each reader (user page, etc.)</translate>
+|<syntaxhighlight lang=mediawiki>
+[[Special:MyPage]]
+
+[[Special:MyTalk]]
+
+[[Special:Preferences]]
+</syntaxhighlight>
+|
+[[Special:MyPage]]
+
+[[Special:MyTalk]]
+
+[[Special:Preferences]]
+
+|-
+| <translate><!--T:101--> Internal link to a specific revision</translate>
+|<syntaxhighlight lang=mediawiki>[[Special:PermanentLink/2393992]]</syntaxhighlight>
+<translate><!--T:102--> Revision numbers can be found in each page's [[<tvar name=h-hist>Special:MyLanguage/Help:History</tvar>|edit history]].</translate>
+<translate><!--T:136--> (It is very common to see links to specific revisions implemented as external links because it's easy to cut-and-paste an entire URL to form an external link.)</translate>
+|[[Special:PermanentLink/2393992]]
+|-
+| <translate><!--T:103--> Internal link to a "diff"</translate>
+|<syntaxhighlight lang=mediawiki>
+[[Special:Diff/2393992]]
+
+[[Special:Diff/2390639/2393992]]
+</syntaxhighlight>
+<translate><!--T:104--> The default (in the first example above) is to show the changes from the previous revision.</translate>
+<translate><!--T:137--> See also the comments in the previous item.</translate>
+|
+[[Special:Diff/2393992]]
+
+[[Special:Diff/2390639/2393992]]
+|-
+| <translate><!--T:15--> Redirect</translate>
+|<pre>#REDIRECT [[Main Page]]</pre>
+<translate><!--T:113--> Should be the first line on the page.</translate>
+<translate><!--T:16--> See <tvar name=1>{{ll|Help:Redirects}}</tvar>.</translate>
+| [[File:Redirect arrow without text (cropped).svg]]&nbsp;[[Main Page]]
+
+|}
+
+<translate>
+== External links == <!--T:31-->
+</translate>
+<translate><!--T:32--> To [[<tvar name=h-edit>Special:MyLanguage/Help:Editing pages</tvar>|create]] an external link, usually to a page at a different website, enclose the URL followed by space and the link text in single square brackets (see examples below).</translate>
+<translate><!--T:354--> When you save or preview the page, you will see a link rendered slightly differently than an internal wikilink.</translate>
+<translate><!--T:355--> It may be a different color and/or be followed by an arrow icon to show that it may lead to another site.</translate>
+
+{| class="wikitable"
+!style="width:15%"| <translate><!--T:33--> Description</translate>
+!style="width:45%"| <translate><!--T:34--> You type</translate>
+!style="width:40%"| <translate><!--T:35--> You get</translate>
+
+|-
+| <translate><!--T:37--> External link with specified link text</translate>
+| <pre>[https://mediawiki.org MediaWiki]</pre>
+| [https://mediawiki.org MediaWiki]
+
+|-
+| <translate><!--T:38--> Numbered external link</translate>
+| <pre>[https://mediawiki.org]</pre>
+
+<translate><!--T:105--> This is what happens if you omit the link text.</translate>
+<translate><!--T:156--> Multiple links of this type on the same page are numbered sequentially.</translate>
+|[https://mediawiki.org]
+
+|-
+| <translate><!--T:36--> Bare external link</translate>
+|<pre>https://mediawiki.org</pre>
+<translate><!--T:106--> URLs beginning with "<tvar name=1><code>http://</code></tvar>" and "<tvar name=2><code>https://</code></tvar>" are automatically linked, even when no brackets are used.</translate>
+|https://mediawiki.org
+
+|-
+|<span id="How to avoid auto-links"><translate><!--T:110--> Avoiding auto-linked URLs</translate></span>
+|<syntaxhighlight lang=html><nowiki>https://mediawiki.org</nowiki></syntaxhighlight>
+|<nowiki>https://mediawiki.org</nowiki>
+
+|-
+| <translate><!--T:75--> [[w:Protocol-relative URL|Protocol-relative]] external link</translate>
+|<pre>
+[//en.wikipedia.org Wikipedia]
+
+[//en.wikipedia.org //en.wikipedia.org]
+</pre>
+<translate><!--T:107--> The link will be <tvar name=code1>HTTP</tvar> or <tvar name=code2>HTTPS</tvar> depending on the protocol of the page currently being viewed (which could be different for different users).</translate>
+<translate><!--T:143--> This is only supported inside of square brackets <tvar name=code3><code><nowiki>[ ]</nowiki></code></tvar>.</translate>
+<translate><!--T:144--> Using "<tvar name=code4><code>//en.wikipedia.org</code></tvar>" by itself ''does not'' result in a link.</translate>
+|
+[//en.wikipedia.org Wikipedia]
+
+[//en.wikipedia.org //en.wikipedia.org]
+
+|-
+| <translate><!--T:41--> External link to the current server</translate>
+|<pre>https://{{SERVERNAME}}/pagename</pre>
+|https://{{SERVERNAME}}/pagename
+
+|-
+| <translate><!--T:42--> External link to other host passing the pagename</translate>
+|<pre>https://google.com/search?q={{PAGENAMEE}}</pre>
+
+<translate><!--T:79--> See also:</translate> {{ll|Help:Magic words#URL encoded page names|2=<translate><!--T:356--> URL encoded page names</translate>}}, {{ll|Manual:PAGENAMEE encoding}}
+|https://google.com/search?q=Links
+
+|-
+| <translate><!--T:43--> Mailto link</translate>
+|<pre>[mailto:info@example.org email me]</pre>
+|[mailto:info@example.org email me]
+
+|-
+| <translate><!--T:44--> Mailto named with subject line and body</translate>
+|<pre>[mailto:info@example.org?Subject=URL%20Encoded%20Subject&amp;body=Body%20Text info]</pre>
+|[mailto:info@example.org?Subject=URL%20Encoded%20Subject&body=Body%20Text info]
+
+|-
+| <translate><!--T:80--> Custom URI</translate>
+|<pre>[skype:echo123 call me]</pre>
+
+<translate><!--T:81--> Any URI you wish to add needs to be first declared through <tvar name=UrlProtocols>{{ll|Manual:$wgUrlProtocols|$wgUrlProtocols}}</tvar>.</translate>
+<translate><!--T:82--> (This example is not enabled on mediawiki.org)</translate>
+|[skype:echo123 call me]
+
+|}
+
+<translate>
+=== Using email links === <!--T:157-->
+</translate>
+<translate><!--T:216--> Email links use <tvar name=1><code>mailto:</code></tvar> before the address.</translate>
+<translate><!--T:219--> They're written like this: {{<tvar name=1>tmpl|0=<code><nowiki>[mailto:anyone@example.org</nowiki> $1<nowiki>]</nowiki></code></tvar>|address name}} (resulting in {{<tvar name=2>tmpl|0=[mailto:anyone@example.org $1]</tvar>|address name}}).</translate>
+<translate><!--T:217--> If there's no name, the address is automatically numbered, like this: <tvar name=1><code><nowiki>[mailto:anyone@example.org]</nowiki></code></tvar> becomes <tvar name=2>[mailto:anyone@example.org]</tvar>.</translate>
+
+<translate>
+<!--T:218-->
+Addresses without square brackets won't be linked, e.g., <tvar name=1>anyone@example.com</tvar>.
+
+<!--T:220-->
+You can also add a CC using {{<tvar name=1>tmpl|0=<code><nowiki>[mailto:anyone@example.org?cc=anyone2@example.org</nowiki> $1<nowiki>]</nowiki></code></tvar>|address name}} (resulting in {{<tvar name=2>tmpl|0=[mailto:anyone@example.org?cc=anyone2@example.org $1]</tvar>|address name}}).
+</translate>
+
+<translate><!--T:243--> To add a subject, use:</translate>
+<code><nowiki>[mailto:anyone@example.com?subject=</nowiki>Subject<nowiki>]</nowiki></code>
+
+<translate>
+=== External links to internal pages === <!--T:45-->
+
+<!--T:46-->
+To add a link to a page on the same wiki using [[w:URI scheme | URL query parameters]], you may need to use external link syntax.
+</translate>
+
+{| border="1" class="wikitable" id="You type"
+! <translate><!--T:47--> Description</translate> {{Anchor|Description}}
+! <translate><!--T:48--> You type</translate>
+! <translate><!--T:49--> You get</translate>
+
+|-
+| <translate><!--T:50--> External link to the current page's edit page</translate>
+|<pre>
+[https://www.mediawiki.org/w/index.php?title=Help:Links&action=edit <translate nowrap><!--T:224--> Edit this page</translate>]
+
+[{{fullurl:{{FULLPAGENAME}}|action=edit}} <translate nowrap><!--T:225--> Edit this page</translate>]
+</pre>
+
+<translate><!--T:52--> See also [[<tvar name=url-data>Special:MyLanguage/Help:Magic_words#URL_data</tvar>|Help:Magic_words#URL_data]] and [[<tvar name=external>#External links</tvar>|External links]] above.</translate>
+|
+[https://www.mediawiki.org/w/index.php?title=Help:Links&action=edit <translate><!--T:244--> Edit this page</translate>]
+
+[{{fullurl:{{FULLPAGENAME}}|action=edit}} <translate><!--T:226--> Edit this page</translate>]
+
+|-
+| <translate><!--T:53--> External link to the current page's edit page, and styled to look like an internal link</translate>
+|<syntaxhighlight lang=html><span class="plainlinks">[https://www.mediawiki.org/w/index.php?title=Help:Links&action=edit Edit this page]</span></syntaxhighlight>
+
+<translate><!--T:54--> The [[<tvar name=1>Special:MyLanguage/Plainlinks</tvar>|plainlinks class]] can be used in cases where you want an external link to look like an internal one, by suppressing the icon that normally appears after it.</translate>
+|<span class="plainlinks">[https://www.mediawiki.org/w/index.php?title=Help:Links&action=edit <translate><!--T:227--> Edit this page</translate>]</span>
+|}
+
+<translate>
+===The arrow icon === <!--T:221-->
+</translate>
+<translate><!--T:222--> Some skins add an arrow icon <tvar name=1>[[File:link-external-small-ltr-progressive.svg]]</tvar> after each external link by default.</translate>
+<translate><!--T:245--> However, this can be avoided by using <tvar name=1>class="{{ll|Plainlinks|plainlinks}}"</tvar>.</translate>
+<translate><!--T:223--> For instance:</translate>
+
+*<code><nowiki>[http://a a]</nowiki></code> → [http://a a]
+*<code><nowiki><</nowiki>span class="plainlinks"><nowiki>[http://a a]</</nowiki>span></code> → <span class="plainlinks">[http://a a]</span>
+
+<translate>
+=== Using Linksearch === <!--T:228-->
+</translate>
+<translate><!--T:229--> <tvar name=1>[[Special:Linksearch]]</tvar> is a built-in tool that helps find pages linked to a specific URL.</translate>
+<translate><!--T:230--> By using the <tvar name=1>{{ll|Manual:externallinks table|externallinks}}</tvar> table, it generates a comprehensive list of page names where the link originates, along with the complete target link for each source page.</translate>
+<translate><!--T:231--> You can search in all namespaces or just one.</translate>
+<translate><!--T:232--> It supports wildcard (<tvar name=1>*</tvar>) use, so you can search by [[w:top-level domain|top-level domain]] (e.g. <tvar name=2>[http://en.wikipedia.org/wiki/Special:Linksearch?title=Special%3ALinksearch&target=*.nl]</tvar>), [[w:second-level domain|second-level domain]] (e.g. <tvar name=3>[http://en.wikipedia.org/wiki/Special:Linksearch?title=Special%3ALinksearch&target=*.ns.nl]</tvar>), etc. or refine your search by specifying parts of the URL e.g. <tvar name=4>[http://meta.wikimedia.org/wiki/Special:Linksearch?title=Special%3ALinksearch&target=en.wikipedia.org/wiki/Portal]</tvar>.</translate>
+
+{{note|1=
+* <translate><!--T:233--> Avoid including <tvar name=1>"http://"</tvar>.</translate>
+* <translate><!--T:234--> The program might not return any results if there is a colon in the URL.</translate>
+* <translate><!--T:235--> MediaWiki page names in URLs should have underscores instead of spaces.</translate> <translate><!--T:236--> The Linksearch function also requires underscores in URLs.</translate>
+* <translate><!--T:237--> Linksearch is sensitive to capitalization, multiple underscores, and the use of <tvar name=1><code>index.php</code></tvar>.</translate> <translate><!--T:238--> It may not find alternative URLs even if they lead to the same target.</translate> <translate><!--T:239--> Therefore, when creating an external link, it's best to use the canonical form of the URL.</translate> <translate><!--T:240--> If the address bar displays a modified URL after following a link, update the URL in the link accordingly for optimal use of Linksearch.</translate>
+* <translate><!--T:241--> The list is sorted by URL, using {{<tvar name=1>ll|Manual:Page naming#Alphabetic order</tvar>|standard page name order}}.</translate> <translate><!--T:242--> Note that an underscore, unlike a blank space, is alphabetically positioned between <tvar name=1><code>Z</code></tvar> and <tvar name=2><code>a</code></tvar>.</translate>
+}}
+
+<translate>
+=== Using backlinks === <!--T:246-->
+</translate>
+<translate><!--T:247--> Normally, internal links within a project are easy to spot and useful for finding related pages.</translate>
+<translate><!--T:248--> But when there's a mix of internal and external links, it can be tricky to track backlinks, it necessitates the use of both "[[<tvar name=1>Special:MyLanguage/Help:What links here</tvar>|Help:What links here]]" and "<tvar name=2>[[#Linksearch|Linksearch]]</tvar>".</translate>
+<translate><!--T:251--> However, for links to specific sections or anchors, it's possible to include both an internal link and, with CSS styling using <tvar name=1><code>display=none</code></tvar> an external link to provide backlink.</translate>
+
+<translate><!--T:249--> External links are better than interwiki links.</translate>
+<translate><!--T:250--> With Linksearch, you can even find backlinks to specific sections or anchors.</translate>
+<translate><!--T:252--> So, combining both internal and external links while hiding the external ones <tvar name=1><code><nowiki><span style="display:none">http://...</span></nowiki></code></tvar> gives us the best of both worlds.</translate>
+
+<translate>
+=== Limitations === <!--T:148-->
+</translate>
+# <translate><!--T:151--> ''External links'' doesn't support ''Word-ending links''.</translate>
+# <translate><!--T:152--> ''External links'' doesn't count toward <tvar name=1><nowiki>Special:WhatLinksHere</nowiki></tvar> ([[<tvar name=2>Special:MyLanguage/Help:What links here</tvar>|What links here]]).</translate>
+
+<translate>
+== Interwiki links == <!--T:63-->
+</translate>
+<translate><!--T:64--> Interwiki links are internal-style links to other websites (which do not have to be wikis, despite the name).</translate>
+<translate><!--T:138--> For example, you can link to the article https://en.wikipedia.org/wiki/Sunflower by typing <code><nowiki>[[wikipedia:Sunflower]]</nowiki></code> or, on this wiki, the shorter <code><nowiki>[[w:Sunflower]]</nowiki></code>.</translate>
+<translate><!--T:139--> Both will result in a link [[wikipedia:Sunflower]].</translate>
+<translate><!--T:140--> This works because by default MediaWiki configures <code>wikipedia:</code> as an "interwiki prefix" that turns into <nowiki>https://en.wikipedia.org/wiki/</nowiki> when used inside <nowiki>[[ ]]</nowiki>.</translate>
+<translate><!--T:141--> (''It may not work if the admin of your wiki has changed the setting.'') Unlike internal links, interwiki links do not use page existence detection, so an interwiki link will appear blue even if the page does not exist on the remote wiki.</translate>
+
+<translate>
+<!--T:65-->
+Similar to internal page links, you can create {{<tvar name=1>ll|Help:Links#Piped links</tvar>|piped links}}, with alternate link label, e.g. <code><nowiki>[[wikipedia:Sunflower|big yellow flower]]</nowiki></code> is the link [[wikipedia:Sunflower|big yellow flower]] and <code><nowiki>[[wikipedia:Sunflower|]]</nowiki></code> is the link [[wikipedia:Sunflower|Sunflower]].
+
+<!--T:66-->
+Basically, interwiki links are abbreviations for commonly-used longer external links. A very similar link could be created as  <code><nowiki>[https://en.wikipedia.org/wiki/Sunflower big yellow flower]</nowiki></code>.
+</translate>
+
+<translate><!--T:67--> More details are at <tvar name=2>{{ll|Manual:Interwiki}}</tvar>.</translate>
+<translate><!--T:153--> Your wiki may have a <tvar name=1>[[Special:Interwiki]]</tvar> page listing the interwiki prefixes it supports; {{<tvar name=2>tmpl|0={{git file | file=maintenance/interwiki.list | text=$1}}</tvar>|here is the default interwiki list}}.</translate>
+<translate><!--T:154--> You can edit the <tvar name=1>{{ll|Manual:interwiki table|interwiki}}</tvar> table on your site.</translate>
+
+<translate>
+=== Interlanguage links === <!--T:68-->
+
+<!--T:69-->
+If your wiki has other language versions, you may find [[<tvar name=mainill>Special:MyLanguage/Interlanguage_links</tvar>|interlanguage links]] in the [[<tvar name=sidebar>Special:MyLanguage/Help:Navigation#Sidebar</tvar>|sidebar]], just below [[<tvar name=toolbox>Special:MyLanguage/Help:Navigation#Toolbox</tvar>|toolbox]] in a section titled “<tvar name=1>{{lcfirst:{{int|otherlanguages}}}}</tvar>.”
+</translate>
+
+<translate><!--T:70--> In wiki markup an interlanguage link looks very much like an interwiki link, but behaves similarly to a [[<tvar name=1>Special:MyLanguage/Categorylinks</tvar>|category link]] in that it is rendered in a special way.</translate>
+<translate><!--T:147--> While category links appear in a special list at the bottom of the page (usually), interlanguage links appear in a special list in the [[<tvar name=1>Special:MyLanguage/sidebar</tvar>|sidebar]] of the page (or elsewhere, depending on the wiki's configuration and the [[<tvar name=2>Special:MyLanguage/Manual:Skins</tvar>|skin]] used).</translate>
+
+<translate><!--T:108--> The purpose of interlanguage links is to link pages on the same topics in different languages.</translate> <translate><!--T:146--> To create an interlanguage link, type {{<tvar name=1>tmpl|0=<code><nowiki>[[</nowiki>$1:$2<nowiki>]]</nowiki></code></tvar>|''language prefix''|''page name''}} anywhere in the page (preferably at the bottom, like category links); the language prefix is the prefix specified at your wiki for the other language version (typically the [[w:List of ISO 639-1 codes|ISO 639-1 language code]]).</translate>
+<translate><!--T:83--> The interlanguage link is unilateral, it does not point back from that page in the other language.</translate>
+<translate><!--T:84--> For that purpose, an equivalent back-link needs to be placed there as well.</translate>
+<translate><!--T:85--> It does not work like the <tvar name=1><code>{{int|wikibase-editlinks}}</code></tvar> in the languages section of Wikipedia-language versions.</translate>
+<translate><!--T:86--> But it can be used across all namespaces, including <tvar name=1><code>{{ns:2}}:</code></tvar> to point to ones other profiles in other languages.</translate>
+
+<translate>
+<!--T:71-->
+If you want to make the interlanguage link appear at a specific place in the content of the page rather than in the sidebar, add a colon before the language prefix:
+:<code><nowiki>[[:en:Sunflower]]</nowiki></code> &rarr; '''[[:en:Sunflower]]'''
+
+<!--T:72-->
+When a link is both interwiki and interlanguage, the order is '''[[wikipedia:en:Sunflower]]'''.
+
+<!--T:109-->
+For more information, see <tvar name=1>{{ll|Interlanguage links}}</tvar>.
+</translate>
+
+{{anchor|Piped Link}}
+<translate>
+== Piped links == <!--T:158-->
+</translate>
+<translate><!--T:159--> A '''piped link''' is an internal [[<tvar name=1>Special:MyLanguage/Help:Link</tvar>|link]] or [[<tvar name=2>Special:MyLanguage/Help:Interwiki linking</tvar>|interwiki link]] where the 'target page name' of the link and its 'label' are both specified.</translate>
+<translate><!--T:160--> This is useful in cases where the user wants values of 'target page name' and 'label' to be different.</translate>
+<translate><!--T:161--> This also enables linking a contextually relevant word or phrase within the text of a page rather than using the generic value "see also".</translate>
+<translate><!--T:162--> The wording does not need to match the name of the target page.</translate>
+<translate><!--T:163--> Depending on the [[<tvar name=1>Special:MyLanguage/Help:Preferences</tvar>|preferences]] set for the current user and a supported browser, you can still see the link target: when you hover your cursor over the link, the name shows up in a pop-up window and is also shown in the status bar.</translate>
+
+<translate>
+<!--T:164-->
+For example:
+</translate>
+<pre><nowiki>[[coffeehouse setup|Get Piping Hot Coffee Here!]]</nowiki></pre>
+<translate><!--T:347--> will show:</translate> [[coffeehouse setup|Get Piping Hot Coffee Here!]]
+
+<translate><!--T:165--> Let's take another example: <nowiki>[[help:Piped link|piped link]]</nowiki> will be displayed as [[help:Piped link|piped link]].</translate>
+<translate><!--T:166--> This can be done when context makes it clear that the page being linked to is in the help namespace.</translate>
+<translate><!--T:167--> The piped link is a better way of doing this, rather than mistakenly linking to [[piped link]] which might be a disambiguation page or not exist.</translate>
+
+<translate><!--T:168--> Fun Fact: The term ''piped'' refers to the use of the pipe character "<tvar name="1">|</tvar>", which in this context is used to separate the more descriptive description from the actual name of the linked page.</translate>
+<translate><!--T:169--> The Pipe character was named after an alternative use of it; see [[w:en:Pipe (computing)|Pipe (computing)]].</translate>
+
+<translate>
+===Using a redirect as an alternative=== <!--T:170-->
+</translate>
+<translate><!--T:171--> An alternative way is to use [[<tvar name=1>Special:MyLanguage/Help:Redirect</tvar>|redirect pages]].</translate>
+<translate><!--T:172--> To create <tvar name="1">[[Get Piping Hot Coffee Here!]]</tvar>, use <tvar name="2"><nowiki>[[Get Piping Hot Coffee Here!]]</nowiki></tvar> and make it redirect to [[coffeehouse setup]] (please note: unlike above, what pops up when you point at the link, depending on your browser's support, is the text that is already shown).</translate>
+
+<translate><!--T:173--> It is convenient if the redirect is already there or will also be of use elsewhere. However, there are a few drawbacks.</translate>
+
+*<translate><!--T:174--> the popup does not show the destination page</translate>
+*<translate><!--T:175--> "[[<tvar name=1>Special:MyLanguage/Help:Related changes</tvar>|Related changes]]" shows the changes in the ''redirect page'' not the redirect target</translate>
+*<translate><!--T:176--> the redirect message that is shown on the target page slightly clutters it</translate>
+
+<translate><!--T:177--> Using a piped link and a redirect together, it is possible to provide information in the hover box that is not the name of the linked page, for example, the value of a unit in terms of other units.</translate>
+<translate><!--T:178--> In that case, it is possible to make a page whose page name is the information that you'd like in the link title, and which redirects to the page with a more appropriate name.</translate>
+<translate><!--T:179--> For example, the page [[w:30.48 cm]] redirects to [[w:Foot (unit)]].</translate>
+
+<translate>
+===Pipe trick=== <!--T:180-->
+
+<!--T:181-->
+If the part after the <tvar name=2><code>|</code></tvar> in a piped link is left empty, it is {{<tvar name="1">ll|Help:Pre-save transform</tvar>|converted}} to an abbreviated form of the page name on the left, based on the following rules:
+</translate>
+
+#<translate><!--T:182--> Any word that is before the '''first colon (:)''', as well as the colon character itself, is removed.</translate> <translate><!--T:183--> This word may or may not be a 'namespace' prefix (such as "Help:") or an 'interwiki' prefix (such as "commons:").</translate> <translate><!--T:184--> If the name of the page is preceded by a colon (:), "first" refers to "first after this".</translate>
+#<translate><!--T:185--> If there is some text in the '''parentheses''' at the end, then it will be removed.</translate>
+#<translate><!--T:186--> If there are no parentheses, but there is a '''comma''' (,) character, the comma and everything after it is removed.</translate>
+#<translate><!--T:187--> Note that this does not work for '''sections/anchors''' as <tvar name="1"><code><nowiki>[[Help:Piped_link#Pipe_trick|]]</nowiki></code></tvar> outputs <tvar name="2">[[Help:Piped_link#Pipe_trick|]].</tvar></translate>
+
+<translate>
+<!--T:188-->
+Similar to using the three or four tildes when signing on Talk pages, and using 'subst', in a preview, the result shows up in the preview itself, but the conversion in the edit box is not shown yet. Click on the <tvar name=1><code>{{int|showdiff}}</code></tvar> option to see the change in the wikitext.
+
+=====Examples===== <!--T:189-->
+</translate>
+* <translate><!--T:190--> <tvar name=1><code><nowiki>[[Help:Template|]]</nowiki></code></tvar> is converted to <tvar name=2><nowiki>[[Help:Template|Template]]</nowiki></tvar>, which is shown as <tvar name=3>[[Help:Template|Template]]</tvar></translate>
+* <translate><!--T:191--> <tvar name="1"><code><nowiki>[[Music: My life|]]</nowiki></code></tvar> is converted to <tvar name="2"><nowiki>[[Music: My life| My life]]</nowiki></tvar>, which is shown as <tvar name="3">[[Music: My life| My life]]</tvar> - although "Music:" itself is not a namespace (therefore the space after the colon character is not automatically removed), however, the shortcut works anyway</translate>
+* <translate><!--T:192--> <tvar name="1"><code><nowiki>[[w:en:Pipe (computing)|]]</nowiki></code></tvar> is converted to <tvar name="2"><nowiki>[[w:en:Pipe (computing)|en:Pipe]]</nowiki></tvar>, which is shown as <tvar name="3">[[w:en:Pipe (computing)|en:Pipe]]</tvar>.</translate>
+* <translate><!--T:193--> <tvar name="1"><code><nowiki>[[commons:Boston, Massachusetts|]]</nowiki></code></tvar> is converted to <tvar name="2"><nowiki>[[commons:Boston, Massachusetts|Boston]]</nowiki></tvar>, which is shown as <tvar name="3">[[commons:Boston, Massachusetts|Boston]]</tvar>.</translate>
+*<translate><!--T:194--> <tvar name="1"><code><nowiki>[[w:{{{1}}}|]]</nowiki></code></tvar> ''does not'' give <tvar name="2"><nowiki>[[w:{{{1}}}|{{{1}}}]]</nowiki></tvar>, and calling the template with a value of parameter 1 gives a working link, but in the case of substitution only.</translate>
+*<translate><!--T:195--> <tvar name="1"><code><nowiki>[[w:en:{{FULLPAGENAME}}|]]</nowiki></code></tvar> ''does not'' give <tvar name="2"><nowiki>[[w:en:{{FULLPAGENAME}}|en:{{FULLPAGENAME}}]]</nowiki></tvar> and <tvar name="3"><code><nowiki>[[m:{{FULLPAGENAME}}|]]</nowiki></code></tvar> ''does not'' give <tvar name="4"><nowiki>[[m:{{FULLPAGENAME}}|{{FULLPAGENAME}}]]</nowiki></tvar></translate>
+*<translate><!--T:196--> <tvar name="1"><code>[[Wikipedia:Village pump (technical)#Pipe trick|]]</code></tvar> is not converted, so it does not give a working link.</translate>
+{|
+| <translate><!--T:197--> This wikitext</translate>
+| <translate><!--T:198--> Produces</translate>
+|-
+|
+<syntaxhighlight lang="wikitext">
+* [[project:a (b)|]]
+* [[w:project:a (b)|]]
+* [[:de:project:a (b)|]]
+* [[wiktionary:project:a (b)|]]
+* [[wiktionary:de:project:a (b)|]]
+* [[wikibooks:project:a (b)|]]
+* [[wikiquote:project:a (b)|]]
+* [[wikisource:project:a (b)|]]
+* [[wikisource:project:a (b)#c|]]
+* [[w:en:{{FULLPAGENAME}}|]] [[w:en:{{FULLPAGENAME}}|en:{{FULLPAGENAME}}]]
+* [[m:{{FULLPAGENAME}}|]] [[m:{{FULLPAGENAME}}|{{FULLPAGENAME}}]]
+</syntaxhighlight>
+|
+ * [[project:a (b)|a]]
+ * [[w:project:a (b)|project:a]]
+ * [[:de:project:a (b)|project:a]]
+ * [[wiktionary:project:a (b)|project:a]]
+ * [[wiktionary:de:project:a (b)|de:project:a]]
+ * [[wikibooks:project:a (b)|project:a]]
+ * [[wikiquote:project:a (b)|project:a]]
+ * [[wikisource:project:a (b)|project:a]]
+ * [[wikisource:project:a (b)#c|]]
+ * [[w:en:{{FULLPAGENAME}}|]] [[w:en:{{FULLPAGENAME}}|en:{{FULLPAGENAME}}]]
+ * [[m:{{FULLPAGENAME}}|]] [[m:{{FULLPAGENAME}}|{{FULLPAGENAME}}]]
+|}
+
+<translate>
+=====Category tag===== <!--T:199-->
+
+<!--T:200-->
+Since the sortkey syntax of the category is similar to a piped link, the pipe trick also works for category tags, even though technically, it is not useful there.
+
+====Limitation==== <!--T:201-->
+</translate>
+* <translate><!--T:202--> <tvar name="1"><nowiki>[[Help:L{{tc}}k|]]</nowiki></tvar> using <tvar name="2">[[template:tc]]</tvar> is not converted, so the result is rendered as <tvar name="3">[[Help:L{{tc}}k|]]</tvar> which is not as a working link.</translate> <translate><!--T:203--> This is because like substitution, the pipe trick expansion occurs before ordinary expansion of the templates, etc.</translate> <translate><!--T:204--> The pipe trick does not work if the linked page includes invalid characters.</translate> <translate><!--T:205--> Therefore, while ordinarily the acceptability of the target page name is assessed after template expansion, the pipe trick expansion judges it before that.</translate> <translate><!--T:206--> The braces are therefore considered invalid characters in the page name.</translate> <translate><!--T:207--> Instead, a template can be used like <tvar name="1">[[template:pipe trick]]</tvar>: <tvar name="2"><nowiki>{{pipe trick|Help:|L{{tc}}k}}</nowiki></tvar> which renders as <tvar name="3">{{pipe trick|Help:|L{{tc}}k}}</tvar>.</translate>
+
+<translate>
+====Inverse pipe trick==== <!--T:208-->
+
+<!--T:209-->
+On page "<tvar name="1">A (c)</tvar>", <tvar name="2"><nowiki>[[|b]]</nowiki></tvar> is converted to <tvar name="3"><nowiki>[[b (c)|b]]</nowiki></tvar> automatically.
+
+<!--T:210-->
+Similarly, on page "<tvar name="1">A, c</tvar>", <tvar name="2"><nowiki>[[|b]]</nowiki></tvar> is converted to <tvar name="3"><nowiki>[[b, c|b]]</nowiki></tvar> automatically.
+
+== Anchors == <!--T:253-->
+
+=== Linking to an anchor === <!--T:254-->
+</translate>
+<translate><!--T:255--> Links in the format <tvar name=1><code><nowiki>[[#anchor_name]]</nowiki></code></tvar> will direct to the first matching anchor on the page, typically corresponding to the first identical section heading.</translate>
+
+<translate><!--T:256--> You can add an <tvar name=1><code><nowiki>[[#anchor_name]]</nowiki></code></tvar> to a link, directing it to the first matching section heading (or anchor) on the '''named''' page:</translate>
+
+<code><nowiki>[[Help:Editing#Advanced editing]]</nowiki></code>
+
+<code><nowiki>https://www.mediawiki.org/wiki/Help:Editing#Advanced_editing</nowiki></code>
+
+<translate>
+=== Using an automatic anchor === <!--T:257-->
+</translate>
+<translate><!--T:258--> Section headings serve as anchors, using the heading text as the anchor name.</translate>
+<translate><!--T:259--> If there are multiple sections with identical headings, each subsequent occurrence is appended with <tvar name=1>"_2", "_3"</tvar>, etc.</translate>
+
+<translate>
+<!--T:260-->
+The anchor <tvar name=1>[[#toc]]</tvar> links to the page's table of contents (TOC), except when there's a section already titled <tvar name=2>"toc"</tvar>.
+
+=== A manual anchor === <!--T:261-->
+</translate>
+<translate><!--T:262--> Manually-set anchors are beneficial for linking to "unlinkable" elements such as tables (titles or cells) or sections of plain text.</translate>
+<translate><!--T:263--> For instance, in the [[<tvar name=1>#External links to internal pages</tvar>|External links to internal pages]] section above, although the column text "Description" resembles a (minor) heading, it is not.</translate>
+
+<translate><!--T:264--> There are several methods to set an anchor at any position:</translate>
+
+* <translate><!--T:265--> The "anchor" [[<tvar name=1>help:Template</tvar>|template]], if it exists on your wiki, specified as <tvar name=2>{{tl|anchor}}</tvar>, offers a standardized method to create anchor points.</translate> <translate><!--T:266--> Place the template where you want, using the syntax <tvar name=2><nowiki>{{Anchor|Name_of_Anchor}}</nowiki></tvar>.</translate> <translate><!--T:267--> For instance, <nowiki>{{<tvar name=1>Anchor</tvar>|Description}}</nowiki> is placed in the "Description" column of the table below the "External links to internal pages" section.</translate> <translate><!--T:268--> Clicking on <tvar name=1>[[#Description]]</tvar> links to that anchor point created on the table.</translate> <translate><!--T:269--> The anchor is only visible via the source code.</translate>
+* <translate><!--T:270--> Use the generic anchor tag <tvar name=1><code><nowiki><span id="anchor_name">some text</span></nowiki></code></tvar> with optional text for visible anchors.</translate> <translate><!--T:271--> For hidden anchors, omit the text.</translate> <translate><!--T:272--> To point to the anchor use <tvar name=1><code><nowiki>[[#anchor_name]]</nowiki></code></tvar>.</translate>
+* <translate><!--T:273--> Avoid using manual HTML headings like <tvar name=1><code><nowiki><h2>Editing Instructions</h2></nowiki></code></tvar>.</translate> <translate><!--T:274--> This text serves as an <tvar name=1>anchor_name</tvar>.</translate>
+* <translate><!--T:275--> In certain instances, adding an ID attribute similar to HTML within a Wiki-element is necessary.</translate> <translate><!--T:276--> Take, for instance, the table mentioned earlier, titled [[<tvar name=1>#External links to internal pages</tvar>|External links to internal pages]]:</translate>
+:<code><nowiki>
+border="1" class="wikitable" id="You type"
+</nowiki></code>
+
+* <translate><!--T:277--> A top of a page can be accessed using the reserved term <tvar name=1><code><nowiki>[[#top]]</nowiki></code></tvar>.</translate>
+
+<translate>
+<!--T:278-->
+See also [[<tvar name=1>Special:MyLanguage/Help:Section#Linking sections using an arbitrary id</tvar>|Help:Section#Linking sections using an arbitrary ID]].
+
+=== Using Linksearch anchors === <!--T:279-->
+
+<!--T:280-->
+As mentioned above, if external link style is used, e.g. <tvar name=1>[https://www.mediawiki.org/wiki/Help:Section#Linking_sections_using_an_arbitrary_id]</tvar>, we can use <tvar name=2>[[Special:Linksearch]]</tvar>: <tvar name=3>[https://www.mediawiki.org/wiki/Special:LinkSearch]</tvar>.
+</translate>
+
+<translate><!--T:281--> When using Linksearch, it's helpful to add leading zeros to numerical anchor names to prevent unintended matches.</translate>
+<translate><!--T:282--> For example, instead of searching for "1", use "01" to avoid including "10".</translate>
+<translate><!--T:283--> This practice is seen in [[w:Template:Current events header|Template:Current events header]].</translate>
+<translate><!--T:284--> Similarly, if there are anchors like "a" and "ab", using "_a" can distinguish them in search results.</translate>
+
+<translate>
+=== Using <tvar name=1>anchorencode</tvar> === <!--T:285-->
+</translate>
+<translate><!--T:286--> The <tvar name=1><code>#anchorencode</code></tvar> parser function encodes input to use as an anchor.</translate>
+<translate><!--T:287--> For example, to external link to <tvar name=1>[[#Using linksearch anchors]]</tvar> above, you would use <tvar name=2><code><nowiki>https://www.mediawiki.org/wiki/Help:Links#{{anchorencode:Using Linksearch anchors}}</nowiki></code></tvar>, which resolves to <tvar name=3>https://www.mediawiki.org/wiki/Help:Links#{{anchorencode:Using Linksearch anchors}}</tvar></translate>
+
+<translate>
+== Subpage feature == <!--T:288-->
+</translate>
+<translate><!--T:289--> MediaWiki has a [[<tvar name=1>mw:Special:MyLanguage/Help:subpages</tvar>|subpage]] feature that may or may not be active depending on the project and namespace.</translate>
+<translate><!--T:290--> If it's activated, the following rules apply; otherwise, "A/b" is simply a standalone page with that name.</translate>
+
+<translate><!--T:291--> A page's [[w:tree structure|tree structure]] is formed using forward slashes in page names: A/b is considered a subpage of A, making A the parent of A/b; additionally, A/b/c is a subpage of A/b; meanwhile, A/a, A/b, and A/c are categorized as sibling pages.</translate>
+
+<translate><!--T:292--> The subpage body automatically displays links to all parent pages without needing specific wikitext.</translate>
+<translate><!--T:293--> These links appear even if the parent page doesn't exist.</translate>
+<translate><!--T:294--> However, if any ancestor page in the sequence is missing, the chain of links will stop before that point.</translate>
+<translate><!--T:295--> Additionally, the capitalization of letters after the forward slash in the page name matters, meaning "<tvar name=1>/subpage</tvar>" and "<tvar name=2>/Subpage</tvar>" refer to different pages.</translate>
+
+<translate>
+<!--T:296-->
+The functions, [[<tvar name=1>Special:MyLanguage/Help:What links here</tvar>|What links here]] and [[<tvar name=2>Special:MyLanguage/Help:Related changes</tvar>|Help:Related changes]] do not consider these automatically generated links.
+
+<!--T:297-->
+When the subpage feature is enabled within a namespace, any forward slash in a page's name automatically creates a subpage structure, regardless of whether it was intended or not.
+
+<!--T:298-->
+You can find a list of subpages using <tvar name=1>[[Special:PrefixIndex]]</tvar>.
+
+=== Using variables === <!--T:299-->
+
+<!--T:300-->
+When utilizing the subpage feature within namespace A on page A:B/c/d, <tvar name=1><nowiki>{{BASEPAGENAME}}</nowiki></tvar> shows B/c while <tvar name=2><nowiki>{{SUBPAGENAME}}</nowiki></tvar> shows d.
+
+=== Using relative links === <!--T:301-->
+
+<!--T:302-->
+Within a subpage hierarchy, you can utilize the following relative links:
+</translate>
+
+* <translate><!--T:303--> <tvar name=1><nowiki>[[../]]</nowiki></tvar> links to the parent page of the current subpage.</translate> <translate><!--T:304--> For example, on page A/b, it takes you to page A, and on page A/b/c, it directs you to page A/b.</translate>
+* <translate><!--T:305--> <tvar name=1><nowiki>[[../../]]</nowiki></tvar> links to the grandparent page of the current subpage.</translate> <translate><!--T:306--> For example, on page A/b/c, it points to page A.</translate>
+* <translate><!--T:307--> <tvar name=1><nowiki>[[../s]]</nowiki></tvar> links to a sibling page of the current subpage.</translate> <translate><!--T:308--> For example, on page A/b, it leads to page A/s.</translate>
+* <translate><!--T:309--> <tvar name=1><nowiki>[[../../s]]</nowiki></tvar> links to an "uncle" page of the current subpage.</translate> <translate><!--T:310--> For example, on page A/b/c, it points to page A/s.</translate>
+* <translate><!--T:311--> <tvar name=1><nowiki>[[/s]]</nowiki></tvar> links direct to a subpage.</translate> <translate><!--T:312--> On page A, it functions similarly to <tvar name=1><nowiki>[[A/s]]</nowiki></tvar>.</translate> <translate><!--T:313--> However, linking from a namespace with an enabled subpage feature to a main namespace page starting with <tvar name=1>"/"</tvar> requires a workaround: adding a colon before the page name.</translate>
+
+<translate><!--T:314--> Relative links remain functional even when all pages within a hierarchy are renamed to reflect a change in the root's name, even if the root becomes a child of a new parent.</translate>
+<translate><!--T:315--> Users with the appropriate permissions, such as administrators and those with the <tvar name=1><code>move-subpages</code></tvar> right, have the option to move both the main page and its subpages during a renaming process.</translate>
+
+<translate><!--T:316--> Learn more about subpages at [[w:Wikipedia:Subpages|Subpages]].</translate>
+<translate><!--T:317--> See examples at [[<tvar name=1>Special:MyLanguage/Help:Links/example</tvar>|Help:Links/example]] and [[<tvar name=2>Special:MyLanguage/Help:Links/example/example2</tvar>|Help:Links/example/example2]]</translate>
+
+<translate>
+=== Subpage activation === <!--T:318-->
+
+<!--T:319-->
+This feature is only enabled in namespaces specified in the <tvar name=1>{{wg|NamespacesWithSubpages}}</tvar> configuration setting, either its [[<tvar name=2>Special:MyLanguage/Manual:$wgNamespacesWithSubpages#Default value</tvar>|default namespaces]], or any additional namespaces set in <tvar name=4>{{ll|Manual:LocalSettings.php|LocalSettings.php}}</tvar>
+
+== Character conversion == <!--T:320-->
+</translate>
+<translate><!--T:321--> The guidelines outlined in [[<tvar name=1>Special:MyLanguage/Manual:Page naming</tvar>|Manual:Page naming]] state that in wiki and interwiki links, conversions are made to [[<tvar name=2>Special:MyLanguage/Help:Special characters</tvar>|non-literal characters]] automatically.</translate>
+<translate><!--T:322--> For example,"<tvar name=1><code><nowiki>[[Manual:Page%20naming]]</nowiki></code></tvar>" will display as "<tvar name=2>[[Manual:Page naming]]</tvar>".</translate>
+<translate><!--T:323--> Conversely, external links operate oppositely; literal characters are transformed into non-literal characters.</translate>
+<translate><!--T:324--> For example, browsers typically convert "<tvar name=1>.../wiki/!</tvar>" to "<tvar name=2>.../wiki/%21</tvar>".</translate>
+
+<translate><!--T:325--> Applying a code like <tvar name=1>%70</tvar> to a redirect deactivates it, even though the link remains accessible from the redirect page.</translate>
+<translate><!--T:326--> To ensure a successful redirect, the redirect page displays the canonical form of the target, unlike the preview page which shows the link in its regular format.</translate>
+
+<translate>
+== Miscellaneous == <!--T:327-->
+
+=== Some additional effects of links === <!--T:328-->
+</translate>
+* {{ll|Help:Related changes|nsp=0}}
+* <translate><!--T:329--> [[<tvar name=1>Special:MyLanguage/Help:What links here</tvar>|Backlink]]s, <tvar name=2>{{ll|Help:Linksearch|nsp=0}}</tvar></translate>
+* <translate><!--T:330--> When you include a space after the pipe symbol (<tvar name=1><nowiki>[[main Page| ]]</nowiki></tvar>), the outcome can vary depending on the browser.</translate> <translate><!--T:331--> In some cases, it might only display a space ("&nbsp;"), without creating a clickable link.</translate> <translate><!--T:332--> However, it's still recognized as a link by the <tvar name=1><code>{{int|whatlinkshere}}</code></tvar> feature.</translate>
+
+<translate>
+=== "Hover box" on links === <!--T:333-->
+</translate>
+<translate><!--T:334--> In certain web browsers, when you place the cursor over a link, a tooltip may appear, displaying the content of the link's HTML title attribute.</translate>
+<translate><!--T:335--> MediaWiki assigns different values to this attribute depending on the type of link: for internal wikilinks, it displays the '''page name''' and <tvar name=1><code>{{int|red-link-title|}}</code></tvar>, if the page does not exist; for interwiki links, it displays the page name with a prefix; and for external links, it displays the URL.</translate>
+
+<translate><!--T:336--> The browser might also display similar information in its status bar, possibly showing which section it belongs to.</translate>
+
+<translate><!--T:337--> Using a <tvar name=1>{{ll|Help:Links#Piped links|nsp=none}}</tvar>, even if it isn't clicked, can help clarify acronyms (like displaying "[[<tvar name=2>m:neutral point of view</tvar>|neutral point of view]]" as <tvar name=3>[[m:neutral point of view|NPOV]]</tvar>) or adding annotations.</translate>
+<translate><!--T:338--> Hover boxes can also be created without links, you can customize the hover box content using markup like <tvar name=1><code><nowiki>[[Link title|<span title="hoverbox">Display text</span>]]</nowiki></code></tvar>.</translate>
+
+<translate><!--T:339--> You cannot include a title attribute directly within the href element for '''external links'''.</translate>
+<translate><!--T:340--> Nevertheless, you can achieve a similar outcome by using a span element instead, like this:</translate>
+<code><nowiki>[http://www.example.com <span title="hover text on external link">www.example.com web site</span>]</nowiki></code> :<br />
+[http://www.example.com <span title="hover text on external link">www.example.com web site</span>]
+
+<translate>
+=== Retrieving links from a page === <!--T:341-->
+</translate>
+<translate><!--T:342--> The [[<tvar name=1>Special:MyLanguage/API:Main page</tvar>|MediaWiki API]] allows users to retrieve all links from a page.</translate>
+<translate><!--T:343--> For example, you can utilize the API query called [[<tvar name=1>Special:MyLanguage/API:Links</tvar>|API:Links]] to achieve this.</translate>
+
+<translate>
+=== Linking to a page from an image === <!--T:344-->
+</translate>
+<translate><!--T:345--> You can utilize images to direct users to other pages.</translate>
+<translate><!--T:346--> For further details, refer to the guidance on [[<tvar name=1>Special:MyLanguage/Manual:Linked images</tvar>|utilizing an image to link to a specific page]] in the help section.</translate>
+
+<translate>
+== Limits == <!--T:119-->
+
+<!--T:111-->
+An internal wiki link is limited by maximum [[<tvar name=2>Special:MyLanguage/Manual:page title</tvar>|page title]] size.
+
+== See also == <!--T:73-->
+</translate>
+* {{ll|Manual:Linked images}}
+* {{ll|Help:Editing#Links}}
+* {{ll|Help:URL}}
+* {{ll|Help:Self link}}
+* {{ll|Help:Template#Restrictions}} <translate><!--T:348--> (and the next section)</translate>
+* {{ll|Manual:Guide to setting up interwiki linking|2=<translate><!--T:349--> Guide to setting up interwiki linking</translate>}}
+* {{ll|Manual:Links table}}
+* {{ll|Interwikimap}}
+* {{ll|Manual:brokenlinks table}}
+* <translate><!--T:350--> [[w:Red Link|Red Link]]</translate>
+* <translate><!--T:357--> [[w:Wikipedia:Canonicalization|Wikipedia:Canonicalization]]</translate>
+* [[Special:Mostlinked]] &ndash; <translate><!--T:351--> Displays the number of links.</translate>
+* [[Special:Lonelypages]] &ndash; <translate><!--T:352--> A list of pages not linked to any page.</translate>
+
+[[Category:Help{{#translation:}}|Links]]
+[[Category:Link{{#translation:}}|Links]]

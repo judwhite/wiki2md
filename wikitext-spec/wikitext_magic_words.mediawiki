@@ -1,0 +1,1512 @@
+<languages />
+{{PD Help Page}}
+{{Magic words|general=1}}
+{{TOCRight}}
+<translate>
+<!--T:1-->
+'''Magic words''' are strings of text that MediaWiki associates with a return value or function, such as time, site details, or page names. This page explains only the standard magic words; for a technical reference, see <tvar name=1>{{ll|Manual:Magic words}}</tvar>.
+
+<!--T:2-->
+There are three general types of magic words:</translate>
+* <translate><!--T:3--> '''[[<tvar name="bs">#Behavior switches</tvar>|Behavior switches]]''': these are usually written as uppercase words surrounded by double underscores, e.g. <tvar name=1>{{code|inline=1|lang=wikitext|__FOO__}}</tvar>.</translate>
+* <translate><!--T:4--> '''[[<tvar name=var>#Variables</tvar>|Variables]]''': these are uppercase words surrounded by double braces, e.g. <tvar name=1>{{code|inline=1|lang=wikitext|<nowiki>{{FOO}}</nowiki>}}</tvar>. As such, they look a lot like [[<tvar name=help-templates>Special:MyLanguage/Help:Templates</tvar>|templates]].</translate>
+* <translate><!--T:5--> '''[[<tvar name=pfunc>#Parser functions</tvar>|Parser functions]]''': these take parameters and are either of the form <tvar name=1>{{code|inline=1|lang=wikitext|<nowiki>{{foo:...}}</nowiki>}}</tvar> or <tvar name=2>{{code|inline=1|lang=wikitext|<nowiki>{{#foo:...}}</nowiki>}}</tvar>, e.g. <tvar name=3>{{Magic word|code=1|ext=Scribunto|#invoke|...}}</tvar>.</translate> <translate><!--T:567--> See also <tvar name=1>{{ll|Help:Extension:ParserFunctions}}</tvar> and <tvar name=4>{{ll|Extension:Scribunto}}</tvar>.</translate>
+
+<translate><!--T:6--> Variables and parser functions can use substitution (<tvar name=2><code>{{ll|Manual:subst|subst:}}</code></tvar>), just like templates.</translate>
+<translate><!--T:585--> Page-dependent magic words will affect or return data about the ''current'' page (by default), even if the word is added through a transcluded template or included system message.</translate>
+
+<translate>
+== Behavior switches == <!--T:7-->
+
+<!--T:8-->
+A behavior switch controls the layout or behavior of the page (if supported by the skin) and can often be used to specify desired omissions and inclusions in the content. Notably some of these are not supported by the [[<tvar name=minerva>Skin:MinervaNeue</tvar>|Minerva skin]].
+</translate>
+
+{| class="wikitable"
+|-
+! width="20%" colspan="2" | <translate><!--T:9--> Word</translate>
+! <translate><!--T:10--> Description</translate>
+! width="10%" | <translate><!--T:11--> Versions</translate>
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)"| <translate><!--T:257--> [[<tvar name=1>Special:MyLanguage/Manual:Table of contents</tvar>|Table of contents]]</translate>
+{{Table-AnchorRow|NOTOC}}
+|-
+| colspan="2" | <code><nowiki>__NOTOC__</nowiki></code>
+| <translate><!--T:12--> Hides the [[<tvar name=1>Special:MyLanguage/table of contents</tvar>|table of contents]] (TOC).</translate>
+|
+{{Table-AnchorRow|FORCETOC}}
+|-
+| colspan="2" | <code><nowiki>__FORCETOC__</nowiki></code>
+| <translate><!--T:13--> Forces the table of contents to appear at its normal position (before the first header, overriding <tvar name=notoc><code><nowiki>__NOTOC__</nowiki></code></tvar>).</translate> <translate><!--T:479--> This will not work in skins that present table of contents outside the article content e.g. [[<tvar name=1>Skin:Vector/2022</tvar>|Vector 2022 skin]].</translate>
+|
+{{Table-AnchorRow|TOC}}
+|-
+| colspan="2" | <code><nowiki>__TOC__</nowiki></code>
+| <translate><!--T:14--> Places a table of contents at the word's current position (overriding <tvar name=notoc><code><nowiki>__NOTOC__</nowiki></code></tvar>).</translate> <translate><!--T:480--> If this is used multiple times, the table of contents will appear at the first word's position.</translate> <translate><!--T:481--> This will not work in skins that present table of contents outside the article content e.g. [[<tvar name=1>Skin:Vector/2022</tvar>|Vector 2022 skin]].</translate>
+|
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)"| <translate><!--T:15--> Editing</translate>
+{{Table-AnchorRow|NOEDITSECTION}}
+|-
+| colspan="2" | <code><nowiki>__NOEDITSECTION__</nowiki></code>
+| <translate><!--T:16--> Hides the section edit links beside headings. This is especially useful where a heading is created from within a template: the normal wiki section-edit would in this case edit the template code, which is usually not what the user intends.</translate> <translate><!--T:345--> Use of this in a template will extend the effect to that template, the pages it's included on, ''and'' any other templates included on the same page.</translate> <translate><!--T:346--> [[<tvar name=meta>Special:MyLanguage/Help:Section/Editing sections of included templates</tvar>|A workaround is possible]].</translate>
+|
+{{Table-AnchorRow|NEWSECTIONLINK}}
+|-
+| colspan="2" | <code><nowiki>__NEWSECTIONLINK__</nowiki></code>
+| <translate><!--T:17--> Adds a link beside the <tvar name=2><code>{{int|vector-view-edit}}</code></tvar> tab for adding a new section on a non-talk page (see [[<tvar name=1>Special:MyLanguage/Help:Section#Including a section at the end</tvar>|Including a section at the end]]).</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|NONEWSECTIONLINK}}
+|-
+| colspan="2" | <code><nowiki>__NONEWSECTIONLINK__</nowiki></code>
+| <translate><!--T:18--> Removes the link beside the <tvar name=1><code>{{int|vector-view-edit}}</code></tvar> tab on pages in talk namespaces.</translate>
+| {{MW version|version=1.15|compact=y|comment=and after|r=47522}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)"| <translate><!--T:19--> Categories</translate>
+{{Table-AnchorRow|NOGALLERY}}
+|-
+| colspan="2" | <code><nowiki>__NOGALLERY__</nowiki></code>
+| <translate><!--T:20--> Used on a category page, replaces thumbnails in the category view with normal links.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|HIDDENCAT}}
+|-
+| colspan="2" | <code><nowiki>__HIDDENCAT__</nowiki></code>
+| <translate><!--T:21--> Used on a category page, hides the category from the lists of categories in its members and subcategories (there is an option in the [[<tvar name=help-preferences>Special:MyLanguage/Help:Preferences</tvar>|user preferences]] to show them).</translate><!-- hiddencategory hiddencat hide category categories -->
+| {{MW version|version=1.13|compact=y|comment=and after}}
+{{Table-AnchorRow|EXPECTUNUSEDCATEGORY}}
+|-
+| colspan="2" | <code><nowiki>__EXPECTUNUSEDCATEGORY__</nowiki></code>
+| <translate><!--T:364--> Used on a category page, removes the category from <tvar name=1>[[Special:UnusedCategories]]</tvar>.</translate>
+| {{MW version|version=1.33|compact=y|comment=and after}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)"| <translate><!--T:22--> Language conversion</translate>
+{{Table-AnchorRow|NOCONTENTCONVERT|NOCC}}
+|-
+| colspan="2" | <code><nowiki>__NOCONTENTCONVERT__</nowiki></code> <br /> <code><nowiki>__NOCC__</nowiki></code>
+| <translate><!--T:23--> On wikis with language variants, don't perform any content language conversion in article display; for example, only show Chinese (zh) instead of variants like zh_cn, zh_tw, zh_sg, or zh_hk.</translate>
+|
+{{Table-AnchorRow|NOTITLECONVERT|NOTC}}
+|-
+| colspan="2" | <code><nowiki>__NOTITLECONVERT__</nowiki></code> <br /> <code><nowiki>__NOTC__</nowiki></code>
+| <translate><!--T:24--> On wikis with language variants, don't perform language conversion on the title (all other content is converted).</translate>
+|
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)"| <translate><!--T:25--> Other</translate>
+{{Table-AnchorRow|START}}
+|-
+| colspan="2" | <code>{{del|<nowiki>__START__</nowiki>}}</code>
+| {{del|1=<translate><!--T:347--> No effect.</translate> <translate><!--T:348--> Was used to point where database message starts after comment that should not be transcluded.</translate>}} <small><translate><!--T:26--> Removed in <tvar name=1>{{rev|1695}}</tvar> and completely removed in <tvar name=2>{{rev|24784}}</tvar>.</translate></small>
+| {{MW version|version=1.10|compact=y|comment=and before|r=1610}}
+{{Table-AnchorRow|END}}
+|-
+| colspan="2" | <code>{{del|<nowiki>__END__</nowiki>|}}</code>
+| {{del|1=<translate><!--T:27--> Explicitly marks the end of the article, to prevent MediaWiki from removing trailing whitespace.</translate>}} <small><translate><!--T:389--> Removed in <tvar name=1>[[rev:19213|19213]]</tvar>.</translate></small>
+| {{MW version|version=1.1|compact=y|version2=1.8}}
+{{Table-AnchorRow|INDEX}}
+|-
+| colspan="2" | <code><nowiki>__INDEX__</nowiki></code>
+| <translate><!--T:28--> Tell search engines to index the page (overrides <tvar name=1>{{ll|Manual:$wgArticleRobotPolicies|$wgArticleRobotPolicies}}</tvar> but not robots.txt). It obeys <tvar name=2>{{ll|Manual:$wgExemptFromUserRobotsControl|$wgExemptFromUserRobotsControl}}</tvar> variable.</translate>
+| {{MW version|version=1.14|compact=y|comment=and after}}
+{{Table-AnchorRow|NOINDEX}}
+|-
+| colspan="2" | <code><nowiki>__NOINDEX__</nowiki></code>
+| <translate><!--T:29--> Tell search engines not to index the page (i.e. do not list in search engines' results). It obeys <tvar name=1>{{ll|Manual:$wgExemptFromUserRobotsControl|$wgExemptFromUserRobotsControl}}</tvar> variable.</translate>
+| {{MW version|version=1.14|compact=y|comment=and after|r=37973}}
+{{Table-AnchorRow|STATICREDIRECT}}
+|-
+| colspan="2" | <code><nowiki>__STATICREDIRECT__</nowiki></code>
+| <translate><!--T:30--> On redirect pages, don't allow MediaWiki to automatically update the link when someone moves a page and checks <tvar name=2><code>{{int|Fix-double-redirects}}</code></tvar> (which requires <tvar name=1>{{ll|Manual:$wgFixDoubleRedirects|$wgFixDoubleRedirects}}</tvar>).</translate>
+| {{MW version|version=1.13|compact=y|comment=and after|r=37928}}
+{{Table-AnchorRow|EXPECTUNUSEDTEMPLATE}}
+|-
+| colspan="2" | <code><nowiki>__EXPECTUNUSEDTEMPLATE__</nowiki></code>
+| <translate><!--T:523--> Used on a template page, removes the page from <tvar name=1>[[Special:UnusedTemplates]]</tvar>.</translate>
+
+<translate><!--T:524--> If this switch is not intended to be transcluded with the template's contents, it should be used inside <tvar name=1>{{tag|noinclude}}</tvar> (or on a template documentation page inside <tvar name=2>{{tag|includeonly}}</tvar>), similarly to template categories.</translate> See {{ll|Help:Templates#Controlling template inclusion}}.
+
+<translate><!--T:525--> If the switch is intended to remove from the report all pages that transclude a given template (for example, a notice that is transcluded on testcases or sandbox subpages), put the switch inside <tvar name=1>{{tag|includeonly}}</tvar> tags within the template page.</translate>
+| {{MW version|version=1.43|compact=y|comment=and after|gerrit change=1064007}}
+|- id="From_Extensions"
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)"| <translate><!--T:356--> From Extensions</translate>
+|-
+! width="10%" | <translate><!--T:357--> Extension</translate>
+! width="10%" | <translate><!--T:358--> Word</translate>
+! <translate><!--T:359--> Description</translate>
+! width="10%" | <translate><!--T:360--> Versions</translate>
+{{Table-AnchorRow|NOGLOBAL}}
+|-
+| {{ll|Extension:GlobalUserPage|GlobalUserPage}}
+| <code><nowiki>__NOGLOBAL__</nowiki></code>
+| <translate><!--T:352--> Disables the global user page.</translate> <translate><!--T:353--> If present on the central user page, will prevent it from being displayed on remote wikis, and it also determines whether a link to a user page on remote wiki should be red or blue.</translate>
+| {{MW version|version=1.28|compact=y|comment=and after|r=}}
+{{Table-AnchorRow|DISAMBIG}}
+|-
+| {{ll|Extension:Disambiguator|Disambiguator}}
+| <code><nowiki>__DISAMBIG__</nowiki></code>
+| <translate><!--T:362--> Identifies a disambiguation page.</translate>
+| {{MW version|version=1.21|compact=y|comment=and after|r=}}
+{{Table-AnchorRow|EXPECTEDUNCONNECTEDPAGE|EXPECTED UNCONNECTED PAGE}}
+|-
+| {{ll|Extension:Wikibase|Wikibase}} (client)
+| <code><nowiki>__EXPECTED_UNCONNECTED_PAGE__</nowiki></code>
+| <translate><!--T:460--> Some wiki pages do not fit the scope of Wikidata items, such as discussion archives, template subpages, etc. To prevent a wiki page from being listed in Special:UnconnectedPages, use this magic word anywhere on the page. Pages that don't meet [<tvar name=1>https://www.wikidata.org/wiki/Special:MyLanguage/Wikidata:Notability</tvar> Wikidata's notability criteria] should not receive a Wikidata item.</translate>
+| {{MW version|version=1.37.0|compact=y|comment=and after}}
+|-
+|rowspan="2"| {{ll|Extension:DiscussionTools|DiscussionTools}}
+| <code><nowiki>__ARCHIVEDTALK__</nowiki></code>
+| <translate><!--T:484--> Hides <tvar name=1><code>{{int|discussiontools-replylink}}</code></tvar> links from discussions on archived pages.</translate> ([[Help:DiscussionTools/Magic words and markup]])
+| {{MW version|version=1.39|compact=y|comment=and after|gerrit change=738221}}
+|-
+| <code><nowiki>__NOTALK__</nowiki></code>
+| <translate><!--T:485--> Makes a page in a talk namespace not be treated like a talk page.</translate> ([[Help:DiscussionTools/Magic words and markup]])
+| {{MW version|version=1.39|compact=y|comment=and after|gerrit change=903247}}
+|-
+| {{ll|Extension:ProofreadPage|ProofreadPage}}
+| <code><nowiki>__EXPECTWITHOUTSCANS__</nowiki></code>
+| <translate><!--T:516--> Some wikisource content pages consist of lists (such as a list of editions or translations of the same work) and therefore did not have scans. To prevent these pages from being listed in <tvar name=1>Special:PagesWithoutScans</tvar>, insert this magic word into the page.</translate>
+| {{MW version|version=1.43.0-wmf.4|compact=y|comment=and after|gerrit change=1026897}}
+|-
+| {{ll|mw:Extension:Wikibase|Wikibase}} (client)
+| <code><nowiki>{{NOEXTERNALLANGLINKS}}</nowiki></code>
+| <translate><!--T:526--> A magic word and a parser function which when invoked, will disable the Wikibase extension for a specific page, or used with parameters {{<tvar name=1>ll|Wikibase/Installation/Advanced configuration#noexternallanglinks</tvar>|can suppress specific interlanguage links}} produced by the extension.</translate> <translate><!--T:527--> When active, only interlanguage links present in the wikitext are used.</translate>
+|
+|}
+
+<translate>
+== Variables == <!--T:33-->
+</translate>
+{{tmpl|0=<translate><!--T:34--> <tvar name=1>{{ll|Variables}}</tvar> return information about the current page, wiki, or date. Their syntax is similar to [[<tvar name=2>Special:MyLanguage/Help:Templates</tvar>|templates]]. Variables marked as <tvar name=3>$3</tvar> are tracked by the software, and the number that can be included on a page is limited.</translate>
+|3=<span style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)">'''[<translate><!--T:598--> Expensive</translate>]'''</span>
+}}
+<translate><!--T:602--> See {{<tvar name=1>ll|Manual:Parser_functions#Expensive_parser_functions</tvar>|Expensive parser functions}}.</translate>
+
+<translate><!--T:35--> If a template name conflicts with a variable, the variable will be used (so to transclude the template {{<tvar name=1>tmpl|0=[[{{ns:10}}:$1]]</tvar>|PAGENAME}} you would need to write {{<tvar name=2>tmpl|0=<code><nowiki>{{</nowiki>{{ns:10}}:$1<nowiki>}}</nowiki></code></tvar>|PAGENAME}}).</translate>
+<translate><!--T:471--> In some cases, adding parameters will force the parser to invoke a template; for example, <tvar name=1><code><nowiki>{{CURRENTDAYNAME|x}}</nowiki></code></tvar> transcludes <tvar name=2>[[{{ns:10}}:CURRENTDAYNAME]]</tvar>, ''not'' the variable.</translate>
+
+<translate>
+=== Date and time === <!--T:36-->
+
+<!--T:37-->
+The following variables return the current date and time in [[w:UTC|UTC]].
+
+<!--T:38-->
+Due to MediaWiki and browser caching, these variables frequently show when the page was ''cached'' rather than the current time.
+
+<!--T:396-->
+The use of those variables cause pages to be cached for a more limited number of seconds. This is configured in <tvar name=MagicWordFactory>[https://github.com/wikimedia/mediawiki/blob/master/includes/parser/MagicWordFactory.php#L132 MagicWordFactory]</tvar>.
+
+<!--T:39-->
+The date and time magic words are formatted in the wiki content language. Since <tvar name=2>{{rev|94680|1.19}}</tvar>, they depend on the [[<tvar name=1>Special:MyLanguage/Manual:Language#page-content-lang</tvar>|page content language]].
+</translate>
+
+{| class="wikitable"
+! <translate><!--T:40--> Variable</translate>
+! <translate><!--T:41--> Output</translate>
+! <translate><!--T:42--> Description</translate>
+! <translate><!--T:43--> Versions</translate>
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:44--> Year</translate>
+{{Table-AnchorRow|CURRENTYEAR}}
+|-
+| <code><nowiki>{{CURRENTYEAR}}</nowiki></code>
+| {{CURRENTYEAR}}
+| <translate><!--T:45--> Year</translate>
+|
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:46--> Month</translate>
+{{Table-AnchorRow|CURRENTMONTH|CURRENTMONTH1|CURRENTMONTH2|CURRENTMONTHNAME|CURRENTMONTHNAMEGEN|CURRENTMONTHABBREV}}
+|-
+| <code><nowiki>{{CURRENTMONTH}}</nowiki></code> <br />
+<code><nowiki>{{CURRENTMONTH2}}</nowiki></code>
+| {{CURRENTMONTH}}
+| <translate><!--T:47--> Month (zero-padded number)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTMONTH1}}</nowiki></code>
+| {{CURRENTMONTH1}}
+| <translate><!--T:304--> Month (unpadded number)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTMONTHNAME}}</nowiki></code>
+| {{CURRENTMONTHNAME}}
+| <translate><!--T:48--> Month (name)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTMONTHNAMEGEN}}</nowiki></code>
+| {{CURRENTMONTHNAMEGEN}}
+| <translate><!--T:49--> Month ([[w:Genitive case|genitive form]])</translate>
+|
+|-
+| <code><nowiki>{{CURRENTMONTHABBREV}}</nowiki></code>
+| {{CURRENTMONTHABBREV}}
+| <translate><!--T:50--> Month (abbreviation)</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:51--> Day</translate>
+{{Table-AnchorRow|CURRENTDAY|CURRENTDAY2|CURRENTDOW|CURRENTDAYNAME}}
+|-
+| <code><nowiki>{{CURRENTDAY}}</nowiki></code>
+| {{CURRENTDAY}}
+| <translate><!--T:52--> Day of the month (unpadded number)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTDAY2}}</nowiki></code>
+| {{CURRENTDAY2}}
+| <translate><!--T:53--> Day of the month (zero-padded number)</translate>
+| {{MW version|version=1.6|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{CURRENTDOW}}</nowiki></code>
+| {{CURRENTDOW}}
+| <translate><!--T:54--> Day of the week (unpadded number), 0 (for Sunday) through 6 (for Saturday)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTDAYNAME}}</nowiki></code>
+| {{CURRENTDAYNAME}}
+| <translate><!--T:55--> Day of the week (name)</translate>
+|
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:56--> Time</translate>
+{{Table-AnchorRow|CURRENTTIME|CURRENTHOUR}}
+|-
+| <code><nowiki>{{CURRENTTIME}}</nowiki></code>
+| {{CURRENTTIME}}
+| <translate><!--T:57--> Time (24-hour HH:mm format)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTHOUR}}</nowiki></code>
+| {{CURRENTHOUR}}
+| <translate><!--T:58--> Hour (24-hour zero-padded number)</translate>
+|
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:59--> Other</translate>
+{{Table-AnchorRow|CURRENTWEEK|CURRENTTIMESTAMP}}
+|-
+| <code><nowiki>{{CURRENTWEEK}}</nowiki></code>
+| {{CURRENTWEEK}}
+| <translate><!--T:60--> Week (number)</translate>
+|
+|-
+| <code><nowiki>{{CURRENTTIMESTAMP}}</nowiki></code>
+| {{CURRENTTIMESTAMP}}
+| <translate><!--T:61--> YYYYMMDDHHmmss timestamp</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+|}
+
+{{note|1=<translate><!--T:461--> <tvar name=1>{{tlx|CURRENTDATE}}</tvar> is not a magic word but it might be a [[<tvar name=2>Special:MyLanguage/Help:Templates</tvar>|template]].</translate>}}
+
+<translate>
+<!--T:62-->
+The following variables do the same as the preceding ones but using the site's server config or <tvar name=1>{{ll|Manual:$wgLocaltimezone|$wgLocaltimezone}}</tvar>.
+</translate>
+
+* <code><nowiki>{{LOCALYEAR}}</nowiki></code>
+* <code><nowiki>{{LOCALMONTH}}</nowiki></code>
+* <code><nowiki>{{LOCALMONTH1}}</nowiki></code>
+* <code><nowiki>{{LOCALMONTH2}}</nowiki></code>
+* <code><nowiki>{{LOCALMONTHNAME}}</nowiki></code>
+* <code><nowiki>{{LOCALMONTHNAMEGEN}}</nowiki></code>
+* <code><nowiki>{{LOCALMONTHABBREV}}</nowiki></code>
+* <code><nowiki>{{LOCALDAY}}</nowiki></code>
+* <code><nowiki>{{LOCALDAY2}}</nowiki></code>
+* <code><nowiki>{{LOCALDOW}}</nowiki></code>
+* <code><nowiki>{{LOCALDAYNAME}}</nowiki></code>
+* <code><nowiki>{{LOCALTIME}}</nowiki></code>
+* <code><nowiki>{{LOCALHOUR}}</nowiki></code>
+* <code><nowiki>{{LOCALWEEK}}</nowiki></code>
+* <code><nowiki>{{LOCALTIMESTAMP}}</nowiki></code>
+
+<translate>
+<!--T:63-->
+''For more thorough time formatting, or to output the current year and week with better compliance with [[w:ISO-8601|ISO-8601]], you may want to install <tvar name=1>{{ll|Extension:ParserFunctions}}</tvar> to use the <tvar name=2>{{ll|Help:Extension:ParserFunctions#.23time|<nowiki>#</nowiki>time}}</tvar> parser function''.
+
+=== Technical metadata === <!--T:64-->
+</translate>
+
+{| class="wikitable"
+! width="10%" | <translate><!--T:66--> Variable</translate>
+! width="15%" | <translate><!--T:67--> Output</translate>
+! <translate><!--T:68--> Description</translate>
+! width="10%" | <translate><!--T:69--> Versions</translate>
+{{Table-AnchorRow|Site}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:70--> Site</translate>
+{{Table-AnchorRow|SITENAME}}
+|-
+| <code><nowiki>{{SITENAME}}</nowiki></code>
+| {{SITENAME}}
+| <translate><!--T:71--> The wiki's site name (<tvar name=1>{{ll|Manual:$wgSitename|$wgSitename}}</tvar>).</translate>
+|
+{{Table-AnchorRow|SERVER}}
+|-
+| <code><nowiki>{{SERVER}}</nowiki></code>
+| {{SERVER}}
+| <translate><!--T:72--> Domain [[w:URL|URL]] (<tvar name=1>{{ll|Manual:$wgServer|$wgServer}}</tvar>).</translate>
+|
+{{Table-AnchorRow|SERVERNAME}}
+|-
+| <code><nowiki>{{SERVERNAME}}</nowiki></code>
+| {{SERVERNAME}}
+| <translate><!--T:73--> Subdomain and domain name (no longer dependent on <tvar name=1>{{ll|Manual:$wgServerName|$wgServerName}}</tvar> as of version 1.17).</translate>
+|
+{{Table-AnchorRow|DIRMARK|DIRECTIONMARK}}
+|-
+| <code><nowiki>{{DIRMARK}}</nowiki></code> <br />
+<code><nowiki>{{DIRECTIONMARK}}</nowiki></code>
+| {{DIRMARK}} <br />
+{{DIRECTIONMARK}}
+| <translate><!--T:74--> Outputs a [[w:Unicode|Unicode]] directional mark that matches the wiki's default language's direction (<tvar name=2><code>&amp;lrm;</code></tvar> on left-to-right wikis, <tvar name=3><code>&amp;rlm;</code></tvar> on right-to-left wikis), useful in text with multi-directional text. Since <tvar name=4>{{rev|94680|1.19}}</tvar>, it depends on the [[<tvar name=1>Special:MyLanguage/Manual:Language#page-content-lang</tvar>|page content language]].</translate>
+| {{MW version|version=1.7|compact=y|comment=and after|r=14442}}
+{{Table-AnchorRow|ARTICLEPATH}}
+|-
+| <code><nowiki>{{ARTICLEPATH}}</nowiki></code>
+| {{ARTICLEPATH}}
+| <translate><!--T:486--> Relative article path (<tvar name=1>{{ll|Manual:$wgArticlePath|$wgArticlePath}}</tvar>).</translate>
+|
+{{Table-AnchorRow|SCRIPTPATH}}
+|-
+| <code><nowiki>{{SCRIPTPATH}}</nowiki></code>
+| {{SCRIPTPATH}}
+| <translate><!--T:75--> Relative script path (<tvar name=1>{{ll|Manual:$wgScriptPath|$wgScriptPath}}</tvar>).</translate>
+|
+{{Table-AnchorRow|STYLEPATH}}
+|-
+| <code><nowiki>{{STYLEPATH}}</nowiki></code>
+| {{STYLEPATH}}
+| <translate><!--T:76--> Relative style path (<tvar name=1>{{ll|Manual:$wgStylePath|$wgStylePath}}</tvar>).</translate>
+| {{MW version|version=1.16|compact=y|comment=and after}}
+{{Table-AnchorRow|CURRENTVERSION}}
+|-
+| <code><nowiki>{{CURRENTVERSION}}</nowiki></code>
+| {{CURRENTVERSION}}
+| <translate><!--T:77--> The wiki's MediaWiki version.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after|r=14199}}
+{{Table-AnchorRow|CONTENTLANGUAGE|CONTENTLANG}}
+|-
+| <code><nowiki>{{CONTENTLANGUAGE}}</nowiki></code> <br />
+<code><nowiki>{{CONTENTLANG}}</nowiki></code>
+| {{CONTENTLANGUAGE}} <br />
+{{CONTENTLANG}}
+| <translate><!--T:78--> The wiki's default interface language (<tvar name=1>{{ll|Manual:$wgLanguageCode|$wgLanguageCode}}</tvar>).</translate>
+| {{MW version|version=1.7|compact=y|comment=and after|r=14661}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:79--> Page</translate>
+{{Table-AnchorRow|Page|PAGEID|PROTECTIONLEVEL|PROTECTIONEXPIRY|CASCADINGSOURCES}}
+|-
+| <code><nowiki>{{PAGEID}}</nowiki></code>
+| {{PAGEID}}
+| <translate><!--T:80--> Returns the [[<tvar name=1>Special:MyLanguage/Help:Page ID</tvar>|page identifier (page ID)]].</translate>
+| {{MW version|version=1.20|compact=y|comment=and after|gerrit change=9858}}
+{{Table-AnchorRow|PAGELANGUAGE}}
+|-
+| <code><nowiki>{{PAGELANGUAGE}}</nowiki></code><br/><!--
+--><code><nowiki>{{#language:{{PAGELANGUAGE}}}}</nowiki></code>
+| {{PAGELANGUAGE}}<br/><!--
+-->{{#language:{{PAGELANGUAGE}}}}
+| <translate><!--T:351--> Returns the language of the current page. The language code that this variable returns can be converted to a language name using <tvar name=1><code><nowiki>{{</nowiki>[[##language|#language]]<nowiki>:...}}</nowiki></code></tvar>.</translate>
+| {{MW version|version=1.29|compact=y|comment=and after|gerrit change=330982}}
+|-
+| <code><nowiki>{{TRANSLATABLEPAGE}}</nowiki></code>
+| {{TRANSLATABLEPAGE}}
+| <translate><!--T:487--> Returns the title of the translation page (the page other languages are translated from) if a page is translatable (including translated pages), and nothing if the page is not translatable.</translate>
+| {{MW version|version=1.41.0-wmf.8|compact=y|comment=and after|gerrit change=913677}}
+|-
+|
+{{#tag:syntaxhighlight|{{^(}}translate{{)^}}{{^(}}!--T:1--{{)^}} Translated unit. Language: {{^(}}tvar name=lang>{{((}}TRANSLATIONLANGUAGE{{))}}{{^(}}/tvar{{)^}}.{{^(}}/translate{{)^}}|lang="html"|inline=1|style="
+	backgrond-color:transparent; border:0; padding:0
+"}}
+
+{{#tag:syntaxhighlight|{{^(}}translate{{)^}}{{^(}}!--T:2--{{)^}} Untranslated unit. Language: {{^(}}tvar name=lang>{{((}}TRANSLATIONLANGUAGE{{))}}{{^(}}/tvar{{)^}}.{{^(}}/translate{{)^}}|lang="html"|inline=1|style="
+	backgrond-color:transparent; border:0; padding:0
+"}}
+|
+<translate><!--T:419--> Translated unit. Language: <tvar name=1>{{TRANSLATIONLANGUAGE}}</tvar>.</translate>
+
+<span lang="en" dir="ltr" class="mw-content-ltr">Not translated unit. Language: en.</span>
+| <translate><!--T:413--> Must be used in a translated page, inside <tvar name=1>{{tag|translate|open}}</tvar> tags.</translate> <translate><!--T:414--> Returns the language code of the current translation unit.</translate> <translate><!--T:415--> In a translation page, if the unit has been translated, then it returns translation language.</translate> <translate><!--T:416--> Else, it returns source language.</translate> <translate><!--T:417--> The language code that this variable returns can be converted to a language name using <tvar name=1><code><nowiki>{{</nowiki>[[##language|#language]]<nowiki>:...}}</nowiki></code></tvar>.</translate> <translate><!--T:418--> Should only be used by [[<tvar name=1>Special:MyLanguage/Help:Extension:Translate/Page_translation_administration</tvar>|translation admins]].</translate>
+|{{MW version|version=1.36.0-wmf.8|compact=y|comment=and after|gerrit change=603472}}
+|-
+| <code><nowiki>{{PROTECTIONLEVEL:</nowiki>''<translate><!--T:261--> action</translate>''<nowiki>}}</nowiki></code>
+| <!-- Leave this empty. -->
+| <translate><!--T:81--> Outputs the protection level (e.g. <tvar name=1><code>autoconfirmed</code>, <code>sysop</code></tvar>) for a given action (e.g. <tvar name=2><code>edit</code>, <code>move</code></tvar>) on the current page.</translate> <translate><!--T:566--> Returns an empty string if not protected.</translate>
+| {{MW version|version=1.15|compact=y|comment=and after|r=45587}}
+|-
+| <code><nowiki>{{PROTECTIONEXPIRY:</nowiki>''<translate><!--T:342--> action</translate>''<nowiki>}}</nowiki></code>
+| <!-- Leave this empty. -->
+| <translate><!--T:343--> Outputs the protection expiry (e.g. "<tvar name=1>20160418155030</tvar>", "infinity") for a given action (e.g. "edit", "move") on the current page.</translate> <translate><!--T:344--> Returns "infinity" if not protected.</translate>
+| {{MW version|version=1.27|compact=y|comment=and after|gerrit change=255717}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{CASCADINGSOURCES}}</nowiki></code>
+| <!-- Leave this empty. -->
+| '''[<translate><!--T:326--> Expensive</translate>]''' <translate><!--T:291--> Returns the sources of any cascading protection acting on the current page. Pages will not return their own title unless they transclude themselves.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=104999}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:82--> Viewed revision of current page (latest revision or selected older revision)</translate>
+{{Table-AnchorRow|revision|REVISIONID|REVISIONDAY|REVISIONDAY2|REVISIONMONTH|REVISIONMONTH1|REVISIONYEAR|REVISIONTIMESTAMP|REVISIONUSER}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONID}}</nowiki></code>
+| {{#ifeq: {{SITENAME}} | MediaWiki | {{Note|type=warn|text=<translate><!--T:586--> This variable is unavailable on this wiki.</translate>}} | {{REVISIONID}} }}
+| <translate><!--T:83--> Unique revision ID.</translate>
+{{Note|type=warn|text=
+<translate><!--T:395--> It is always empty in preview, thus one can show an error message only in preview.</translate>
+<translate><!--T:399--> May be disabled in [[<tvar name=1>Special:MyLanguage/Manual:$wgMiserMode</tvar>|miser mode (used on all WMF wikis)]] returning <tvar name=2><code><nowiki>-</nowiki></code></tvar> instead when not in preview.</translate>
+}}
+{{Warning|1=<translate><!--T:600--> This variable '''cannot''' be [[w:Substitution|substituted]].</translate>}}
+| {{MW version|version=1.5|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{REVISIONDAY}}</nowiki></code>
+| {{REVISIONDAY}}
+| <translate><!--T:84--> Day edit was made (unpadded number).</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{REVISIONDAY2}}</nowiki></code>
+| {{REVISIONDAY2}}
+| <translate><!--T:85--> Day edit was made (zero-padded number).</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{REVISIONMONTH}}</nowiki></code>
+| {{REVISIONMONTH}}
+| <translate><!--T:86--> Month edit was made (zero-padded number as of <tvar name=1>[[rev:66200|1.17+]]</tvar>, unpadded number in prior versions).</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{REVISIONMONTH1}}</nowiki></code>
+| {{REVISIONMONTH1}}
+| <translate><!--T:87--> Month edit was made (unpadded number).</translate>
+| {{MW version|version=1.17|compact=y|comment=and after|r=66200}}
+|-
+| <code><nowiki>{{REVISIONYEAR}}</nowiki></code>
+| {{REVISIONYEAR}}
+| <translate><!--T:88--> Year edit was made.</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{REVISIONTIMESTAMP}}</nowiki></code>
+| {{REVISIONTIMESTAMP}}
+| <translate><!--T:89--> Timestamp as of time of edit.</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}
+|-
+| <code><nowiki>{{REVISIONUSER}}</nowiki></code>
+| {{REVISIONUSER}}
+| <translate><!--T:90--> The username of the last user to edit the page, or the user previewing an edit.</translate>
+| {{MW version|version=1.15|compact=y|comment=and after|r=48149}}
+|-
+| <code><nowiki>{{REVISIONSIZE}}</nowiki></code>
+| {{REVISIONSIZE}}
+| <translate><!--T:91--> The size (bytes of wikitext) of the viewed revision of the page or preview.</translate>
+| {{MW version|version=1.22|compact=y|comment=and after|gerrit change=82650}}
+|-
+! colspan="4" style="color: var(--color-base, #202122); background-color: var(--background-color-interactive--hover, #dadde3)" | <translate><!--T:92--> Affects page content</translate>
+{{Table-AnchorRow|DISPLAYTITLE|DisplayTitle}}
+|-
+| <code><nowiki>{{DISPLAYTITLE:</nowiki><translate><!--T:262--> ''title''</translate><nowiki>}}</nowiki></code> <br/><code><nowiki>{{DISPLAYTITLE:</nowiki><translate><!--T:397--> ''title''</translate><nowiki>|noerror}}</nowiki></code> <br/><code><nowiki>{{DISPLAYTITLE:</nowiki><translate><!--T:398--> ''title''</translate><nowiki>|noreplace}}</nowiki></code>
+|
+| <translate><!--T:93--> Format the {{<tvar name=3>ll|Display title</tvar>|display title}} of the current page, which is what is typically shown in a page's title header.</translate> <translate><!--T:505--> Unless <tvar name=1>{{ll|Manual:$wgRestrictDisplayTitle|$wgRestrictDisplayTitle}}</tvar> is set to <tvar name=2>{{phpi|false}}</tvar>, the value must be equivalent to the default title: only capitalization changes to certain parts of the title (not all) and replacing spaces with underscores are allowed.</translate> <translate><!--T:506--> It can be disabled or enabled by <tvar name=2>{{ll|Manual:$wgAllowDisplayTitle|$wgAllowDisplayTitle}}</tvar>.</translate>
+<translate><!--T:300--> It can take a second argument of ''noerror'' or ''noreplace'' to suppress error messages when multiple displaytitles are used on one page or to make this <tvar name=1><code>displaytitle</code></tvar> do nothing if a <tvar name=1><code>displaytitle</code></tvar> was already specified earlier in the page.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+
+{{MW version|version=1.24|compact=y|comment=and after|gerrit change=144870}}
+
+(<translate><!--T:299--> for noerror and noreplace</translate>)
+{{Table-AnchorRow|DEFAULTSORT|DEFAULTCATEGORYSORT|DEFAULTSORTKEY|Defaultsort}}
+|-
+| <code><nowiki>{{DEFAULTSORT:</nowiki>''<translate><!--T:263--> sortkey</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{DEFAULTSORTKEY:</nowiki>''<translate><!--T:447--> sortkey</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{DEFAULTCATEGORYSORT:</nowiki>''<translate><!--T:448--> sortkey</translate>''<nowiki>}}</nowiki></code> <br/><code><nowiki>{{DEFAULTSORT:</nowiki>''<translate><!--T:449--> sortkey</translate>''<nowiki>|noerror}}</nowiki></code> <br/><code><nowiki>{{DEFAULTSORT:</nowiki>''<translate><!--T:450--> sortkey</translate>''<nowiki>|noreplace}}</nowiki></code>
+|
+| <translate><!--T:94--> Used for categorizing pages, sets a default [[<tvar name=help-categories>Special:MyLanguage/Help:Categories</tvar>|category sort key]].</translate> <translate><!--T:411--> For example if you put <code><nowiki>{{DEFAULTSORT:</nowiki>Smith, John<nowiki>}}</nowiki></code> at the end of [[w:John Smith|John Smith]], the page would be sorted under "S" by default in categories.</translate> <translate><!--T:412--> It can take a second argument of ''noerror'' or ''noreplace'' to suppress error messages when multiple defaultsortkeys are used on one page or to make this <tvar name=sort2><code>defaultsort</code></tvar> do nothing if a <tvar name=sort3><code>defaultsort</code></tvar> was already specified earlier in the page.</translate>
+| {{MW version|version=1.10|compact=y|comment=and after}}
+
+{{MW version|version=1.19|compact=y|comment=and after|r=96767}}
+
+(<translate><!--T:95--> for noerror and noreplace</translate>)
+|}
+
+<translate>
+=== Localization variables === <!--T:533-->
+</translate>
+{| class="wikitable"
+! width="10%" | <translate><!--T:534--> Variable</translate>
+! width="15%" | <translate><!--T:535--> Output</translate>
+! <translate><!--T:536--> Description</translate>
+! width="10%" | <translate><!--T:537--> Versions</translate>
+
+|-
+| <code><nowiki>{{USERLANGUAGE}}</nowiki></code>
+| {{USERLANGUAGE}}
+| <translate><!--T:538--> User's language.</translate> <translate><!--T:549--> (Only if <tvar name=1>{{ll|Manual:$wgParserEnableUserLanguage|$wgParserEnableUserLanguage}}</tvar> is enabled; it is disabled by default but enabled on commons, meta, and incubator.)</translate><br>{{Note}}  <translate><!--T:551--> If <tvar name=1>$wgParserEnableUserLanguage</tvar> is disabled, the magic word will return the same result as <tvar name=2><code><nowiki>{{PAGELANGUAGE}}</nowiki></code></tvar>.</translate>
+| {{MW version|version=1.43|compact=y|comment=and after|gerrit change=508295}}
+|}
+
+<translate>
+=== Statistics === <!--T:96-->
+
+<!--T:97-->
+Numbers returned by these variables normally contain separators (commas, dots or spaces, depending on the local language) but can return raw numbers with the ":R" flag (for example, <tvar name=1><code><nowiki>{{NUMBEROFPAGES}}</nowiki></code></tvar> &rarr; <tvar name=2>{{NUMBEROFPAGES}}</tvar> and <tvar name=3><code><nowiki>{{NUMBEROFPAGES:R}}</nowiki></code></tvar> &rarr; <tvar name=4>{{NUMBEROFPAGES:R}}</tvar>).
+</translate>
+
+<translate><!--T:98--> Use "|R" for magic words that require a parameter like PAGESINCATEGORY (for example <tvar name=1><code><nowiki>{{PAGESINCATEGORY:Help}}</nowiki></code></tvar> and <tvar name=2><code><nowiki>{{PAGESINCATEGORY:Help|R}}</nowiki></code></tvar>, or <tvar name=3><code><nowiki>{{PAGESINCATEGORY:Help|subcats}}</nowiki></code></tvar> and <tvar name=4><code><nowiki>{{PAGESINCATEGORY:Help|subcats|R}}</nowiki></code></tvar>).</translate>
+<translate><!--T:472--> Also applicable to {{<tvar name=1>tmpl|0=<code>{{((}}PAGESIZE:$1{{))}}</code></tvar>|''page name''}} hereinbefore.</translate>
+
+<translate>
+<!--T:99-->
+The number magic words are formatted in the wiki content language. Since <tvar name=2>{{rev|94680|1.19}}</tvar>, it depends on the [[<tvar name=1>Special:MyLanguage/Manual:Language#page-content-lang</tvar>|page content language]].
+</translate>
+
+{| class="wikitable"
+|-
+! width="10%" | <translate><!--T:100--> Variable</translate>
+! width="10%" | <translate><!--T:101--> Output</translate>
+! <translate><!--T:102--> Description</translate>
+! width="10%" | <translate><!--T:103--> Versions</translate>
+{{Table-AnchorRow|NUMBEROFPAGES}}
+|-
+| <code><nowiki>{{NUMBEROFPAGES}}</nowiki></code>
+| {{NUMBEROFPAGES}}
+| <translate><!--T:104--> Number of wiki pages.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|NUMBEROFARTICLES}}
+|-
+| <code><nowiki>{{NUMBEROFARTICLES}}</nowiki></code>
+| {{NUMBEROFARTICLES}}
+| <translate><!--T:105--> Number of pages in {{<tvar name=1>ll|Manual:Using custom namespaces#content-ns</tvar>|content namespaces}} that qualify as articles.</translate> <translate><!--T:390--> See <tvar name=1>{{ll|Manual:$wgArticleCountMethod}}</tvar> for details.</translate>
+|
+{{Table-AnchorRow|NUMBEROFFILES}}
+|-
+| <code><nowiki>{{NUMBEROFFILES}}</nowiki></code>
+| {{NUMBEROFFILES}}
+| <translate><!--T:106--> Number of uploaded files.</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+{{Table-AnchorRow|NUMBEROFEDITS}}
+|-
+| <code><nowiki>{{NUMBEROFEDITS}}</nowiki></code>
+| {{NUMBEROFEDITS}}
+| <translate><!--T:107--> Number of wiki edits.</translate>
+| {{MW version|version=1.10|compact=y|comment=and after|r=21319}}
+{{Table-AnchorRow|NUMBEROFVIEWS}}
+|-
+| <code>{{del|<nowiki>{{NUMBEROFVIEWS}}</nowiki>}}</code>
+|
+| {{del|1=<translate><!--T:108--> Number of page views. Usually useless on a wiki using [[<tvar name=1>Special:MyLanguage/Manual:Cache</tvar>|caching]].</translate>}} <small><translate><!--T:303--> Removed in <tvar name=gerrit>{{gerrit|150699}}</tvar>.</translate></small>
+| {{MW version|version=1.14|compact=y|version2=1.24|r=42721}}
+{{Table-AnchorRow|NUMBEROFUSERS}}
+|-
+| <code><nowiki>{{NUMBEROFUSERS}}</nowiki></code>
+| {{NUMBEROFUSERS}}
+| <translate><!--T:109--> Number of registered users.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|NUMBEROFADMINS}}
+|-
+| <code><nowiki>{{NUMBEROFADMINS}}</nowiki></code>
+| {{NUMBEROFADMINS}}
+| <translate><!--T:110--> Number of users in the ''sysop'' {{<tvar name=1>ll|Manual:User rights</tvar>|group}}.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|NUMBEROFACTIVEUSERS}}
+|-
+| <code><nowiki>{{NUMBEROFACTIVEUSERS}}</nowiki></code>
+| {{NUMBEROFACTIVEUSERS}}
+| <translate><!--T:111--> Number of active users, based on the criteria used in <tvar name=1>[[Special:Statistics]]</tvar>.</translate>
+| {{MW version|version=1.15|compact=y|comment=and after|r=47392}}
+{{Table-AnchorRow|PAGESINCATEGORY|PAGESINCAT}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{PAGESINCATEGORY:</nowiki>''<translate><!--T:464--> categoryname</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{PAGESINCAT:</nowiki>''<translate><!--T:465--> categoryname</translate>''<nowiki>}}</nowiki></code>
+| {{PAGESINCATEGORY:Help}} <br />{{PAGESINCAT:Help}}
+| '''[<translate><!--T:327--> Expensive</translate>]''' <translate><!--T:112--> Number of pages (including subcategories and files) in the given [[<tvar name=help-categories>Special:MyLanguage/Help:Categories</tvar>|category]]. <small>(<tvar name=1>{{ll|Category:Help}}</tvar> used for demonstration)</small></translate>
+| {{MW version|version=1.13|compact=y|comment=and after|r=32932}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{PAGESINCATEGORY:</nowiki>''<translate><!--T:264--> categoryname</translate>''<nowiki>|all}}</nowiki></code> <br /><code><nowiki>{{PAGESINCATEGORY:</nowiki>''<translate><!--T:451--> categoryname</translate>''<nowiki>|pages}}</nowiki></code> <br /><code><nowiki>{{PAGESINCATEGORY:</nowiki>''<translate><!--T:452--> categoryname</translate>''<nowiki>|subcats}}</nowiki></code> <br /><code><nowiki>{{PAGESINCATEGORY:</nowiki>''<translate><!--T:453--> categoryname</translate>''<nowiki>|files}}</nowiki></code>
+| {{PAGESINCATEGORY:Help|all}} <br />{{PAGESINCATEGORY:Help|pages}} <br />{{PAGESINCATEGORY:Help|subcats}} <br />{{PAGESINCATEGORY:Help|files}}
+| '''[<translate><!--T:328--> Expensive</translate>]''' <translate><!--T:113-->
+Respectively, the number of
+* all pages
+* ordinary pages (excluding subcategories and files)
+* subcategories or
+* files
+in the given [[<tvar name=help-categories>Special:MyLanguage/Help:Categories</tvar>|category]]. <small>(<tvar name=1>{{ll|Category:Help}}</tvar> used for demonstration)</small></translate>
+| {{MW version|version=1.20|compact=y|comment=and after|gerrit change=12790}}
+{{Table-AnchorRow|NUMBERINGROUP|NUMINGROUP}}
+|-
+| <code><nowiki>{{NUMBERINGROUP:</nowiki><translate><!--T:265--> ''groupname''</translate><nowiki>}}</nowiki></code> <br /><code><nowiki>{{NUMINGROUP:</nowiki><translate><!--T:426--> ''groupname''</translate><nowiki>}}</nowiki></code>
+| {{NUMBERINGROUP:bureaucrat}} <br />{{NUMINGROUP:bureaucrat}}
+| <translate><!--T:114--> Number of users in a specific {{<tvar name=1>ll|Manual:User rights</tvar>|group}}.</translate> <small>(<translate><!--T:400--> <tvar name=1>bureaucrat</tvar> used for demonstration</translate>)</small>
+| {{MW version|version=1.14|compact=y|comment=and after|r=40116}}
+{{Table-AnchorRow|PAGESINNS|PAGESINNAMESPACE}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{PAGESINNS:</nowiki><translate><!--T:266--> ''index''</translate><nowiki>}}</nowiki></code> <br /><code><nowiki>{{PAGESINNAMESPACE:</nowiki><translate><!--T:427--> ''index''</translate><nowiki>}}</nowiki></code>
+| <translate><!--T:115--> ''Not enabled''</translate>
+| '''[<translate><!--T:329--> Expensive</translate>]''' <translate><!--T:116--> Number of pages in the given [[<tvar name=1>Special:MyLanguage/Help:Namespaces</tvar>|namespace]] (replace ''index'' with the relevant [[<tvar name=2>Special:MyLanguage/Manual:Namespace</tvar>|namespace index]]).</translate> <translate><!--T:404--> For instance, <tvar name=1><code><nowiki>{{PAGESINNAMESPACE:</nowiki>''14''<nowiki>}}</nowiki></code></tvar> will output the number of category pages. <tvar name=2><code><nowiki>{{PAGESINNS:0}}</nowiki></code></tvar> differs from <tvar name=3><code><nowiki>{{NUMBEROFARTICLES}}</nowiki></code></tvar> in that the former includes redirects and disambiguation pages.</translate> <translate><!--T:405--> Disabled by default, enable with <tvar name=1>{{ll|Manual:$wgAllowSlowParserFunctions|$wgAllowSlowParserFunctions}}</tvar>.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+|}
+
+{{Anchor|Page-names}}
+<translate>
+=== Page names === <!--T:117-->
+</translate>
+
+{| class="wikitable"
+|-
+! width="10%" | <translate><!--T:118--> Variable</translate>
+! width="10%" | <translate><!--T:119--> For current page</translate>
+! <translate><!--T:120--> Description</translate>
+! width="10%" | <translate><!--T:121--> Versions</translate>
+{{Table-AnchorRow|FULLPAGENAME|fullpagename}}
+|-
+| <code><nowiki>{{FULLPAGENAME}}</nowiki></code>
+| {{FULLPAGENAME}}
+| <translate><!--T:122--> Namespace and full page name (including all subpage levels).</translate>
+| {{MW version|version=1.6|compact=y|comment=and after}}
+{{Table-AnchorRow|PAGENAME|pagename}}
+|-
+| <code><nowiki>{{PAGENAME}}</nowiki></code>
+| {{PAGENAME}}
+| <translate><!--T:123--> The page name, including all subpage levels, but without the namespace.</translate>
+|
+{{Table-AnchorRow|BASEPAGENAME|basepagename}}
+|-
+| <code><nowiki>{{BASEPAGENAME}}</nowiki></code>
+| {{BASEPAGENAME}}
+| <translate><!--T:124--> Page name of the page in the immediately superior [[<tvar name=help-subpages>Special:MyLanguage/Help:Subpages</tvar>|subpage]] level without the namespace.</translate> <translate><!--T:401--> Would return <tvar name=foo><code>Title/Foo</code></tvar> on page <tvar name=baz><code>Help:Title/Foo/Bar</code></tvar>.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|ROOTPAGENAME|rootpagename}}
+|-
+| <code><nowiki>{{ROOTPAGENAME}}</nowiki></code>
+| {{ROOTPAGENAME}}
+| <translate><!--T:301--> Name of the root of the current page.</translate> <translate><!--T:302--> Would return <tvar name=foo><code>Title</code></tvar> on page <tvar name=baz><code>Help:Title/Foo/Bar</code></tvar>.</translate>
+| {{MW version|version=1.22|compact=y|comment=and after}}
+{{Table-AnchorRow|SUBPAGENAME|subpagename}}
+|-
+| <code><nowiki>{{SUBPAGENAME}}</nowiki></code>
+| {{SUBPAGENAME}}
+| <translate><!--T:125--> The [[<tvar name=help-subpages>Special:MyLanguage/Help:Subpages</tvar>|subpage]] title.</translate> <translate><!--T:402--> Would return <tvar name=foo><code>Bar</code></tvar> on page <tvar name=baz><code>Help:Title/Foo/Bar</code></tvar>.</translate>
+
+<translate>
+<!--T:403-->
+If no subpage exists, the value of <tvar name=code><code><nowiki>{{PAGENAME}}</nowiki></code></tvar> is returned.
+
+<!--T:260-->
+For more complex splitting, use <tvar name=help-ext-pf-titleparts><code><nowiki>{{</nowiki>[[Special:MyLanguage/Help:Extension:ParserFunctions#.23titleparts|#titleparts:]]<nowiki>}}</nowiki></code></tvar> from the [[<tvar name=help-ext-pf>Special:MyLanguage/Help:Extension:ParserFunctions</tvar>|ParserFunctions extension]].
+</translate>
+|{{MW version|version=1.6|compact=y|comment=and after}}
+{{Table-AnchorRow|SUBJECTPAGENAME|ARTICLEPAGENAME|subjectpagename|articlepagename}}
+|-
+| <code><nowiki>{{SUBJECTPAGENAME}}</nowiki></code> <br/><code><nowiki>{{ARTICLEPAGENAME}}</nowiki></code>
+| {{SUBJECTPAGENAME}}<br/>{{ARTICLEPAGENAME}}
+| <translate><!--T:126--> Full page name of the associated subject (e.g. article or file). Useful on talk pages.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|TALKPAGENAME|talkpagename}}
+|-
+| <code><nowiki>{{TALKPAGENAME}}</nowiki></code>
+| {{TALKPAGENAME}}
+| <translate><!--T:127--> Full page name of the associated talk page.</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+|}
+
+<translate>
+<!--T:366-->
+None of these are affected by changes to the display title using <tvar name=1><code><nowiki>{{DISPLAYTITLE:xxxx}}</nowiki></code></tvar>; the values returned are the original page title.
+
+<!--T:128-->
+The <tvar name=basepagename><code><nowiki>{{BASEPAGENAME}}</nowiki></code></tvar> and <tvar name=subpagename><code><nowiki>{{SUBPAGENAME}}</nowiki></code></tvar> magic words only work in namespaces that have subpages enabled. See <tvar name=1>{{ll|Manual:$wgNamespacesWithSubpages|$wgNamespacesWithSubpages}}</tvar> for information on enabling subpages.
+</translate>
+
+{{introduced-inline|[[rev:46662|1.15+]]}}
+<translate><!--T:129--> These can all take a parameter, allowing specification of the page to be operated on, instead of just the current page:</translate>
+
+* {{demo inline|<nowiki>{{PAGENAME:Template:Main Page}}</nowiki>}}
+
+{{Warning|1=
+<translate><!--T:580--> The magic word is not compatible with {{<tvar name=3>ll|Help:Links#Using relative links</tvar>|relative page titles}} (i.e. links to subpages or base pages using the <tvar name=1><code>/foo</code></tvar> or <tvar name=2><code>../bar</code></tvar> formats).</translate>
+: {{demo inline|<nowiki>{{PAGENAME:/foo}}</nowiki>}} - <small><translate><!--T:569--> Refers to the literal page <tvar name=1>[[:/foo]]</tvar></translate></small>
+: {{demo inline|<nowiki>{{PAGENAME:../bar}}</nowiki>}} - <small><translate><!--T:355--> Nothing is returned.</translate></small>
+}}
+
+{{Warning|1=<translate><!--T:130--> Page titles containing certain characters, such as apostrophes <code>'</code> or asterisks <code>*</code>, may produce unexpected results when handled with these magic words, e.g. <tvar name=pic><code><nowiki>{{PAGESINCATEGORY:{{PAGENAME}}}}</nowiki></code></tvar>. See bugs <tvar name=1>[[phabricator:T16779|T16779]], [[phabricator:T18474|T18474]], [[phabricator:T37628|T37628]], [[phabricator:T37746|T37746]]</tvar>. One simple way to fix this is wrapping the pagename in <tvar name=titleparts><code><nowiki>{{</nowiki>[[Special:MyLanguage/Help:Extension:ParserFunctions#.23titleparts|#titleparts:]]<nowiki>}}</nowiki></code></tvar> from the [[<tvar name=help-ext-pf>Special:MyLanguage/Help:Extension:ParserFunctions</tvar>|ParserFunctions extension]].</translate>
+}}
+
+<translate>
+==== URL encoded page names ==== <!--T:133-->
+
+<!--T:134-->
+The following are equivalents encoded for use in MediaWiki URLs (i.e. spaces replaced with underscores and some characters [[w:Numeric character reference|HTML escaped using numeric character encoding]]):
+</translate>
+
+{{anchor|FULPAGENAMEE|PAGENAMEE|BASEPAGENAMEE|SUBPAGENAMEE|SUBJECTPAGENAMEE|ARTICLEPAGENAMEE|TALKPAGENAMEE|ROOTPAGENAMEE}}
+* <code><nowiki>{{FULLPAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{PAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{BASEPAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{SUBPAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{SUBJECTPAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{ARTICLEPAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{TALKPAGENAMEE}}</nowiki></code>
+* <code><nowiki>{{ROOTPAGENAMEE}}</nowiki></code>
+
+<translate><!--T:135--> Note that <tvar name=pagename><code><nowiki>{{PAGENAME:...}}</nowiki></code></tvar>, <tvar name=pagenamee><code><nowiki>{{PAGENAMEE:...}}</nowiki></code></tvar> and <tvar name=uec><code><nowiki>{{urlencode:...}}</nowiki></code></tvar> have distinct implementations.</translate>
+<translate><!--T:459--> See <tvar name=1>{{ll|Manual:PAGENAMEE encoding}}</tvar> for details.</translate>
+
+<translate>
+=== Namespaces === <!--T:136-->
+</translate>
+
+{| class="wikitable"
+|-
+! <translate><!--T:137--> Variable</translate>
+! <translate><!--T:138--> Output</translate>
+! <translate><!--T:139--> Description</translate>
+! <translate><!--T:140--> Versions</translate>
+|- id="NAMESPACE"
+| <code><nowiki>{{NAMESPACE}}</nowiki></code>
+| {{NAMESPACE}}
+| <translate><!--T:141--> Name of the page's namespace</translate> <translate><!--T:478--> (except for main space)</translate>
+|
+|- id="NAMESPACENUMBER"
+| <code><nowiki>{{NAMESPACENUMBER}}</nowiki></code>
+| {{NAMESPACENUMBER}}
+| <translate><!--T:142--> [[<tvar name=1>Special:MyLanguage/Manual:Namespace#Built-in_namespaces</tvar>|ID]] of the page's namespace</translate>
+| {{MW version|version=1.20|compact=y|comment=and after|gerrit change=4056}}
+|- id="SUBJECTSPACE"
+| <code><nowiki>{{SUBJECTSPACE}}</nowiki></code> <br /><code><nowiki>{{ARTICLESPACE}}</nowiki></code>
+| {{SUBJECTSPACE}} <br />{{ARTICLESPACE}}
+| <translate><!--T:143--> Name of the associated content namespace</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+|- id="TALKSPACE"
+| <code><nowiki>{{TALKSPACE}}</nowiki></code>
+| {{TALKSPACE}}
+| <translate><!--T:144--> Name of the associated talk namespace</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+|}
+
+<translate>
+<!--T:145-->
+The following are equivalents encoded for use in MediaWiki URLs (spaces replaced with underscores and some characters percent-encoded):
+</translate>
+
+* <code><nowiki>{{NAMESPACEE}}</nowiki></code>
+* <code><nowiki>{{SUBJECTSPACEE}}</nowiki></code>
+* <code><nowiki>{{ARTICLESPACEE}}</nowiki></code>
+* <code><nowiki>{{TALKSPACEE}}</nowiki></code>
+
+<translate>
+<!--T:146-->
+As of <tvar name=1>[[rev:46630|1.15+]]</tvar>, these can take a full-page-name parameter and will return the requested namespace associated with that page, instead of with the current page:
+</translate>
+
+* <code><nowiki>{{NAMESPACENUMBER:Main Page}}</nowiki></code> &rarr; '''{{NAMESPACENUMBER:Main Page}}'''
+* <code><nowiki>{{NAMESPACE:Main Page}}</nowiki></code> &rarr; '''{{NAMESPACE:Main Page}} ''(<translate><!--T:508--> Pages in main space will return empty</translate>)'''''
+* <code><nowiki>{{NAMESPACE:Template:Main Page}}</nowiki></code> &rarr; '''{{NAMESPACE:Template:Main Page}}'''
+* <code><nowiki>{{SUBJECTSPACE:Template talk:Main Page}}</nowiki></code> &rarr; '''{{SUBJECTSPACE:Template talk:Main Page}}'''
+* <code><nowiki>{{ARTICLESPACE:Template talk:Main Page}}</nowiki></code> &rarr; '''{{ARTICLESPACE:Template talk:Main Page}}'''
+* <code><nowiki>{{TALKSPACE:Template:Main Page}}</nowiki></code> &rarr; '''{{TALKSPACE:Template:Main Page}}'''
+<translate><!--T:147--> Parameter must not be a namespace name:</translate>
+* <code><nowiki>{{SUBJECTSPACE:Help talk}}</nowiki></code> &rarr; '''{{SUBJECTSPACE:Help talk}} ''(<translate><!--T:532--> Empty</translate>)'''''
+
+<translate>
+== Escaped characters == <!--T:541-->
+</translate>
+<translate><!--T:552--> MediaWiki interprets certain characters as markup separators in certain contexts, notably:</translate>
+
+* <translate><!--T:553--> template invocations</translate>
+* <translate><!--T:554--> tables</translate>
+* <translate><!--T:555--> function calls.</translate>
+
+{{tmpl|0=<translate><!--T:556--> To prevent an immediate interpretation (so that the character can be displayed literally or later interpreted as a separator), $1 such as <tvar name=2><syntaxhighlight lang="wikitext" inline>{{!}}</syntaxhighlight></tvar> can be used as an escape sequence, but only the following characters (replacements) are supported.</translate>
+|1=<span class="mw-highlight">{{((}}{{#tag:span|<translate nowrap><!--T:587--> character</translate>|class=nt}}{{))}}</span>
+}}
+<translate><!--T:557--> This form can be clearer or at least shorter than using the equivalent <tvar name=1>{{ll|Help:Advanced editing#Reformatting and/or disabling wikitext interpretation|<syntaxhighlight lang="mediawiki" inline><nowiki>character</nowiki></syntaxhighlight>}}</tvar>.</translate>
+
+{| class="wikitable"
+|-
+! <translate><!--T:540--> Syntax</translate>
+! <translate><!--T:295--> Output</translate>
+! <translate><!--T:296--> Description</translate>
+! <translate><!--T:297--> Versions</translate>
+{{Table-AnchorRow|PIPE|Pipe|pipe|&#x7C;|.7C|!|.21|&#x7B;&#x7B;!&#x7D;&#x7D;|.7B.7B.21.7D.7D}}
+|-
+| <syntaxhighlight lang="mediawiki" inline>{{!}}</syntaxhighlight>
+|style="text-align:center;"| {{samp|{{!}}}}
+|
+<translate><!--T:298--> Used to include a [[w:vertical bar|vertical bar]] (pipe).</translate>
+{{Note|type=warn|text=<translate><!--T:542--> For historical and technical reasons, this function is not considered an actual escape sequence. Instead of using the vertical bar, the syntax employs an exclamation mark, which visually resembles a vertical bar. See [[<tvar name=1>Special:MyLanguage/Help:Extension:ParserFunctions#In tables</tvar>|Help:Extension:ParserFunctions#Escaping pipe characters in tables]] for additional details.</translate>}}
+
+<translate><!--T:543--> Before this capability was introduced as a magic word, many wikis achieved this effect by creating a template (<tvar name=1>[[Template:!]]</tvar>) that simply returned <tvar name=2><syntaxhighlight lang="mediawiki" inline>|</syntaxhighlight></tvar> as its content.</translate>
+| {{MW version|version=1.24|compact=y|comment=and after|gerrit change=136234}}
+{{Table-AnchorRow|&#x3D;|.3D|&#x7B;&#x7B;&#x3D;&#x7D;&#x7D;|.7B.7B.3D.7D.7D}}
+|-
+| <syntaxhighlight lang="mediawiki" inline>{{=}}</syntaxhighlight>
+|style="text-align:center;"| {{samp|{{=}}}}
+|
+<translate><!--T:473--> Used to include an equal sign.</translate>
+
+<translate><!--T:475--> See [[<tvar name=1>Special:MyLanguage/Help:Extension:ParserFunctions#Raw equal signs</tvar>|Help:Extension:ParserFunctions#Raw equal signs]] for further explanation.</translate>
+
+<translate><!--T:474--> Before this was added as a magic word, many wikis implemented this by creating <tvar name=1>[[Template:=]]</tvar> with <tvar name=2><syntaxhighlight lang="mediawiki" inline>=</syntaxhighlight></tvar> as the content.</translate>
+| {{MW version|version=1.39|compact=y|comment=and after|gerrit change=791685}}
+|}
+
+<translate>
+== Parser functions == <!--T:148-->
+
+<!--T:149-->
+<tvar name=1>{{ll|Parser functions}}</tvar> are very similar to variables but take one or more parameters (technically, any magic word that takes a parameter is a parser function), and the name is sometimes prefixed with a [[w:Number sign|hash]] to distinguish them from templates.
+
+<!--T:150-->
+This page only describes parser functions that are integral to the MediaWiki software. Other parser functions may be added by MediaWiki extensions such as the <tvar name=ext-pf>{{ll|Extension:ParserFunctions}}</tvar>. For those see <tvar name=help-ext-pf>{{ll|Help:Extension:ParserFunctions}}</tvar>.
+
+=== Technical metadata of another page === <!--T:151-->
+</translate>
+
+{| class="wikitable"
+|-
+! width="15%" | <translate><!--T:152--> Parser function</translate>
+! width="10%" | <translate><!--T:153--> Output<br />(for page <tvar name=1>[[MediaWiki]]</tvar>)</translate>
+! <translate><!--T:154--> Description</translate>
+! width="10%" | <translate><!--T:155--> Versions</translate>
+{{Table-AnchorRow|PAGEID:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{PAGEID: </nowiki><translate><!--T:267--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{PAGEID: MediaWiki }}
+| '''[<translate><!--T:330--> Expensive</translate>]''' <translate><!--T:156--> Returns the page identifier of the specified page*.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|PAGESIZE|PAGESIZE:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{PAGESIZE:</nowiki>''<translate><!--T:367--> page name</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{PAGESIZE: </nowiki>''<translate><!--T:368--> page name</translate>''<nowiki> |R}}</nowiki></code>
+| {{PAGESIZE: Help:Magic_words }} <br />{{PAGESIZE: Help:Magic_words |R}}
+| '''[<translate><!--T:331--> Expensive</translate>]''' <translate><!--T:157--> Returns the byte size of the specified page. Use "<tvar name=r><code><nowiki>|R</nowiki></code></tvar>" to get raw (unformatted) numbers.</translate>
+| {{MW version|version=1.13|compact=y|comment=and after|r=33551}}
+{{Table-AnchorRow|PROTECTIONLEVEL:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{</nowiki>PROTECTIONLEVEL:''<translate><!--T:269--> action</translate>'' &#124; ''<translate><!--T:270--> page name</translate>''}}</code>
+| {{PROTECTIONLEVEL: edit | MediaWiki }}
+| '''[<translate><!--T:332--> Expensive</translate>]''' <translate><!--T:158--> Outputs the protection level (e.g. <tvar name=1><code>autoconfirmed</code>, <code>sysop</code></tvar>) for a given action (e.g. <tvar name=2><code>edit</code>, <code>move</code></tvar>) on the specified page.</translate> <translate><!--T:565--> Returns an empty string if not protected.</translate>
+| {{MW version|version=1.21|compact=y|comment=and after|r=44683}}
+{{Table-AnchorRow|PROTECTIONEXPIRY:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{</nowiki>PROTECTIONEXPIRY: ''<translate><!--T:466--> action</translate>'' &#124; ''<translate><!--T:467--> page name</translate>''}}</code>
+| {{PROTECTIONEXPIRY: edit | MediaWiki }}
+| '''[<translate><!--T:363--> Expensive</translate>]''' <translate><!--T:369--> Outputs the protection expiry (e.g. "<tvar name=1>20160418155030</tvar>", "infinity") for a given action (e.g. "edit", "move") on the specified page.</translate> <translate><!--T:370--> Returns "infinity" if not protected.</translate>
+| {{MW version|version=1.27|compact=y|comment=and after|gerrit change=255717}}
+{{Table-AnchorRow|CASCADINGSOURCES:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{CASCADINGSOURCES:</nowiki> ''page name''<nowiki>}}</nowiki></code>
+| <!-- Leave this empty. -->
+| '''[<translate><!--T:333--> Expensive</translate>]''' <translate><!--T:292--> Returns the sources of any cascading protection acting on the specified page. Pages will not return their own title unless they transclude themselves.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=104999}}
+{{Table-AnchorRow|REVISIONID:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONID: </nowiki><translate><!--T:271--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONID: MediaWiki }}
+| '''[<translate><!--T:334--> Expensive</translate>]''' <translate><!--T:160--> Unique revision ID of the last revision on the specified page*.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONDAY:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONDAY: </nowiki><translate><!--T:272--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONDAY: MediaWiki }}
+| '''[<translate><!--T:335--> Expensive</translate>]''' <translate><!--T:161--> Day of edit from the last revision of the specified page* (unpadded number).</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONDAY2:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONDAY2: </nowiki><translate><!--T:273--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONDAY2: MediaWiki }}
+| '''[<translate><!--T:336--> Expensive</translate>]''' <translate><!--T:162--> Day of edit from the last revision of the specified page* (zero-padded number).</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONMONTH:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONMONTH: </nowiki><translate><!--T:274--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONMONTH: MediaWiki }}
+| '''[<translate><!--T:337--> Expensive</translate>]''' <translate><!--T:163--> Month of edit from the last revision of the specified page* (zero-padded number as of <tvar name=1>[[rev:66200|1.17+]]</tvar>, unpadded number in prior versions).</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONMONTH1:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONMONTH1: </nowiki><translate><!--T:275--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONMONTH1: MediaWiki }}
+| '''[<translate><!--T:338--> Expensive</translate>]''' <translate><!--T:164--> Month of edit from the last revision of the specified page* (unpadded number).</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONYEAR:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONYEAR: </nowiki><translate><!--T:276--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONYEAR: MediaWiki }}
+| '''[<translate><!--T:339--> Expensive</translate>]''' <translate><!--T:165--> Year of edit from the last revision of the specified page*.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONTIMESTAMP:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONTIMESTAMP: </nowiki><translate><!--T:277--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONTIMESTAMP: MediaWiki }}
+| '''[<translate><!--T:340--> Expensive</translate>]''' <translate><!--T:166--> Timestamp as of time of edit on the specified page*.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|REVISIONUSER:}}
+|- style="color:var(--color-base, #202122); background:var(--background-color-warning-subtle, #fdf2d5)"
+| <code><nowiki>{{REVISIONUSER: </nowiki><translate><!--T:278--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{REVISIONUSER: MediaWiki }}
+| '''[<translate><!--T:341--> Expensive</translate>]''' <translate><!--T:167--> The username from the last revision on the specified page*.</translate>
+| {{MW version|version=1.23|compact=y|comment=and after|gerrit change=76534}}
+{{Table-AnchorRow|contentmodel|#contentmodel|.23contentmodel}}
+|-
+|-
+| <code><nowiki>{{#contentmodel:</nowiki>canonical<nowiki>|</nowiki> <translate><!--T:595--> ''page name''</translate><nowiki> }}</nowiki></code>
+<code><nowiki>{{#contentmodel:</nowiki>local<nowiki>|</nowiki> <translate><!--T:596--> ''page name''</translate><nowiki> }}</nowiki></code>
+| {{#contentmodel: canonical | MediaWiki }}
+{{#contentmodel: local | MediaWiki }}
+| <translate><!--T:597--> The canonical or localised name of the content model of the specified page.</translate>
+| {{MW version|version=1.45|compact=y|comment=and after|gerrit change=1094385}}
+|-
+| colspan="4" | <translate>
+<!--T:168-->
+*When the given param is equal to the current title of the parser, the parser function will yield the previous versions on preview and on substitution, that includes empty strings when used on page creation but using the values from the viewed version for page view, including viewing old revisions. In this case it is a non-expensive parser function.
+</translate>
+|}
+
+<translate>
+=== URL data === <!--T:169-->
+</translate>
+{| class="wikitable"
+|-
+! scope="col" | <translate><!--T:170--> Parser function</translate>
+! scope="col" | <translate><!--T:171--> Input → Output</translate>
+! scope="col" | <translate><!--T:172--> Description</translate>
+! scope="col" | <translate><!--T:173--> Versions</translate>
+{{Table-AnchorRow|localurl|LOCALURL}}
+|-
+| <code><nowiki>{{localurl:</nowiki>''<translate><!--T:371--> page name</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{localurl:</nowiki>''<translate><!--T:372--> page name</translate>''<br /><nowiki>|</nowiki>''<translate><!--T:373--> query_string</translate>''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{localurl:MediaWiki}}</nowiki></code><br />→ {{localurl:MediaWiki}} <br /><code><nowiki>{{localurl:MediaWiki|printable=yes}}</nowiki></code><br />→ {{localurl:MediaWiki|printable=yes}}
+| <translate><!--T:174--> The relative path to the title. </translate>
+|
+{{Table-AnchorRow|fullurl|FULLURL}}
+|-
+| <code><nowiki>{{fullurl:</nowiki>''<translate><!--T:374--> page name</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{fullurl:</nowiki>''<translate><!--T:375--> page name</translate>''<br /><nowiki>|</nowiki>''<translate><!--T:376--> query_string</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{fullurl:</nowiki>''<translate><!--T:377--> interwiki:remote page name</translate>''<br /><nowiki>|</nowiki>''<translate><!--T:378--> query_string</translate>''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{fullurl:Category:Top level}}</nowiki></code><br />→ {{fullurl:Category:Top level}} <br />
+<code><nowiki>{{fullurl:Category:Top level|action=edit}}</nowiki></code><br />→ {{fullurl:Category:Top level|action=edit}}<br />
+<code><nowiki>{{fullurl:s:Electra|action=edit}}</nowiki></code><br />→ {{fullurl:s:Electra|action=edit}}<br />
+<code><nowiki>{{fullurl:s:es:Electra|action=edit}}</nowiki></code><br />→ {{fullurl:s:es:Electra|action=edit}}
+| <translate><!--T:175--> A protocol-relative path to the title, which depends on the <tvar name=1>{{ll|Manual:$wgServer|$wgServer}}</tvar> configuration setting for the local wiki (and so may or may not start with <tvar name=prefix><code>http(s)://</code></tvar>). This will also resolve [[<tvar name=2>Special:MyLanguage/Manual:Interwiki</tvar>|interwiki]] prefixes. '''Note:''' Unbracketed (plain) protocol-relative links are not automagically linked.</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+{{Table-AnchorRow|canonicalurl|CANONICALURL}}
+|-
+| <code><nowiki>{{canonicalurl:</nowiki>''<translate><!--T:379--> page name</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{canonicalurl:</nowiki>''<translate><!--T:380--> page name</translate>''<br /><nowiki>|</nowiki>''<translate><!--T:381--> query_string</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{canonicalurl:</nowiki>''<translate><!--T:382--> interwiki:remote page name</translate>''<br /><nowiki>|</nowiki>''<translate><!--T:383--> query_string</translate>''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{canonicalurl:Category:Top level}}</nowiki></code><br />→ {{canonicalurl:Category:Top level}} <br />
+<code><nowiki>{{canonicalurl:Category:Top level|action=edit}}</nowiki></code><br />→ {{canonicalurl:Category:Top level|action=edit}}
+<code><nowiki>{{canonicalurl:w:Category:Top level|action=edit}}</nowiki></code><br />→
+{{canonicalurl:w:Category:Top level|action=edit}}
+| <translate><!--T:176--> The absolute path to the title, using the canonical URL. This will also resolve [[<tvar name=1>Special:MyLanguage/Manual:Interwiki</tvar>|interwiki]] prefixes.</translate>
+| {{MW version|version=1.18|compact=y|comment=and after}}
+{{Table-AnchorRow|filepath|FILEPATH}}
+|-
+| <code><nowiki>{{filepath:</nowiki>''<translate><!--T:384--> file name</translate>''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{filepath:</nowiki>''<translate><!--T:385--> file name</translate>''<nowiki>|nowiki}}</nowiki></code> <br /><code><nowiki>{{filepath:</nowiki>''<translate><!--T:386--> file name</translate>''<nowiki>|</nowiki>''<translate><!--T:387--> thumbnail_size</translate>''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{filepath:Wiki.png}}</nowiki></code><br />→ {{filepath:Wiki.png}} <br />
+<code><nowiki>{{filepath:Wiki.png|nowiki}}</nowiki></code><br />→ {{filepath:Wiki.png|nowiki}} <br />
+<code><nowiki>{{filepath:Example.svg|300}}</nowiki></code><br />→ {{filepath:Example.svg|300}} <br /><br />
+<translate><!--T:490--> The parameter <tvar name="1"><code>nowiki</code></tvar> usually removes the link around the filepath (which can't be seen in this example).</translate>
+| <translate><!--T:177--> A protocol-relative path to the full size or thumbnail (<tvar name=1>[[rev:80813|1.18+]]</tvar>) of a media file.</translate>
+| {{MW version|version=1.12|compact=y|comment=and after|r=25854}} <br />{{MW version|version=1.18|compact=y|comment=and after|r=80813}}
+{{Table-AnchorRow|urlencode|URLENCODE}}
+|-
+| <code><nowiki>{{urlencode:</nowiki><translate><!--T:283--> ''string''</translate><nowiki>}}</nowiki></code> <translate><!--T:432--> or</translate> <br /><code><nowiki>{{urlencode:</nowiki><translate><!--T:433--> ''string''</translate><nowiki>|QUERY}}</nowiki></code> <br /><code><nowiki>{{urlencode:</nowiki><translate><!--T:434--> ''string''</translate><nowiki>|WIKI}}</nowiki></code> <br /><code><nowiki>{{urlencode:</nowiki><translate><!--T:435--> ''string''</translate><nowiki>|PATH}}</nowiki></code>
+| <code><nowiki>{{urlencode:x:y/z á é}}</nowiki></code> <translate><!--T:436--> or</translate> <br /><code><nowiki>{{urlencode:x:y/z á é|QUERY}}</nowiki></code><br />→ {{urlencode:x:y/z á é}} <br /><code><nowiki>{{urlencode:x:y/z á é|WIKI}}</nowiki></code><br />→ {{urlencode:x:y/z á é|WIKI}} <br /><code><nowiki>{{urlencode:x:y/z á é|PATH}}</nowiki></code><br />→ {{urlencode:x:y/z á é|PATH}}
+<translate><!--T:178--> Note that the default changed from <tvar name=wiki><code>|WIKI</code></tvar> to <tvar name=query><code>|QUERY</code></tvar> in 1.17; this may break templates that rely on this function.</translate>
+| <translate><!--T:179--> The input encoded for use in URLs.</translate> <translate><!--T:562--> See <tvar name=1>{{ll|Manual:PAGENAMEE_encoding#Encodings_compared}}</tvar> for the differences.</translate> <translate><!--T:563--> Note that there is no urldecode function like there is in the obsolete <tvar name=ext-stringfunctions>{{ll|Extension:StringFunctions}}</tvar></translate><br /><table class="wikitable">
+<caption><translate><!--T:305--> Encoding</translate></caption>
+<tr><th><translate><!--T:306--> code</translate></th><th><translate><!--T:307--> space</translate></th></tr>
+<tr><td>''<translate><!--T:564--> none</translate>''</td><td><samp>+</samp></td></tr>
+<tr><td><kbd>QUERY</kbd></td><td><samp>+</samp></td></tr>
+<tr><td><kbd>WIKI</kbd></td><td><samp>_</samp></td></tr>
+<tr><td><kbd>PATH</kbd></td><td><samp>%20</samp></td></tr>
+</table>
+| {{MW version|version=1.7|compact=y|comment=and after|r=14273}} (or {{MW version|version=1.17|compact=y|comment=and after|r=64726}} <br />{{MW version|version=1.17|compact=y|comment=and after|r=64726}} <br />{{MW version|version=1.17|compact=y|comment=and after|r=64726}})
+{{Table-AnchorRow|anchorencode|ANCHORENCODE}}
+|-
+| <code><nowiki>{{anchorencode:</nowiki><translate><!--T:284--> ''string''</translate><nowiki>}}</nowiki></code>
+| <code><nowiki>{{anchorencode:x y z á é}}</nowiki></code><br />→ {{anchorencode:x y z á é}}
+| <translate><!--T:180--> The input encoded for use in URL section anchors (after the “#” symbol in a URL).</translate>
+| {{MW version|version=1.6|compact=y|comment=and after|r=16279}}
+|}
+<translate><!--T:504--> The following are equivalents encoded for use in MediaWiki URLs (some characters percent-encoded):</translate>
+
+* <code><nowiki>{{localurle:</nowiki>''<translate><!--T:491--> page name</translate>''<nowiki>}}</nowiki></code>
+* <code><nowiki>{{localurle:</nowiki>''<translate><!--T:492--> page name</translate>''<nowiki>|</nowiki>''<translate><!--T:493--> query_string</translate>''<nowiki>}}</nowiki></code>
+
+* <code><nowiki>{{fullurle:</nowiki>''<translate><!--T:494--> page name</translate>''<nowiki>}}</nowiki></code>
+* <code><nowiki>{{fullurle:</nowiki>''<translate><!--T:495--> page name</translate>''<nowiki>|</nowiki>''<translate><!--T:496--> query_string</translate>''<nowiki>}}</nowiki></code>
+* <code><nowiki>{{fullurle:</nowiki>''<translate><!--T:497--> interwiki:remote page name</translate>''<nowiki>|</nowiki>''<translate><!--T:498--> query_string</translate>''<nowiki>}}</nowiki></code>
+
+* <code><nowiki>{{canonicalurle:</nowiki>''<translate><!--T:499--> page name</translate>''<nowiki>}}</nowiki></code>
+* <code><nowiki>{{canonicalurle:</nowiki>''<translate><!--T:500--> page name</translate>''<nowiki>|</nowiki>''<translate><!--T:501--> query_string</translate>''<nowiki>}}</nowiki></code>
+* <code><nowiki>{{canonicalurle:</nowiki>''<translate><!--T:502--> interwiki:remote page name</translate>''<nowiki>|</nowiki>''<translate><!--T:503--> query_string</translate>''<nowiki>}}</nowiki></code>
+
+{{anchor|ns|Namespaces_2}}
+<translate>
+=== Namespaces === <!--T:181-->
+</translate>
+<translate><!--T:182--> <tvar name=ns><code><nowiki>{{ns:}}</nowiki></code></tvar> returns the current localised name for the [[<tvar name=help-ns>Special:MyLanguage/Help:Namespace</tvar>|namespace]] with that index, canonical name, or local alias.</translate>
+<translate><!--T:482--> Thus <tvar name=ns6><code><nowiki>{{ns:6}}</nowiki></code></tvar>, <tvar name=ns-file><code><nowiki>{{ns:File}}</nowiki></code></tvar>, and <tvar name=ns-img><code><nowiki>{{ns:Image}}</nowiki></code></tvar> (an old name for the File namespace) all return "{{ns:6}}".</translate>
+<translate><!--T:483--> On a wiki where the content language is French, <tvar name=1><code><nowiki>{{ns:Fichier}}</nowiki></code></tvar> is also valid, but <tvar name=2><code><nowiki>{{ns:Datei}}</nowiki></code></tvar> (the localisation of "File" in German) is not.</translate>
+
+<translate><!--T:488--> The main namespace has no name, i.e. <tvar name="1"><code><nowiki>{{ns:0}}</nowiki></code></tvar> returns an empty string.</translate>
+<translate><!--T:489--> For explicitly referring to the main namespace, <tvar name="1"><code><nowiki>{{int:</nowiki>[[translatewiki:MediaWiki:Blanknamespace/qqq|Blanknamespace]]}}</code></tvar> can be used, resulting in <tvar name="2"><code>{{int|Blanknamespace}}</code></tvar>.</translate>
+
+<translate>
+<!--T:183-->
+<tvar name=nse><code><nowiki>{{nse:}}</nowiki></code></tvar> is the equivalent encoded for MediaWiki URLs. It does the same, but it replaces spaces with underscores, making it usable in external links.</translate>
+
+{| class="wikitable"
+|-
+! colspan="2" width="50%" | <translate><!--T:258--> Content namespaces</translate>
+! rowspan="11" |
+! colspan="2" width=%50%" | <translate><!--T:259--> Talk namespaces</translate>
+|-
+! <translate><!--T:184--> Usage</translate>
+! <translate><!--T:185--> Output</translate>
+! <translate><!--T:186--> Usage</translate>
+! <translate><!--T:187--> Output</translate>
+|-
+| <code><nowiki>{{ns:-2}}</nowiki></code> / <code><nowiki>{{ns:Media}}</nowiki></code>
+| {{ns:-2}}
+| <code><nowiki>{{ns:-1}}</nowiki></code> / <code><nowiki>{{ns:Special}}</nowiki></code>
+| {{ns:-1}}<br/>''(no '''talk''' page)''
+|-
+| <code><nowiki>{{ns:0}}</nowiki></code> / <code><nowiki>{{ns:}}</nowiki></code>
+| {{ns:0}}
+| <code><nowiki>{{ns:1}}</nowiki></code> / <code><nowiki>{{ns:Talk}}</nowiki></code>
+| {{ns:1}}
+|-
+| <code><nowiki>{{ns:2}}</nowiki></code> / <code><nowiki>{{ns:User}}</nowiki></code>
+| {{ns:2}}
+| <code><nowiki>{{ns:3}}</nowiki></code> / <code><nowiki>{{ns:User talk}}</nowiki></code>
+| {{ns:3}}
+|-
+| <code><nowiki>{{ns:4}}</nowiki></code> / <code><nowiki>{{ns:Project}}</nowiki></code>
+| {{ns:4}} <br/>''Varies between wikis''
+| <code><nowiki>{{ns:5}}</nowiki></code> / <code><nowiki>{{ns:Project talk}}</nowiki></code>
+| {{ns:5}}
+|-
+| <code><nowiki>{{ns:6}}</nowiki></code> / <code><nowiki>{{ns:File}}</nowiki></code> or <code><nowiki>{{ns:Image}}</nowiki></code>
+| {{ns:6}}
+| <code><nowiki>{{ns:7}}</nowiki></code> / <code><nowiki>{{ns:File talk}}</nowiki></code> or <code><nowiki>{{ns:Image talk}}</nowiki></code>
+| {{ns:7}}
+|-
+| <code><nowiki>{{ns:8}}</nowiki></code> / <code><nowiki>{{ns:MediaWiki}}</nowiki></code>
+| {{ns:8}}
+| <code><nowiki>{{ns:9}}</nowiki></code> / <code><nowiki>{{ns:MediaWiki talk}}</nowiki></code>
+| {{ns:9}}
+|-
+| <code><nowiki>{{ns:10}}</nowiki></code> / <code><nowiki>{{ns:Template}}</nowiki></code>
+| {{ns:10}}
+| <code><nowiki>{{ns:11}}</nowiki></code> / <code><nowiki>{{ns:Template talk}}</nowiki></code>
+| {{ns:11}}
+|-
+| <code><nowiki>{{ns:12}}</nowiki></code> / <code><nowiki>{{ns:Help}}</nowiki></code>
+| {{ns:12}}
+| <code><nowiki>{{ns:13}}</nowiki></code> / <code><nowiki>{{ns:Help talk}}</nowiki></code>
+| {{ns:13}}
+|-
+| <code><nowiki>{{ns:14}}</nowiki></code> / <code><nowiki>{{ns:Category}}</nowiki></code>
+| {{ns:14}}
+| <code><nowiki>{{ns:15}}</nowiki></code> / <code><nowiki>{{ns:Category talk}}</nowiki></code>
+| {{ns:15}}
+|}
+
+<translate>
+<!--T:188-->
+Don't confuse localised namespaces with [[<tvar name=1>Special:MyLanguage/Manual:Using custom namespaces</tvar>|custom namespaces]].
+
+=== Formatting === <!--T:189-->
+</translate>
+
+{| class="wikitable"
+! <translate><!--T:190--> Usage</translate>
+! <translate><!--T:191--> Input → Output</translate>
+! <translate><!--T:192--> Description</translate>
+! <translate><!--T:193--> Version</translate>
+{{Table-AnchorRow|formatnum}}
+|-
+|
+<code><nowiki>{{formatnum:</nowiki>''<translate><!--T:468--> unformatted number</translate>''<nowiki>}}</nowiki></code> <br />
+<code><nowiki>{{formatnum:</nowiki>''<translate><!--T:469--> formatnum-formatted number</translate>''<nowiki>|R}}</nowiki></code> <br />
+<code><nowiki>{{formatnum:</nowiki>''<translate><!--T:470--> unformatted number</translate>''<nowiki>|NOSEP}}</nowiki></code>
+<code><nowiki>{{formatnum:</nowiki>''<translate><!--T:581--> unformatted number</translate>''<nowiki>|LOSSLESS}}</nowiki></code>
+|
+* <translate><!--T:194--> Simple:</translate>
+** <code><nowiki>{{formatnum:987654321.654321}}</nowiki></code> <br/> → {{formatnum:987654321.654321}}
+** <code><nowiki>{{formatnum:</nowiki>{{formatnum:987654321.654321}}<nowiki>|R}}</nowiki></code> <br/> → {{formatnum:{{formatnum:987654321.654321}}|R}}
+* <translate><!--T:195--> Advanced:</translate>
+** <code><nowiki>{{formatnum:{{formatnum:987654321.654321}}|R}}</nowiki></code> <br/> → {{formatnum:{{formatnum:987654321.654321}}|R}} <translate><!--T:196--> (on any locale)</translate>
+** <code><nowiki>{{formatnum:00001}}</nowiki></code> <br/> → {{formatnum:00001}}
+** <code><nowiki>{{formatnum:987654321.654321 |NOSEP}}</nowiki></code> <br/> → {{formatnum:987654321.654321 |NOSEP}}
+** <translate><!--T:197--> Examples with [[w:Bengali numerals|{{#language:bn|en}} locale]]:</translate>
+*** <code><nowiki>{{formatnum:987654321.654321}}</nowiki></code> <br/> → ৯৮,৭৬,৫৪,৩২১.৬৫৪৩২১
+*** <code><nowiki>{{formatnum:987654321.654321 |NOSEP}}</nowiki></code> <br/> → ৯৮৭৬৫৪৩২১.৬৫৪৩২১
+*** <code><nowiki>{{formatnum:৯৮,৭৬,৫৪,৩২১.৬৫৪৩২১ |R}}</nowiki></code> <br/> → 987654321.654321
+** <translate><!--T:582--> Examples with loss of precision:</translate>
+*** <code><nowiki>{{formatnum:10000000000000001}}</nowiki></code> <br /> → {{formatnum:10000000000000001}}
+*** <code><nowiki>{{formatnum:10000000000000001|LOSSLESS}}</nowiki></code> <br /> → {{formatnum:10000000000000001|LOSSLESS}}
+----
+<translate><!--T:198--> Unsupported:</translate> <br />
+<code><nowiki>{{formatnum:{{formatnum:987.654.321}}}}</nowiki></code> <br/> → 987 654 321 <translate><!--T:199--> (e.g. with Italian locale)</translate>
+----
+<translate><!--T:200--> Examples of wrong input (unreliable output), with or without <tvar name=1><code>|R</code></tvar>:</translate> <br />
+<code><nowiki>{{formatnum:987,654.321|R}}</nowiki></code> <translate><!--T:201--> (the least broken)</translate> <br/>
+<code><nowiki>{{formatnum:987.654,321|R}}</nowiki></code> <br/>
+<code><nowiki>{{formatnum:987 654,321|R}}</nowiki></code> <br/>
+<code><nowiki>{{formatnum:987&amp;nbsp;654,321|R}}</nowiki></code>
+| <translate><!--T:202--> Takes an unformatted number ([[w:Arabic numerals|Arabic]], no group separators and <tvar name=1><code>.</code></tvar> as decimal separator) and outputs it in the localised digit script and formatted with decimal and decimal group separators, according to the page language.</translate><br />
+<translate><!--T:463--> The <tvar name=1><code>{{!}}R</code></tvar> parameter can be used to reverse the behavior, for use in mathematical situations: it's reliable and should be used only to deformat numbers which are known to be formatted exactly as formatnum formats them with the wiki's locale.</translate><br/>
+<translate><!--T:205--> The <tvar name=1><code>NOSEP</code></tvar> ("no separators") parameter means that no group / decimal separators are changed; formatnum will only transform the digits themselves in languages which don't use the [[w:Hindu–Arabic numeral system|Hindu–Arabic numeral system]].</translate> <translate><!--T:514--> <tvar name=1><code>NOSEP</code></tvar> can also prevent non-standard digit groupings you wouldn't expect.</translate><br />
+<translate><!--T:583--> By default, the formatted number may be slightly imprecise.</translate> <translate><!--T:584--> The <tvar name=1><code>LOSSLESS</code></tvar> parameter can be added to instead use the unformatted (exact) number in this case, if exact display of the number is more important than formatting it nicely.</translate>
+
+{{warning|1=Don't use formatnum in system messages. <translate><!--T:588--> Format the numbers in code using appropriate functions.</translate> <translate><!--T:601--> See <tvar name=1>{{ll|Manual:Messages API}}</tvar> for details.</translate>}}<br />
+
+{{warning|1=<translate><!--T:203--> Leading zeroes are not removed, you can use <nowiki>{{#expr:00001}}</nowiki> instead if you have <tvar name=ext-pf>{{ll|Extension:ParserFunctions}}</tvar> installed.</translate>}}<br />
+
+{{warning|1=<translate><!--T:204--> If you don't input numbers in the exact format required, don't expect any reliable output, especially on non-English wikis.</translate>}}<br />
+----
+
+<translate><!--T:206--> If you really need to format (according the wiki's locale) a number in an unknown input format, you could try and use <tvar name=1><code>formatnum</code></tvar> two times (but not if it can have a decimal group, or its separator will be eaten or the number won't be formatted).</translate>
+<translate><!--T:599--> Be aware that this is more a hack than a regular way to proceed, thus the output may not be reliable.</translate>
+
+| {{MW version|version=1.7|compact=y|comment=and after}}<br/><!--
+-->{{MW version|version=1.13|compact=y|comment=and after|r=32012}}<!--
+-->{{MW version|version=1.45|compact=y|comment=and after|gerrit change=1145237}}
+{{Table-AnchorRow|dateformat|formatdate|#dateformat|#formatdate|.23dateformat|.23formatdate}}
+|-
+|
+<code><nowiki>{{#dateformat:</nowiki>''date''<nowiki>}}</nowiki></code><br />
+<code><nowiki>{{#formatdate:</nowiki>''date''<nowiki>}}</nowiki></code><br />
+<code><nowiki>{{#dateformat:</nowiki>''date''{{!}}''format''<nowiki>}}</nowiki></code><br />
+<code><nowiki>{{#formatdate:</nowiki>''date''{{!}}''format''<nowiki>}}</nowiki></code>
+|
+<code><nowiki>{{#dateformat:25 dec 2009|ymd}}</nowiki></code> <br/>
+→ {{#dateformat:25 dec 2009|ymd}} <translate><!--T:207--> (your pref), 2009 December 25 (default)</translate> <br/>
+<code><nowiki>{{#formatdate:dec 25,2009|dmy}}</nowiki></code> <br/>
+→ {{#formatdate:dec 25,2009|dmy}} <translate><!--T:208--> (your pref), 25 December 2009 (default)</translate> <br/>
+<code><nowiki>{{#dateformat:2009-12-25|mdy}}</nowiki></code> <br/>
+→ {{#dateformat:2009-12-25|mdy}} <translate><!--T:209--> (your pref), December 25, 2009 (default)</translate> <br/>
+<code><nowiki>{{#formatdate:2009 dec 25|ISO 8601}}</nowiki></code> <br/>
+→ {{#formatdate:2009 dec 25|ISO 8601}} <translate><!--T:210--> (your pref), 2009-12-25 (default)</translate> <br/>
+<code><nowiki>{{#dateformat:25 decEmber|mdy}}</nowiki></code> <br/>
+→ {{#dateformat:25 decEmber|mdy}} <translate><!--T:211--> (your pref), December 25 (default)</translate> <br/>
+<translate><!--T:212-->
+''Note:'' In the examples above, "your pref" refers to your date preference on the current MediaWiki wiki only.
+</translate>
+
+| <translate><!--T:213--> Formats an unlinked date based on user "date format" preference, and adds metadata tagging it as a formatted date.</translate> <translate><!--T:509--> For logged-out users and those who have not set a date format in their preferences, dates can be given a default: <tvar name=1><code>mdy</code>, <code>dmy</code>, <code>ymd</code>, <code>ISO&nbsp;8601</code></tvar> (all case sensitive).</translate> <translate><!--T:510--> If only the month and day are given, only <tvar name=1><code>mdy</code></tvar> and <tvar name=2><code>dmy</code></tvar> are valid.</translate> <translate><!--T:511--> If a format is not specified or is invalid, the input format is used as a default.</translate> <translate><!--T:512--> If the supplied date is not recognized as a valid date (specifically, if it contains any metadata such as from a nested use of these or similar templates), it is rendered unchanged, and no (additional) metadata is generated.</translate>
+
+{{warning|1=<translate><!--T:214--> Although the ISO 8601 standard requires that dates be in the Gregorian calendar, the ISO parameter in this function will still format dates that fall outside the usual Gregorian range (e.g. dates prior to 1583). Also, the magic word cannot properly convert between negative years (used with ISO 8601) and years BC or years BCE (used in general writing).</translate>}}
+
+| {{MW version|version=1.15|compact=y|comment=and after|r=48249}}
+{{Table-AnchorRow|lc|Lc|LC}}
+|-
+|
+<code><nowiki>{{lc:</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{lc:DATA CENTER}}</nowiki></code> → {{lc:DATA CENTER}}
+| <translate><!--T:215--> The lowercase input.</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+{{Table-AnchorRow|lcfirst|Lcfirst|LCFIRST}}
+|-
+|
+<code><nowiki>{{lcfirst:</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{lcfirst:DATA center}}</nowiki></code> → {{lcfirst:DATA center}}
+| <translate><!--T:216--> The input with the <u>very first</u> character lowercase.</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+{{Table-AnchorRow|uc|Uc|UC}}
+|-
+|
+<code><nowiki>{{uc:</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{uc:text transform}}</nowiki></code> → {{uc:text transform}}
+| <translate><!--T:217--> The uppercase input.</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+{{Table-AnchorRow|ucfirst|Ucfirst|UCFIRST}}
+|-
+|
+<code><nowiki>{{ucfirst:</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{ucfirst:text tRAnSFORM}}</nowiki></code> → {{ucfirst:text tRAnSFORM}}
+| <translate><!--T:218--> The input with the <u>very first</u> character uppercase.</translate>
+| {{MW version|version=1.5|compact=y|comment=and after}}
+{{Table-AnchorRow|padleft}}
+|-
+|
+<code><nowiki>{{padleft:xyz|</nowiki>''stringlength''<nowiki>}}</nowiki></code> <br />
+<code><nowiki>{{padleft:xyz|</nowiki>''strlen''<nowiki>|</nowiki>''char''<nowiki>}}</nowiki></code> <br />
+<code><nowiki>{{padleft:xyz|</nowiki>''strlen''<nowiki>|</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{padleft:xyz|5}}</nowiki></code> → {{padleft:xyz|5}} <br />
+<code><nowiki>{{padleft:xyz|5|_}}</nowiki></code> → {{padleft:xyz|5|_}} <br />
+<code><nowiki>{{padleft:xyz|5|abc}}</nowiki></code> → {{padleft:xyz|5|abc}}<br />
+<code><nowiki>{{padleft:xyz|2}}</nowiki></code> → {{padleft:xyz|2}} <br />
+<code><nowiki>{{padleft:|1|xyz}}</nowiki></code> → {{padleft:|1|xyz}}
+<translate><!--T:219--> (first character of the string)</translate> <br />
+| <translate><!--T:220--> Inserts a string of padding characters (character chosen in third parameter; default "0") of a specified length (second parameter) next to a chosen base character or variable (first parameter).</translate> <translate><!--T:476--> The final digits or characters in the base replace the final characters in the padding; i.e. <tvar name=1><code><nowiki>{{padleft:44|3|0}}</nowiki></code></tvar> produces <tvar name=2>{{padleft:44|3}}</tvar>.</translate> <translate><!--T:477--> The padding string may be truncated if its length does not evenly divide the required number of characters.</translate>
+
+<translate>
+<!--T:221-->
+Only the first character of the third parameter is used in versions up to 1.12, but by version 1.15, all the characters are used.
+
+<!--T:222-->
+'''[[<tvar name=1>bugzilla:16852</tvar>|Bug]] (fixed in <tvar name=2>[[rev:45734|r45734]]</tvar>):''' multibyte characters are interpreted as two characters, which can skew width. These also cannot be used as padding characters.</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}<br/><!--
+-->{{MW version|version=1.15|compact=y|comment=and after|r=45734}}
+{{Table-AnchorRow|padright}}
+|-
+|
+<code><nowiki>{{padright:xyz|</nowiki>''stringlength''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{padright:xyz|</nowiki>''strlen''<nowiki>|</nowiki>''char''<nowiki>}}</nowiki></code> <br /><code><nowiki>{{padright:xyz|</nowiki>''strlen''<nowiki>|</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{padright:xyz|5}}</nowiki></code> → {{padright:xyz|5}} <br />
+<code><nowiki>{{padright:xyz|5|_}}</nowiki></code> → {{padright:xyz|5|_}} <br />
+<code><nowiki>{{padright:xyz|5|abc}}</nowiki></code> → {{padright:xyz|5|abc}} <br />
+<code><nowiki>{{padright:xyz|2}}</nowiki></code> → {{padright:xyz|2}} <br />
+<code><nowiki>{{padright:|1|xyz}}</nowiki></code> → {{padright:|1|xyz}} <br />
+| <translate><!--T:223--> Identical to <tvar name=1><code>padleft</code></tvar> but adds padding characters to the right side.</translate>
+| {{MW version|version=1.8|compact=y|comment=and after}}<br/><!--
+-->{{MW version|version=1.15|compact=y|comment=and after|r=45734}}
+{{Table-AnchorRow|bidi}}
+|-
+|
+<code><nowiki>{{bidi:</nowiki>''string''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{bidi:text transform}}</nowiki></code> → {{bidi:text transform}} <br />
+<code><nowiki>{{bidi:كتابة عربية}}</nowiki></code> → {{bidi:كتابة عربية}}
+| <translate><!--T:507--> Wraps the text in a script-appropriate directionality marker (either left-to-right (U+202A) or right-to-left (U+202B)) and a pop directionality formatting character (U+202C), to ensure directionality safety when using a mix of scripts in running text.</translate>
+|
+|}
+<translate>
+<!--T:224-->
+'''See also:''' <tvar name=ext-stringfunctions>{{ll|Extension:StringFunctions}}</tvar>.
+</translate>
+
+{{anchor|Localization|Localisation|Localization int|Localization (main)}}
+<translate>
+=== Localization functions === <!--T:225-->
+
+<!--T:226-->
+Here are the magic words which are used as main localisation tools. Other magic words will often depend on the wiki's locale and configuration or on the chosen language: see in particular [[<tvar name=date>#Date and time</tvar>|#Date and time]], and [[<tvar name=formatting>#Formatting</tvar>|#Formatting]]. More magic words are added by the <tvar name=ext-translate>{{ll|Extension:Translate}}</tvar>.
+
+<!--T:227-->
+The usage of these magic words can be very complex, and the documentation is currently incomplete; there's some more info on [[<tvar name=1>translatewiki:Special:MyLanguage/FAQ#PLURAL</tvar>|PLURAL]], [[<tvar name=2>translatewiki:Special:MyLanguage/Grammar</tvar>|GRAMMAR]], [[<tvar name=3>translatewiki:Special:MyLanguage/Gender</tvar>|GENDER]].</translate>
+
+{| class="wikitable"
+! width="10%" | <translate><!--T:228--> Usage</translate>
+! width="40%" | <translate><!--T:229--> Input → Output</translate>
+! <translate><!--T:230--> Description</translate>
+! width="10%" | <translate><!--T:231--> Version</translate>
+{{Table-AnchorRow|language|#language|.23language}}
+|-
+| <code><nowiki>{{#language}}</nowiki></code><br /><!--
+--><code><nowiki>{{#language:</nowiki><translate><!--T:422--> ''language code''</translate><nowiki>}}</nowiki></code><br /><!--
+--><code><nowiki>{{#language:</nowiki><translate><!--T:423--> ''language code''</translate><nowiki>|</nowiki><translate><!--T:424--> ''target language code''</translate><nowiki>}}</nowiki></code>
+| <code><nowiki>{{#language:ar}}</nowiki></code> → {{#language:ar}} <br /><!--
+--><code><nowiki>{{#language:ar|en}}</nowiki></code> → {{#language:ar|en}}
+| <translate><!--T:245--> The full name of the language for the given [[<tvar name=1>Special:MyLanguage/Manual:Language#Language code</tvar>|language code]]: native name (language autonym) by default, name translated in target language if a target language code is specified.</translate> <translate><!--T:406--> <tvar name=1>{{ll|Extension:CLDR}}</tvar> must be installed for the translation to work.</translate> <translate><!--T:528--> If no argument is given, returns the name of the ''target language'' (for articles, the content language; for messages, the user language).</translate>
+| {{MW version|version=1.7|compact=y|comment=and after|r=14490}}<br />{{MW version|version=1.18|compact=y|comment=and after|r=91875}} <translate><!--T:246--> (translation)</translate><br />{{MW version|version=1.43|comment=and after|gerrit change=1038880|compact=y}} <translate><!--T:529--> (with no argument)</translate>
+{{Table-AnchorRow|bcp47}}
+|-
+|<code><nowiki>{{#bcp47}}</nowiki></code><br /><!--
+--><code><nowiki>{{#bcp47:</nowiki>''language code''<nowiki>}}</nowiki></code>
+|<code><nowiki>{{#bcp47:sr-ec}}</nowiki></code> → {{#bcp47:sr-ec}}<br /><!--
+--><code><nowiki>{{#bcp47:zh-yue}}</nowiki></code> → {{#bcp47:zh-yue}}
+| <translate><!--T:518--> The [[w:IETF language tag|IETF BCP-47]] language tag for the given {{<tvar name=1>ll|Manual:Language#Language code</tvar>|language code}}.</translate> <translate><!--T:519--> If no argument is given, returns the tag of the ''target language'' (for articles, the content language; for messages, the user language).</translate>
+| {{MW version|version=1.43|comment=and after|gerrit change=1038879|compact=y}}
+{{Table-AnchorRow|dir}}
+|-
+|<code><nowiki>{{#dir}}</nowiki></code><br /><!--
+--><code><nowiki>{{#dir:</nowiki>''language code''<nowiki>}}</nowiki></code><br /><!--
+---><code><nowiki>{{#dir:</nowiki>''language code''<nowiki>|bcp47}}</nowiki></code>
+|<code><nowiki>{{#dir:en}}</nowiki></code> → {{#dir:en}}<br /><!--
+--><code><nowiki>{{#dir:he}}</nowiki></code> → {{#dir:he}}<br /><!--
+--><code><nowiki>{{#dir:sr-Cyrl|bcp47}}</nowiki></code> → {{#dir:sr-Cyrl|bcp47}}
+| <translate><!--T:520--> The directionality for the given {{<tvar name=1>ll|Manual:Language#Language code</tvar>|language code}}, either <tvar name=2><code>rtl</code></tvar> or <tvar name=3><code>ltr</code></tvar>.</translate> <translate><!--T:521--> If the optional second argument is <tvar name=1><code>bcp47</code></tvar>, then the first argument is interpreted as a [[w:IETF language tag|BCP-47 language tag]].</translate> <translate><!--T:522--> If no argument is given, returns the directionality of the ''target language'' (for articles, the content language; for messages, the user language).</translate>
+| {{MW version|version=1.43|comment=and after|gerrit change=1032542|compact=y}}
+{{Table-AnchorRow|plural|Plural|PLURAL}}
+|-
+| <code><nowiki>{{PLURAL:2|</nowiki>''is''<nowiki>|</nowiki>''are''<nowiki>}}</nowiki></code>
+| <code><nowiki>{{PLURAL:0|is|are}}</nowiki></code> → {{PLURAL:0|is|are}}<br /><code><nowiki>{{PLURAL:1*1|is|are}}</nowiki></code> → {{PLURAL:1*1|is|are}}<br /><code><nowiki>{{PLURAL:21 mod 10|is|are}}</nowiki></code> → {{PLURAL:21 mod 10|is|are}}<br /><code><nowiki>{{PLURAL:{{#expr:21 mod 10}}|is|are}}</nowiki></code> → {{PLURAL:{{#expr:21 mod 10}}|is|are}}<br /><code><nowiki>{{PLURAL:1|is|are}}</nowiki></code> → {{PLURAL:1|is|are}}<br /><code><nowiki>{{PLURAL:2|is|are}}</nowiki></code> → {{PLURAL:2|is|are}}<br /><code><nowiki>{{PLURAL:-1|is|are}}</nowiki></code> → {{PLURAL:-1|is|are}}<br /><code><nowiki>{{PLURAL:-2|is|are}}</nowiki></code> → {{PLURAL:-2|is|are}}<br /><code><nowiki>{{PLURAL:0.5|is|are}}</nowiki></code> → {{PLURAL:0.5|is|are}}<br /><code><nowiki>{{PLURAL:1.5|is|are}}</nowiki></code> → {{PLURAL:1.5|is|are}}<br /><code><nowiki>{{PLURAL:-0.5|is|are}}</nowiki></code> → {{PLURAL:-0.5|is|are}}<br /><code><nowiki>{{PLURAL:-1.5|is|are}}</nowiki></code> → {{PLURAL:-1.5|is|are}}<br /> <translate><!--T:232--> (For [[w:Russian language|Russian]])</translate><br /><code><nowiki>{{PLURAL:5|1=Категория|Категории}}</nowiki></code>&nbsp;→&nbsp;Категории
+<br /><code><nowiki>{{PLURAL:3|страница|страницы|страниц}}</nowiki></code>&nbsp;→&nbsp;страницы<br /><code><nowiki>{{PLURAL:5|страница|страницы|страниц}}</nowiki></code>&nbsp;→&nbsp;страниц
+| <translate><!--T:233--> Outputs a plural form appropriate for the given language. For English, the singular form (second parameter) is used if the absolute value of the first parameter is an expression equalling one; and the plural form (third parameter) is used otherwise.</translate> <translate><!--T:517--> See further documentation [<tvar name="url">https://translatewiki.net/wiki/Plural#Plural_in_MediaWiki</tvar> on translatewiki.net]</translate>
+{{note|1=<translate><!--T:394--> Some language codes (ab, av, ba, bxr, ce, crh_cyrl, cv, inh, koi, krc, kv, lbe, lez, mhr, mrj, myv, ru, sl, tt_cyrl, tyv, udm, xal) used 3 plural forms ([[<tvar name=1>betawiki:Thread:Portal talk:Ru/Plural changes in many languages</tvar>|updated 01.2014]]):</translate>
+*<translate><!--T:391--> Form 1:</translate> 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …
+*<translate><!--T:392--> Form 2:</translate> 0, 5, 6, 7, 8, …, 18, 19, 100, 1000, 10000, 100000, 1000000, …
+*<translate><!--T:393--> Form 3:</translate> 2, 3, 4, 22, 23, 24, 32, 33, 34, 42, 43, 44, 52, 53, 54, 62, 102, 1002, …
+}}
+|
+{{Table-AnchorRow|grammar|Grammar|GRAMMAR}}
+|-
+| <code><nowiki>{{GRAMMAR:N|</nowiki>''noun''<nowiki>}}</nowiki></code>
+|
+| <translate><!--T:234--> Outputs the correct inflected form of the given word described by the inflection code after the colon. Grammar transformations are used for inflected languages like Polish. See also <tvar name=1>{{ll|Manual:$wgGrammarForms|$wgGrammarForms}}</tvar>, and [<tvar name="url">https://translatewiki.net/wiki/Grammar</tvar> grammar documentation on translatewiki.net].</translate>
+| {{MW version|version=1.7|compact=y|comment=and after}}
+{{Table-AnchorRow|gender|Gender|GENDER}}
+|-
+|
+{{tmpl|0=<code><nowiki>{{</nowiki>GENDER:$1{{!}}$2<nowiki>}}</nowiki></code>
+|1=<translate><!--T:570--> username</translate>
+|2=<translate><!--T:571--> gender-neutral text applicable to all genders</translate>
+}}<br />
+{{tmpl|0=<code><nowiki>{{</nowiki>GENDER:$1{{!}}$2{{!}}$3{{!}}$4<nowiki>}}</nowiki></code><br />
+<code><nowiki>{{</nowiki>GENDER:{{!}}$2{{!}}$3{{!}}$4<nowiki>}}</nowiki></code><br />
+<code><nowiki>{{</nowiki>GENDER:.{{!}}$2{{!}}$3{{!}}$4<nowiki>}}</nowiki></code>
+|1=<translate><!--T:572--> username</translate>
+|2=<translate><!--T:573--> text if user is male</translate>
+|3=<translate><!--T:574--> text if user is female</translate>
+|4=<translate><!--T:575--> text for unspecified gender</translate>
+}}
+| ''<translate><!--T:235--> (Depends on the named user's gender)</translate>''
+| <translate><!--T:236--> A switch for the gender set by the user in <tvar name=1>[[Special:Preferences]]</tvar>.</translate>
+* <translate><!--T:576--> The first example (with a single parameter) always produces the same output; it may be used to make it explicit that the text is gender-neutral.</translate>
+* {{tmpl|0=<translate><!--T:577--> If only two parameters are used (for male and female text) but the 3rd parameter is omitted, and user hasn't defined their gender, then the first parameter ($1) is returned as a default.</translate>
+|1=<code>{{Tunit|573|text if user is male}}</code>
+}}
+* <translate><!--T:578--> A blank username field (<tvar name=1><nowiki>{{GENDER:|</nowiki></tvar>) means the current user, but can be used only in interface messages (MediaWiki namespace).</translate>
+* <translate><!--T:579--> Using a dot (<tvar name=1><code>.</code></tvar>) in the username field produces the output corresponding to the default user gender on this wiki.</translate>
+| {{MW version|version=1.15|compact=y|comment=and after|r=46247}}
+{{Table-AnchorRow|formal|Formal|FORMAL}}
+|-
+| <!-- this line break needed for proper display -->
+<code><nowiki>{{</nowiki>&num;FORMAL:''<translate><!--T:589--> informal version</translate>''|''<translate><!--T:590--> formal version</translate>''<nowiki>}}</nowiki></code>
+| ''<translate><!--T:591--> (Depends on the formality set in the language configuration)</translate>''
+| <translate><!--T:592--> A switch for the formality index set by the configuration for certain languages.</translate> <translate><!--T:593--> The default formality index is 0 (informal), but some language codes such as <tvar name=1><code>de-formal</code></tvar> and <tvar name=2><code>es-formal</code></tvar> have the formality index 1 (formal).</translate> <translate><!--T:594--> For these languages, translations are still stored in the localization for <tvar name=1><code>de</code></tvar> and <tvar name=2><code>es</code></tvar> respectively, and what is displayed for the end user depends on whether their interface language is set to the formal or informal language code.</translate>
+| {{MW version|version=1.43|compact=y|comment=and after|gerrit=1027099}}
+{{Table-AnchorRow|int|Int|INT}}
+|-
+| <code><nowiki>{{int:</nowiki><translate><!--T:285--> ''message name''</translate><nowiki>}}</nowiki></code>
+| <code><nowiki>{{int:</nowiki>edit<nowiki>}}</nowiki></code> &rarr; '''{{int:edit}}''' <br /><small>''<translate><!--T:237--> (Depends on user language; try: [{{fullurl:{{FULLPAGENAME}}|uselang=fr}}#Localisation fr] &bull; [{{fullurl:{{FULLPAGENAME}}|uselang=ja}}#Localisation ja])</translate>''</small>
+| <translate><!--T:238--> Internationalises (translates) the given '''int'''erface (MediaWiki namespace) message into the user language. For <tvar name=1><code>msgnw</code></tvar> and other transclusion magic words, see the [[<tvar name=sec>#Transclusion modifiers</tvar>|Transclusion modifiers]] section.</translate>
+<translate><!--T:513--> ''Note that this can damage / confuse cache consistency in MediaWiki 1.17 and earlier, see <tvar name=1>[[phab:T16404|T16404]]</tvar>.''</translate>
+|
+|-
+| <code><nowiki>{{int:editsectionhint|MediaWiki}}</nowiki></code>
+| <code><nowiki>{{int:editsectionhint|MediaWiki}}</nowiki></code> &rarr; '''{{int:editsectionhint|MediaWiki}}'''
+| <translate><!--T:239--> You may also use parameters with translations. <br />Parameters are designated in messages with: $1, $2, $3, etc. <br />For example, here is the message for ''editsectionhint'': Edit section: $1 <br />In this example, MediaWiki replaces $1.</translate>
+|
+|}
+<translate>
+=== Transclusion modifiers === <!--T:308-->
+</translate>
+<translate><!--T:309--> {{<tvar name=1>tmpl|0=<code>{{((}}$1{{!}}$2{{))}}</code></tvar>|''Page name''|''optional params''}} usually transcludes another page, by default from the Template namespace.</translate>
+<translate><!--T:310--> These magic words modify that behavior.</translate>
+
+{| class="wikitable plainlinks"
+! width="15%" | <translate><!--T:311--> Usage</translate>
+! <translate><!--T:313--> Description</translate>
+! width="10%" | <translate><!--T:314--> Version</translate>
+|-
+| <code><nowiki>{{:xyz}}</nowiki></code>
+| <translate><!--T:315--> A bare colon is not a template modifier but the prefix for the main namespace.</translate> <translate><!--T:316--> Since transclusion defaults to the Template namespace, you would use for example, <tvar name=code1>{{((}}:UTC{{))}}</tvar> (vs. <tvar name=code2>{{((}}UTC{{))}}</tvar>) to include the text of the main namespace article UTC rather than <tvar name=1>Template:UTC.</tvar></translate>
+|
+|-
+| <code><nowiki>{{int:xyz}}</nowiki></code>
+| <translate><!--T:317--> Same as <tvar name=mw><nowiki>{{MediaWiki:xyz}}</nowiki></tvar>, except standard message translation is applied depending on subpages and content/user/uselang language.</translate> <translate><!--T:318--> Another difference is: this doesn't appear under <tvar name=translatesused><code>{{int|templatesused}}</code></tvar>.</translate> <translate><!--T:319--> Rendered as <tvar name=int>{{int:xyz}}</tvar> if <tvar name=mw>{{Red link|MediaWiki:xyz}}</tvar> doesn't exist.</translate> <translate><!--T:320--> See also <tvar name=1>{{ll|Help:System message}}</tvar>.</translate>
+|
+{{Table-AnchorRow|msg|Msg|MSG}}
+|-
+| <code><nowiki>{{msg:xyz}}</nowiki></code><br /><code><nowiki>{{raw:xyz}}</nowiki></code>
+| <translate><!--T:321--> Even if there is a magic word named "xyz", use template:xyz unless the template doesn't exist (equivalent to <tvar name=code><nowiki>{{template:xyz}}</nowiki></tvar>).</translate> <translate><!--T:322--> Normally, magic words have priority when there is a conflict.</translate>
+|
+{{Table-AnchorRow|raw|Raw|RAW}}
+|-
+|<code><nowiki>{{raw:xyz}}</nowiki></code>
+| <translate><!--T:361--> If <tvar name=1>{{ll|Manual:$wgEnableScaryTranscluding|$wgEnableScaryTranscluding}}</tvar> is enabled, and this is an interwiki transclusion, include the raw wikitext instead of the html from the foreign wiki.</translate>
+| {{MW version|version=1.6|compact=y|comment=and after|r=12925}}
+{{Table-AnchorRow|msgnw|Msgnw|MSGNW}}
+|-
+| <code><nowiki>{{msgnw:xyz}}</nowiki></code>
+| <translate><!--T:323--> The unexpanded wikitext is rendered (more or less, for details see <tvar name=msgnw>{{ll|Help:Templates#Usage}}</tvar>).</translate>
+|
+{{Table-AnchorRow|subst|Subst|SUBST}}
+|-
+| <code><nowiki>{{subst:xyz}}</nowiki></code>
+| <translate><!--T:325--> In the wikitext, the tag is substituted by the ''content'' (single-level evaluation only), see <tvar name=1>{{ll|Help:Templates#Usage}}</tvar>.</translate>
+|
+{{Table-AnchorRow|safesubst|Safesubst|SAFESUBST}}
+|-
+| <code><nowiki>{{safesubst:xyz}}</nowiki></code>
+| <translate><!--T:388--> See <tvar name=1>{{ll|Help:Templates#Usage}}</tvar>.</translate>
+|
+|}
+
+<translate>
+=== Miscellaneous === <!--T:240-->
+</translate>
+
+{| class="wikitable plainlinks"
+! width="20%" | <translate><!--T:241--> Usage</translate>
+! width="20%" | <translate><!--T:421--> Input</translate> → <translate><!--T:242--> Output</translate>
+! width="50%" | <translate><!--T:243--> Description</translate>
+! width="10%" | <translate><!--T:244--> Version</translate>
+{{Table-AnchorRow|interwikilink}}
+|-
+| {{tmpl|0=<code><nowiki>{{#interwikilink:</nowiki>''$1''<nowiki>|</nowiki>''$2''<nowiki>|</nowiki>''$3''<nowiki>}}</nowiki></code>
+|1=<translate><!--T:544--> link prefix</translate>
+|2=<translate><!--T:545--> page title</translate>
+|3=<translate><!--T:546--> link text</translate>
+}}
+| <code><nowiki>{{#interwikilink:mos|Soraogo|Link text}}</nowiki></code> → {{#interwikilink:mos|Soraogo|Link text}}
+| <translate><!--T:558--> Creates an {{<tvar name=1>ll|Manual:Interwiki</tvar>|interwiki link}}.</translate> <translate><!--T:559--> When the interwiki prefix of the link conflicts with a namespace on the local wiki, the {{<tvar name=1>ll|Help:Links#Interwiki_links</tvar>|usual syntax}} {{<tvar name=3>tmpl|0=<code><nowiki>[[</nowiki>$1:$2<nowiki>]]</nowiki></code></tvar>|''prefix''|''title''}} syntax can't be used, but this parser function can still be used to make an interwiki link.</translate>
+| {{MW version|version=1.44|compact=y|comment=and after|gerrit change=1093420}}
+{{Table-AnchorRow|interlanguagelink}}
+|-
+| {{tmpl|0=<code><nowiki>{{#interlanguagelink:</nowiki>''$1''<nowiki>|</nowiki>''$2''<nowiki>}}</nowiki></code>
+|1=<translate><!--T:547--> link prefix</translate>
+|2=<translate><!--T:548--> page title</translate>
+}}
+| <code><nowiki>{{#interlanguagelink:mos|Soraogo}}</nowiki></code> → An (invisible) interlanguage link from this page to <code><nowiki>[[mos:Soraogo]]</nowiki></code>
+| <translate><!--T:560--> Creates an {{<tvar name=1>ll|Interlanguage links</tvar>|interlanguage link}}.</translate> <translate><!--T:561--> When the language prefix of the link conflicts with a namespace on the local wiki, the {{<tvar name=1>ll|Help:Links#Interlanguage_links</tvar>|usual syntax}} {{<tvar name=3>tmpl|0=<code><nowiki>[[</nowiki>$1:$2<nowiki>]]</nowiki></code></tvar>|''prefix''|''title''}} can't be used, but this parser function can still be used to make an interlanguage link.</translate>
+| {{MW version|version=1.44|compact=y|comment=and after|gerrit change=1093420}}
+{{Table-AnchorRow|special|#special|.23special}}
+|-
+| <code><nowiki>{{#special:</nowiki><translate><!--T:288--> ''special page name''</translate><nowiki>}}</nowiki></code>
+| <code><nowiki>{{#special:userlogin}}</nowiki></code> → {{#special:userlogin}}
+| <translate><!--T:247--> The localised name for the given canonical {{<tvar name=1>ll|Special pages</tvar>|Special: page}}.</translate>
+| {{MW version|version=1.9|compact=y|comment=and after|r=17321}}
+{{Table-AnchorRow|speciale|#speciale|.23speciale}}
+|-
+| <code><nowiki>{{#speciale:</nowiki><translate><!--T:289--> ''special page name''</translate><nowiki>}}</nowiki></code>
+| <code><nowiki>{{#speciale:userlogin}}</nowiki></code> → {{#speciale:userlogin}}
+| <translate><!--T:248--> The localised and URL-encoded name for the given canonical Special: page.</translate>
+| {{MW version|version=1.20|compact=y|comment=and after|gerrit change=4340}}
+{{Table-AnchorRow|tag|#tag|.23tag}}
+|-
+| {{tmpl|0=<code><nowiki>{{#tag:</nowiki>''$1'' <br/><nowiki>|</nowiki>''$2'' <br/><nowiki>|</nowiki>''$3''=''$4'' <br /><nowiki>|</nowiki>''$5''=''$6''<br /><nowiki>}}</nowiki></code>
+|1=<translate><!--T:290--> tagname</translate>
+|2=<translate><!--T:454--> content</translate>
+|3=<translate><!--T:455--> attribute1</translate>
+|4=<translate><!--T:456--> value1</translate>
+|5=<translate><!--T:457--> attribute2</translate>
+|6=<translate><!--T:458--> value2</translate>
+}}
+| <translate><!--T:254--> Example using the [[<tvar name=ext-cite>Special:MyLanguage/Extension:Cite</tvar>|Cite extension]]'s <tvar name=1>{{tag|ref|open}}</tvar> tags:</translate></br>
+
+<code><nowiki>{{#tag:ref|</nowiki><translate nowrap><!--T:428--> Citation on <tvar name=1>{{PAGENAME}}</tvar>.</translate> <nowiki>|name = "</nowiki><translate nowrap><!--T:429--> multiple</translate><nowiki>"}}</nowiki></code>
+→
+{{#tag:ref|<translate><!--T:430--> Citation on <tvar name=1>{{PAGENAME}}</tvar>.</translate> |name = "<translate nowrap><!--T:431--> multiple</translate>"}}
+| <translate><!--T:250--> Alias for XML-style MediaWiki parser tags or extension tags.</translate> <translate><!--T:407--> It allows a [[<tvar name=1>Special:MyLanguage/Manual:Tag extensions#How do I render wikitext in my extension?</tvar>|pre-save transform of wiki code]] and <tvar name=2>{{ll|Extension:ParserFunctions}}</tvar> within tags before the tag is processed.</translate> <translate><!--T:408--> It also prevents parsing of tags in conditional paths that aren't executed (like in <tvar name=1><code>#if</code></tvar> statements).</translate> <translate><!--T:409--> Content between tags is passed as the first parameter, and any attributes for the tags can be passed as subsequent parameters.</translate> <translate><!--T:410--> This example:</translate>
+
+{{#tag:syntaxhighlight||lang=html|style=display:none!important}}
+{{tmpl|0=
+{{tag|wrap=yes|1=''$1''
+|params={{attr|1=''$2''|2="''$3''"}} {{attr|1=''$4''|2="''$5''"}}
+|content=''$6''}}
+|1=<translate nowrap><!--T:251--> tagname</translate>
+|2=<translate nowrap><!--T:437--> attribute1</translate>
+|3=<translate nowrap><!--T:438--> value1</translate>
+|4=<translate nowrap><!--T:439--> attribute2</translate>
+|5=<translate nowrap><!--T:440--> value2</translate>
+|6=<translate nowrap><!--T:441--> Your content goes here</translate>
+}}
+
+<translate>
+<!--T:252-->
+…can be rewritten like this:
+</translate>
+
+{{tmpl|0=
+<code><nowiki>{{#tag:</nowiki>''$1''{{!}}''$2''{{!}}''$3''=''$4''{{!}}''$5''=''$6''<nowiki>}}</nowiki></code>
+|1=<translate nowrap><!--T:253--> tagname</translate>
+|2=<translate nowrap><!--T:442--> Your content goes here</translate>
+|3=<translate nowrap><!--T:443--> attribute1</translate>
+|4=<translate nowrap><!--T:444--> value1</translate>
+|5=<translate nowrap><!--T:445--> attribute2</translate>
+|6=<translate nowrap><!--T:446--> value2</translate>
+}}
+{{warning|1=<translate><!--T:256--> You must write {{<tvar name=1>tmpl|0=<code>{{((}}#tag:''$1''{{!!}}''$2''=''$3''{{!}}''$4''=''$5''{{))}}</code></tvar>|tagname|attribute1|value1|attribute2|value2}} to pass an empty content. No leading or trailing space of the text content are permitted between the pipe characters <tvar name=code5><code>{{!}}{{!}}</code></tvar> before ''attribute1''.</translate>}}
+{{warning|1=<translate><!--T:530--> For the [[<tvar name=1>Special:MyLanguage/Extension:InputBox</tvar>|<tvar name=2>&lt;inputbox&gt;</tvar> tag]], do '''not''' separate the parameters with pipes – this will not work.</translate> <translate><!--T:531--> You need to supply everything as the first parameter, with individual lines separated by line breaks and not pipes, as you do when using the inputbox tag normally with <tvar name=1>{{tag|inputbox}}</tvar>.</translate>}}
+| {{MW version|version=1.12|compact=y|comment=and after|r=29482}}
+|}
+
+<translate>
+== See also == <!--T:515-->
+</translate>
+* <translate><!--T:462--> For parser function <tvar name=1><code>#invoke</code></tvar>, see [[w:Wikipedia:Lua#Running a module]].</translate>
+* {{ll|Parser function extensions}} – <translate><!--T:568--> a somewhat outdated list of extensions which add parser functions and the parser functions added by them.</translate>
+{{Parser functions nav}}
+{{#if:<references />}}
+
+[[Category:Help{{#translation:}}|{{PAGENAME}}]]
+[[Category:Time{{#translation:}}|{{PAGENAME}}]]
+[[Category:Magic words{{#translation:}}|{{PAGENAME}}]]

@@ -1,0 +1,315 @@
+<languages/>
+{{PD Help Page}}
+<translate>
+== Formatting text in wikitext == <!--T:1-->
+</translate>
+{{#section:{{TNTN|Help:Advanced editing}}|formatting}}
+
+<translate>
+== Organizing your writing == <!--T:2-->
+</translate>
+{{see also|Help:Images}}{{#section:{{TNTN|Help:Advanced editing}}|lists}}
+
+<translate>
+== Creating links == <!--T:3-->
+</translate>
+{{main|Help:Link}}
+<translate>
+<!--T:4-->
+You will often want to make clickable ''links'' to other pages.
+</translate>
+{{#section:{{TNTN|Help:Advanced editing}}|linkstable}}
+
+<translate>
+== Displaying text as typed == <!--T:5-->
+
+<!--T:6-->
+A few different formatting methods will ensure the wiki shows your text exactly as you type it.
+</translate>
+
+{| class="wikitable"
+!width="1000"|<translate><!--T:7--> Rendering</translate>
+!width="500"|<translate><!--T:8--> Wikitext</translate>
+|-
+|
+<nowiki>
+The nowiki tag prevents
+[[Wiki]] ''markup'' from rendering.
+It adjusts text by
+eliminating
+newlines and multiple
+spaces.
+It still processes special
+characters: &rarr;
+</nowiki>
+| <syntaxhighlight lang=wikitext>
+<nowiki>
+The nowiki tag prevents
+[[Wiki]] ''markup'' from rendering.
+It adjusts text by
+eliminating
+newlines and multiple
+spaces.
+It still processes special
+characters: &rarr;
+</nowiki>
+</syntaxhighlight>
+|-
+|
+<pre>
+The pre tag bypasses [[Wiki]]
+ ''markup''.
+It also maintains     text
+ format.
+It still recognizes special
+characters: &rarr;
+</pre>
+| <syntaxhighlight lang=wikitext><pre>
+The pre tag bypasses [[Wiki]]
+ ''markup''.
+It also maintains     text
+ format.
+It still recognizes special
+characters: &rarr;
+</pre></syntaxhighlight>
+|-
+|
+Leading spaces offer another method to keep formatting.
+ Inserting a space at the
+ start of each
+ line keeps the text
+ as is. It still
+ processes [[Wiki]]
+ ''markup'' and special
+ characters: &rarr;
+| <syntaxhighlight lang=wikitext>
+Leading spaces offer another method to keep formatting.
+ Inserting a space at the
+ start of each
+ line keeps the text
+ as is. It still
+ processes [[Wiki]]
+ ''markup'' and special
+ characters: &rarr;
+</syntaxhighlight>
+|}
+
+<translate>
+=== Displaying code=== <!--T:9-->
+</translate>
+{{main|Extension:SyntaxHighlight}}
+<translate><!--T:10--> If the syntax highlighting extension is available, you can show [[w:source code|source code]] similarly to the HTML <tvar name=1>{{tag|pre|open}}</tvar> tag, but with advanced text editor-like [[w:syntax highlighting|syntax highlighting]].</translate>
+<translate><!--T:11--> See the list of supported languages:</translate>
+http://pygments.org/languages/
+<translate><!--T:12--> Here's an example for displaying [[w:C Sharp (programming language)|C#]] code:</translate>
+
+{{#tag:syntaxhighlight|<syntax<nowiki></nowiki>highlight lang="csharp">
+// <translate nowrap><!--T:13--> Hello World in Microsoft C# ("C-Sharp").</translate>
+
+using System;
+
+class HelloWorld
+{
+    public static int Main(String[] args)
+    {
+        Console.WriteLine("<translate nowrap><!--T:14--> Hello, World!</translate>");
+        return 0;
+    }
+}
+</syntaxhighlight>|lang=wikitext}}
+
+<translate><!--T:65--> Renders as:</translate>
+
+<syntaxhighlight lang="csharp">
+// <translate nowrap><!--T:15--> Hello World in Microsoft C# ("C-Sharp").</translate>
+
+using System;
+
+class HelloWorld
+{
+    public static int Main(String[] args)
+    {
+        Console.WriteLine("<translate nowrap><!--T:16--> Hello, World!</translate>");
+        return 0;
+    }
+}
+</syntaxhighlight>
+
+<translate>
+== Using images, tables, video, and sounds== <!--T:17-->
+
+<!--T:18-->
+For more detailed guides, see:
+</translate>
+
+* {{ll|Help:Images}} - <translate><!--T:19--> for file uploads and image syntax.</translate>
+* {{ll|Help:Tables}} - <translate><!--T:20--> for creating tables.</translate>
+
+<translate><!--T:21--> Once you upload a file, enter its filename, highlight it, and click the "embedded image" button on the edit toolbar.</translate>
+<translate><!--T:22--> This will generate the embedding syntax:</translate>
+
+'''<nowiki>[[Image:filename.png]]</nowiki>'''
+
+{| class="wikitable"
+!width="1000"|<translate><!--T:23--> Rendering</translate>
+!width="500"|<translate><!--T:24--> Wikitext</translate>
+|-
+|
+<translate><!--T:25--> An image with alternate text:</translate>
+[[Image:Wiki.png|<translate><!--T:26--> This is Wiki's logo</translate>]]
+
+<translate><!--T:27--> Image with frame and caption:</translate>
+[[Image:Wiki.png|frame|<translate><!--T:28--> This is Wiki's logo</translate>]]
+| <syntaxhighlight lang=wikitext>
+<translate nowrap><!--T:29--> An image with alternate text:</translate>
+[[Image:Wiki.png|<translate nowrap><!--T:30--> This is Wiki's logo</translate>]]
+
+<translate nowrap><!--T:31--> Image with frame and caption:</translate>
+[[Image:Wiki.png|frame|<translate nowrap><!--T:32--> This is Wiki's logo</translate>]]
+</syntaxhighlight>
+|-
+|
+<translate><!--T:33--> Link to MediaWiki's image page:</translate>
+[[:Image:Wiki.png]]
+
+<translate><!--T:34--> Direct link to the image:</translate>
+[[Media:Wiki.png]]
+| <syntaxhighlight lang=wikitext>
+<translate nowrap><!--T:35--> Link to MediaWiki's image page:</translate>
+[[:Image:Wiki.png]]
+
+<translate nowrap><!--T:36--> Direct link to the image:</translate>
+[[Media:Wiki.png]]
+</syntaxhighlight>
+|-
+|
+
+<translate><!--T:37--> The '''media:''' namespace tag can be used to link directly to sounds or videos:</translate>
+[[media:Classical guitar scale.ogg|<translate><!--T:38--> A sound file</translate>]]
+| <syntaxhighlight lang=wikitext>
+<translate nowrap><!--T:39--> The '''media:''' namespace tag can be used to link directly to sounds or videos:</translate>
+[[media:Classical guitar scale.ogg|<translate nowrap><!--T:40--> A sound file</translate>]]
+</syntaxhighlight>
+|-
+| <translate><!--T:41--> Include a spoken version of text in a template (<tvar name="1">{{tl|listen}}</tvar>):</translate>
+{{listen
+ |title    = Flow, my tears
+ |filename = Flow, my tears.ogg
+ |filesize = 1.41 MB
+}}
+| <syntaxhighlight lang=wikitext>
+<translate nowrap>
+<!--T:42-->
+Include a spoken version of text in a template:
+</translate>
+{{listen
+ |title    = Flow, my tears
+ |filename = Flow, my tears.ogg
+ |filesize = 1.41 MB
+}}
+</syntaxhighlight>
+|-
+|<center><span style="border:5px double black">'''<translate><!--T:43--> Text in a bordered box</translate>'''</span></center>
+| <syntaxhighlight lang=wikitext>
+|<center><span style="border:5px double black">'''<translate nowrap><!--T:44--> Text in a bordered box</translate>'''</span></center>
+|</syntaxhighlight>
+|-
+|
+{| style="margin: auto; border: 10px solid black; border-spacing: 5px;"
+|-
+! style="padding: 10px;" | This
+! style="padding: 10px;" | is
+|-
+| style="padding: 10px;" | a
+| style="padding: 10px;" | table
+|}
+| <syntaxhighlight lang=wikitext>
+{| style="margin: auto; border: 10px solid black; border-spacing: 5px;"
+|-
+! style="padding: 10px;" | This
+! style="padding: 10px;" | is
+|-
+| style="padding: 10px;" | a
+| style="padding: 10px;" | table
+|}
+</syntaxhighlight>
+|}
+
+<translate>
+=== Galleries === <!--T:45-->
+</translate>
+{{See also|w:WP:Gallery tag}}
+<translate>
+<!--T:46-->
+Images can be organized into galleries using the <tvar name=1>{{tag|gallery|open}}</tvar> tag, like this:
+</translate>
+
+<gallery>
+Image:Wiki.png
+Image:Wiki.png|<translate><!--T:47--> Captioned</translate>
+Image:Wiki.png
+Image:Wiki.png|<translate><!--T:48--> [[Wikipedia|Links]] can be put in captions.</translate>
+</gallery>
+
+<translate>
+
+== Mathematical formulae == <!--T:49-->
+</translate>
+{{main|Extension:Math/Syntax}}
+
+<translate><!--T:50--> To format mathematical formulae, you can use [[w:TeX|TeX]] markup.</translate>
+
+{| class="wikitable"
+!width="1000"|<translate><!--T:51--> Rendering</translate>
+!width="500"|<translate><!--T:52--> Wikitext</translate>
+|-
+|<math>\sum_{n=0}^\infty \frac{x^n}{n!}</math>
+| <syntaxhighlight lang="tex">
+<math>\sum_{n=0}^\infty \frac{x^n}{n!}</math>
+</syntaxhighlight>
+|}
+
+<translate>
+
+== Templates == <!--T:53-->
+</translate>
+{{main|Help:Template}}
+<translate><!--T:54--> Templates are snippets of Wiki markup that can be automatically copied ("transcluded") into a page.</translate>
+<translate><!--T:55--> You can add them by placing the template's name inside <nowiki>{{double braces}}</nowiki>.</translate>
+<translate><!--T:56--> To transclude pages from other namespaces, use <nowiki>{{:colon and double braces}}</nowiki>.</translate>
+<translate><!--T:57--> Some templates accept ''parameters'', separated by the pipe character.</translate>
+
+{| class="wikitable"
+!width="1000"|<translate><!--T:58--> Rendering</translate>
+!width="500"|<translate><!--T:59--> Wikitext</translate>
+|-
+|
+{{Help:Wikitext examples/transclusion demo}}
+| <syntaxhighlight lang=wikitext>
+{{Help:Wikitext examples/transclusion demo}}
+</syntaxhighlight>
+|-
+|
+<translate>
+<!--T:60-->
+This template takes one parameter and returns it twice:
+</translate>
+{{2x|<translate nowrap><!--T:61--> Hello World</translate>}}
+| <syntaxhighlight lang=wikitext>
+<translate nowrap>
+<!--T:62-->
+This template takes one parameter and returns it twice:
+</translate>
+{{2x|<translate nowrap><!--T:63--> Hello World</translate>}}
+</syntaxhighlight>
+|}
+
+<translate>
+
+== See also == <!--T:64-->
+</translate>
+* {{ll|Help:Lists}}
+* {{ll|Help:Footnotes}}
+* {{ll|Help:Advanced editing}}
+
+[[Category:Help{{#translation:}}]]

@@ -1,0 +1,956 @@
+<languages/>
+{{PD Help Page}}
+<translate><!--T:1--> This page explains the '''image''' syntax when editing the wiki.</translate>
+<translate><!--T:2--> You or another user must usually [[<tvar name=1>Special:MyLanguage/Help:Managing files</tvar>|upload an image]] before you can use it on a page.</translate>
+
+<translate><!--T:3--> Images that are stored on a MediaWiki server are usually rendered by using the <tvar name=1><code>File:</code></tvar> namespace prefix (but the legacy <tvar name=2><code>Image:</code></tvar> namespace prefix is still supported as a synonym) as the target of a MediaWiki link.</translate>
+<translate><!--T:4--> The alternate <tvar name=media><code>Media:</code></tvar> namespace prefix is also usable to reference the original media file content (for rendering or downloading it separately, out of any MediaWiki page).</translate>
+
+<translate>
+== Requisites == <!--T:186-->
+</translate>
+<translate><!--T:187--> Before using images in your page, the system administrator of your wiki must have [[<tvar name=uploads>Special:MyLanguage/Manual:Configuring file uploads</tvar>|enabled file uploads]] and a user has to [[<tvar name=managing>Special:MyLanguage/Help:Managing files</tvar>|upload the file]].</translate>
+<translate><!--T:188--> System administrators may also set the wiki to accept files from [[<tvar name=image>Special:MyLanguage/Manual:Image Administration#Foreign Repositories</tvar>|foreign repositories]], such as the [<tvar name=url>http://commons.wikimedia.org/wiki/Main_Page</tvar> Wikimedia Commons].</translate>
+<translate><!--T:189--> For server side image resizing it is necessary to have a scaler configured (such as GD2, ImageMagick, etc.).</translate>
+
+<translate>
+== Supported media types for images == <!--T:5-->
+
+<!--T:6-->
+The following file formats are supported by default:
+</translate>
+
+* <code>.jpg</code> <translate><!--T:255--> or</translate> <code>.jpeg</code> &ndash; <translate><!--T:7--> bitmap image compressed in the standard JPEG format (this lossy format is most suitable for photographs).</translate>
+* <code>.png</code> &ndash; <translate><!--T:8--> bitmap image in the ''[[w:Portable Network Graphics|Portable Network Graphics]]'' format (specified by the ''W3 Consortium'').</translate>
+* <code>.gif</code> &ndash; <translate><!--T:9--> bitmap image in the legacy ''Graphics Interchange Format''.</translate>
+* <code>.webp</code> &ndash; <translate><!--T:274--> [[w:WebP|WebP]] supports both lossy and lossless compression while reducing image size by up to 45%.</translate>
+
+<translate>
+<!--T:10-->
+Other formats used on Wikimedia, and commonly enabled elsewhere (these may require extra set-up beyond what is enabled by default):
+</translate>
+
+* <code>.svg</code> &ndash; <translate><!--T:11--> scalable image in the ''Scalable Vector Graphics'' format (specified by the ''W3 Consortium'').</translate> <translate><!--T:12--> See [[<tvar name=1>Special:MyLanguage/Manual:Image Administration#SVG</tvar>|Manual:Image Administration#SVG]].</translate>
+* <code>.tiff</code> &ndash; <translate><!--T:13--> Tagged image format.</translate> <translate><!--T:14--> Often used for high-resolution archival photographs.</translate> <translate><!--T:15--> Often used with <tvar name=1>{{ll|Extension:PagedTiffHandler}}</tvar>.</translate>
+* <code>.ogg</code>, <code>.oga</code>, <code>.ogv</code> &ndash; <translate><!--T:16--> Ogg multimedia (audio or video).</translate> <translate><!--T:17--> Not an image format, but treated similarly.</translate> <translate><!--T:18--> Often used with <tvar name=1>{{ll|Extension:TimedMediaHandler}}</tvar></translate>
+* <code>.pdf</code> &ndash; <translate><!--T:19--> multipaged documents in the ''Portable Document Format'' (initially specified by ''Adobe'').</translate> <translate><!--T:20--> Often used in conjunction with <tvar name=1>{{ll|Extension:PdfHandler}}</tvar></translate>
+* <code>.djvu</code> &ndash; <translate><!--T:21--> multipaged bitmap documents in the ''DejaVu'' format (most often, scans of books).</translate> <translate><!--T:22--> See <tvar name=1>{{ll|Manual:How to use DjVu with MediaWiki}}</tvar></translate>
+<translate>
+<!--T:23-->
+*: Only a single page of a <tvar name=1><code>.pdf</code></tvar> or <tvar name=2><code>.djvu</code></tvar> file is shown at one time.
+
+<!--T:24-->
+Other media types may be supported, but it may not be possible to display them inline.
+
+== Rendering a single image == <!--T:25-->
+
+=== Syntax === <!--T:26-->
+
+<!--T:27-->
+The full syntax for displaying an image is:
+</translate>
+ <nowiki>[[</nowiki>File:<translate><!--T:285--> ''filename.extension''</translate>|<translate><!--T:286--> ''options''</translate>|<translate><!--T:287--> ''caption''</translate>]]
+
+<translate>
+<!--T:28-->
+where ''options'' can be empty or containing one or more of the following lower-case words, separated by pipes ('''|'''):
+
+<!--T:29-->
+* ''[[<tvar name=1>#Format</tvar>|Format]]'' option: '''border''', and one of '''frameless''', '''frame''' (or '''framed'''), or '''thumb''' (or '''thumbnail''').</translate> {{Note}} <translate><!--T:307--> <tvar name=1>'''border'''</tvar> can be used in combination with <tvar name=2>'''frameless'''</tvar> but will be ignored if used with one of the other options.</translate>
+<translate>
+<!--T:30-->
+*: Controls how the rendered image is formatted and embedded in the rest of the page.</translate>
+<translate>
+<!--T:31-->
+* ''[[<tvar name=1>#Size and frame</tvar>|Resizing]]'' option: one of</translate>
+<translate>
+<!--T:32-->
+** ''{width}'''''px''' &ndash; Resizes the image to fit within the given maximum width in pixels, without restricting its height.</translate> (<translate><!--T:264--> Only whole-number pixel values are supported.</translate> <translate><!--T:223--> A space character between the width value and "px" is permitted.</translate>)
+<translate>
+<!--T:33-->
+** '''x'''''{height}'''''px''' &ndash; Resizes the image to fit within the given maximum height in pixels, without restricting its width.</translate> <translate><!--T:265--> Only whole-number pixel values are supported.</translate> <translate><!--T:266--> A space character between the height value and "px" is permitted.</translate>
+<translate>
+<!--T:34-->
+** ''{width}'''''x'''''{height}'''''px''' &ndash; Resizes the image to fit within the given width and height in pixels.</translate> <translate><!--T:267--> Only whole-number pixel values are supported.</translate> <translate><!--T:268--> A space character between the width value and "px" is permitted.</translate>
+** '''upright''' &ndash; <translate><!--T:35--> Resizes an image to a multiple of the user's thumbnail size preferences (see <tvar name=1><code>{{ll|Manual:$wgThumbLimits|$wgThumbLimits}}</code></tvar>) – or the default thumbnail size, for logged-out users or logged-in users who have not changed their preferences – to fit within reasonable dimensions.</translate> <translate><!--T:275--> This option is often useful for images whose height is larger than their width.</translate> <translate><!--T:276--> Requires either <tvar name=1>'''thumb'''</tvar> or <tvar name=2>'''frameless'''</tvar>.</translate> <translate><!--T:224--> Setting <tvar name=1><code>|upright=1.0|</code></tvar> will display the image at the user's default image width.</translate> <translate><!--T:225--> <tvar name=1><code>|upright=2.0|</code></tvar> will display the image at double the user's default width.</translate>
+<translate>
+<!--T:226-->
+*: The image will always retain its aspect ratio.</translate>
+<translate>
+<!--T:227-->
+*: Images in non-scalable media types can be reduced in size, but not increased; e.g., bitmap images cannot be scaled up.</translate>
+<translate>
+<!--T:228-->
+*: The <tvar name=1><code>upright</code></tvar> setting does not require an equals sign, i.e. <tvar name=2><code>|upright 2.0|</code></tvar> works the same as <code>|upright=2.0|</code>.</translate>
+<translate>
+<!--T:229-->
+*: When used without a value or an equals sign (e.g., <tvar name=1><code>|upright|</code></tvar>), defaults to <tvar name=2><code>|upright=0.75|</code></tvar> (although <tvar name=3><code>|upright=|</code></tvar> is the same as <tvar name=4><code>|upright=1.0|</code></tvar>)</translate>
+<translate>
+<!--T:37-->
+*: The default maximum size depends on the ''format'' and the internal image dimensions (according to its media type).</translate>
+<translate>
+<!--T:38-->
+* ''[[<tvar name=1>#Horizontal alignment</tvar>|Horizontal alignment]]'' option: one of '''left''', '''right''', '''center''', '''none'''.</translate> <translate><!--T:234--> If multiple of these options are present, only the first one will be used</translate>
+<translate>
+<!--T:39-->
+*: Controls the horizontal alignment (and inline/block or floating styles) of the image within a text (no default value).</translate>
+<translate>
+<!--T:40-->
+* ''[[<tvar name=1>#Vertical alignment</tvar>|Vertical alignment]] option'': one of '''baseline''', '''sub''', '''super''', '''top''', '''text-top''', '''middle''', '''bottom''', '''text-bottom'''</translate>
+<translate>
+<!--T:41-->
+*: Controls the vertical alignment of a non-floating inline image with the text before or after the image, and in the same block (the default vertical alignment is '''middle''').</translate>
+<translate>
+<!--T:42-->
+* ''[[<tvar name=1>#Altering the default link target</tvar>|Link]] option'': one of</translate>
+<translate>
+<!--T:43-->
+** '''<tvar name=1>link</tvar>='''''{target}'' &ndash; Allows to change the target (to an arbitrary page title, or URL) of the generated link, activable on the rendered image surface; e.g. <tvar name=code><code><nowiki>[[File:Example.jpg|20px|link=http://www.wikipedia.org]]</nowiki></code></tvar> renders as <tvar name=code2>[[File:Example.jpg|20px|link=http://www.wikipedia.org]]</tvar> (external link), or <tvar name=code3><code><nowiki>[[File:Example.jpg|20px|link=MediaWiki]]</nowiki></code></tvar> renders as <tvar name=code4>[[File:Example.jpg|20px|link=MediaWiki]]</tvar> (internal link).</translate>
+<translate>
+<!--T:44-->
+** '''<tvar name=2>link</tvar>=''' (with an empty value) &ndash; (<tvar name=1>[[rev:41727|MediaWiki 1.14+]]</tvar>) Displays an image without any activable link; e.g. <tvar name=code1><code><nowiki>[[</nowiki>File:Example.jpg|20px|link=]]</code></tvar> renders as <tvar name=code2>[[File:Example.jpg|20px|link=]]</tvar>.</translate>
+<translate>
+<!--T:235-->
+*:If there is a space character between <tvar name=1><code>link</code></tvar> and the equals sign, the link statement will be treated as a caption.</translate>
+<translate>
+<!--T:254-->
+*:Including some HTML character equivalents, like <tvar name=1><code>%22</code></tvar> for <tvar name=2><code>"</code></tvar>, can cause the link statement to be treated as a caption (see <tvar name=3>[[phabricator:T306216]]</tvar>).
+</translate>
+<!--*** '''!''' Link does '''not''' work with thumb, thumbnail or frame. (This works for external and internal links)-->
+*: <translate><!--T:45--> '''!''' for MW 1.24 and lower: If you set <code>|link=|</code> (empty), then no <code>title</code> will be rendered. (See [[phabricator:T23454]].)</translate>
+* {{Anchor|Other|other}}<translate><!--T:46--> Other specific options:</translate>
+<translate>
+<!--T:47-->
+** '''<tvar name=2>alt</tvar>='''''{alternative text}'' &ndash; (<tvar name=1>[[rev:41837|MediaWiki 1.14+]]</tvar>) Defines the alternative text (maps to the HTML attribute <code>alt="..."</code> of the generated <tvar name=3>{{tag|img|single}}</tvar> element) of an image that will be rendered if either the referenced image cannot be downloaded and embedded, or if the support media must use the alternative description text (e.g. when using a Braille reader or with accessibility options set by the user in its browser).</translate>
+<translate>
+<!--T:236-->
+*:If there is a space character between <tvar name=1><code>alt</code></tvar> and the equals sign, the alt statement will be treated as a caption.
+</translate>
+** {{Anchor|page}}'''page='''''{number}'' &ndash; <translate><!--T:48--> Renders the specified page number (currently only applicable when showing a .djvu or .pdf file).</translate>
+** {{Anchor|thumbtime}}'''thumbtime='''''{number}'' &ndash; <translate><!--T:277--> Renders a thumbnail from the video at the specified timestamp in seconds or MM:SS or HH:MM:SS format (only applicable when showing a video file).</translate>
+** {{Anchor|start}}'''start='''''{number}'' &ndash; <translate><!--T:278--> When video playback is started it will start at the specified timestamp in seconds or MM:SS or HH:MM:SS format (only applicable when showing a video file).</translate>
+** {{Anchor|muted}}'''muted''' &ndash; <translate><!--T:279--> When media playback is started, audio will be muted.</translate>
+** {{Anchor|loop}}'''loop''' &ndash; <translate><!--T:280--> Media will loop continuously. (only applies to audio and video)</translate>
+** {{Anchor|lossy}}'''lossy='''''{false}'' &ndash; ({{ll|Extensions:PagedTiffHandler|PagedTiffHandler}}) <translate><!--T:281--> For using PNG instead of JPG thumbnails for Tiff images</translate>
+** {{Anchor|class}}'''class='''''{html class}'' &ndash; (MediaWiki 1.20+) <translate><!--T:49--> Defines classes (maps to the HTML attribute <tvar name=3><code>class="..."</code></tvar> of the generated <tvar name=1>{{tag|span}}</tvar> element wrapped around the <tvar name=4>{{tag|img|single}}</tvar> element).</translate>{{note|1=<translate><!--T:282--> Default behavior since MediaWiki 1.40, optional since MediaWiki 1.36.</translate><ref>{{ll|Manual:$wgParserEnableLegacyMediaDOM}}</ref> <translate><!--T:283--> Previously the class was applied directly to the <tvar name=1>{{tag|img|single}}</tvar> element.</translate><ref>{{ll|Parsoid/Parser Unification/Media structure/FAQ#The %7Cclass{{=}} media option is now applied to the wrapper|<translate><!--T:284--> The <tvar name=1>{{!}}class{{=}}</tvar> media option is now applied to the wrapper</translate>}}</ref>}}
+** {{Anchor|lang}}'''lang='''''{language code}'' &ndash; (MediaWiki 1.22+) <translate><!--T:50--> For SVG files containing [http://www.w3.org/TR/SVG/struct.html#SwitchElement &lt;switch&gt;] statements varying on a ''systemLanguage'' attribute, selects what language to render the file in.</translate> <translate><!--T:221--> The default is the page language (defaults to project default language on most projects).</translate>
+
+<translate><!--T:51--> If a parameter does not match any of the other possibilities, it is assumed to be the caption text.</translate>
+<translate><!--T:237--> If more than one non-parameter string is present, the final non-parameter string will be used as the caption.</translate>
+<translate><!--T:52--> Caption text shows below the image in '''thumb''' and '''frame''' formats, or as tooltip text in any other format.</translate>
+<translate><!--T:53--> Caption text displayed in the '''thumb''' and '''frame''' formats may contain wiki links and other formatting.</translate>
+<translate><!--T:54--> MediaWiki extensions can add additional options.</translate>
+
+<translate>
+<!--T:55-->
+If 'alt' is not specified and a caption is provided, the alternative text will be created automatically from the caption, stripped of formatting, except when in ''thumb'' or ''frame'' mode since the caption is already readable by screen readers in that case.
+
+=== Thumbnail sizes === <!--T:308-->
+
+<!--T:309-->
+File thumbnails are stored in discrete sizes. If a page specifies a thumbnail size that's not among the [[<tvar name=1>Manual:$wgThumbnailSteps</tvar>|standard sizes]] (20, 40, 60, 120, 250, 330, 500, 960, 1280, 1920, 3840), then MediaWiki will pick the closest larger thumbnail size but will tell the browser to downscale it to the requested size. In these cases, nothing will change visually but users might load slightly larger images. If it doesn't matter which thumbnail size is used in a page, please pick one of the standard sizes to avoid the extra in-browser down-scaling step.
+
+=== Format === <!--T:56-->
+
+<!--T:57-->
+The following table shows the effect of all available formats.
+</translate>
+<div class="noresize">
+{|class="wikitable plainlinks"
+|-
+!<translate><!--T:58--> Description</translate>
+!<translate><!--T:59--> You type</translate>
+!<translate><!--T:60--> You get</translate>
+{{Help:Images/frame|frame=|ex=<translate><!--T:61--> no format specified</translate>|float=no|inline=yes|render caption=no}}
+{{Help:Images/frame|frame=border|ex=<translate><!--T:62--> '''border''' results in a very small gray border</translate>|float=no|inline=yes|render caption=no}}
+{{Help:Images/frame|frame=frameless|ex=<translate><!--T:63--> '''frameless''', like thumbnail, respect user preferences for image width, but without border and no right float</translate>|float=no|inline=yes|render caption=no}}
+{{Help:Images/frame|frame=frameless|2=border|ex=<translate><!--T:64--> '''frameless''' and '''border'''</translate>|float=no|inline=yes|render caption=no}}
+{{Help:Images/frame|frame=frame|ex='''frame'''|float=yes|inline=no|render caption=yes}}
+{{Help:Images/frame|frame=thumb|ex=<translate><!--T:65--> '''thumb''' or '''thumbnail'''</translate>|float=yes|inline=no|render caption=yes}}
+|}
+</div>
+<translate><!--T:66--> When the height of an image in thumbnail is bigger than its width (i.e. in portrait orientation rather than landscape) and you find it too large, you may try the option <code>upright=N</code>, where N is the image's aspect ratio (its width divided by its height, defaulting to 0.75).</translate>
+<translate><!--T:67--> The alternative is to specify the desired maximum height (in pixels) explicitly.</translate>
+
+<translate>
+<!--T:68-->
+Note that by writing <code>thumb={filename}</code>, you can use a different image for the thumbnail.
+
+=== Size and frame === <!--T:69-->
+
+<!--T:70-->
+Among different formats, the effect of the size parameter may be different, as shown below.
+
+<!--T:71-->
+* For how it appears when its size is not specified, see [[<tvar name=1>#Format</tvar>|Format]] section above.</translate>
+<translate>
+<!--T:72-->
+* When the format is not specified, or only <code>border</code>ed, the size can be both reduced and enlarged to any specified size.</translate>
+<translate>
+<!--T:73-->
+* In the examples below, the original size of the image is 400×267 pixels.</translate>
+<translate>
+<!--T:74-->
+* An image with <tvar name=1><code>frame</code></tvar> always '''ignores''' the size specification; the original image will be reduced if it exceeds the maximum size defined in user preferences, and the page information will display a Linter error.</translate>
+<translate>
+<!--T:75-->
+* The size of an image with <tvar name=1><code>thumb</code></tvar> or <tvar name=2><code>frameless</code></tvar> can be reduced, but cannot be enlarged beyond the original size of the image.
+</translate>
+
+<div class="noresize">
+{|class="wikitable"
+|-
+! <translate><!--T:76--> Format</translate>
+! <translate><!--T:77--> Reduced</translate>
+! <translate><!--T:78--> Enlarged</translate>
+{{Help:Images/size|frame=}}
+{{Help:Images/size|frame=border}}
+{{Help:Images/size|frame=frame}}
+{{Help:Images/size|frame=thumb}}
+{{Help:Images/size|frame=frameless}}
+|}
+</div>
+
+<translate>
+=== Horizontal alignment === <!--T:79-->
+
+<!--T:80-->
+Note that when using the <code>frame</code> or <code>thumb[nail]</code> formats, the default horizontal alignment will be ''right'' for left-to-right languages, and ''left'' for right-to-left languages.
+</translate>
+
+{|class="wikitable"
+|-
+!<translate><!--T:81--> Description</translate>
+!<translate><!--T:82--> You type</translate>
+!<translate><!--T:83--> You get</translate>
+{{Help:Images/frame|2=100px|frame=|ex=<translate><!--T:84--> '''no horizontal alignment specified''', or default alignment</translate>|inline=yes|float=no}}
+{{Help:Images/frame|2=100px|frame=none|ex=<translate><!--T:85--> specify horizontal alignment as: '''none'''</translate>|inline=no|float=no}}
+{{Help:Images/frame|2=100px|frame=center|ex=<translate><!--T:86--> specify horizontal alignment as: '''center'''</translate>|inline=no|float=no}}
+{{Help:Images/frame|2=100px|frame=left|ex=<translate><!--T:87--> specify horizontal alignment as: '''left'''</translate>|inline=no|float=yes}}
+{{Help:Images/frame|2=100px|frame=right|ex=<translate><!--T:88--> specify horizontal alignment as: '''right'''</translate>|inline=no|float=yes}}
+|}
+
+<translate>
+=== Vertical alignment === <!--T:89-->
+</translate>
+<translate><!--T:90--> The vertical alignment options take effect only if the image '''is''' rendered as an inline element and '''is not''' floating.</translate>
+<translate><!--T:91--> They alter the way the inlined image will be vertically aligned with the text present in the same block before and/or after this image on the same rendered row.</translate>
+
+<translate>
+<!--T:92-->
+Note that the rendered line of text where inline images are inserted (and the lines of text rendered after the current one) may be moved down (this will increase the line-height conditionally by additional line spacing, just as it may occur with spans of text with variable font sizes, or with superscripts and subscripts) to allow the image height to be fully displayed with this alignment constraint.
+</translate>
+
+<div class="mw-collapsible mw-collapsed">
+<div class="mw-collapsible-toggle toccolours" style="float:none;text-align:center">'''{{Blue|1=<translate><!--T:194--> Toggle source code view</translate>}}'''</div>
+<div class="mw-collapsible-content">
+<syntaxhighlight lang="html4strict">
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''top:''' [[File:Example.jpg|20px|top]] [[File:Example.jpg|40px|top]] [[File:Example.jpg|100px|top]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''text-top:''' [[File:Example.jpg|20px|text-top]] [[File:Example.jpg|40px|text-top]] [[File:Example.jpg|100px|text-top]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+<sup>super:</sup> [[File:Example.jpg|20px|super]] [[File:Example.jpg|40px|super]] [[File:Example.jpg|100px|super]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''baseline:''' [[File:Example.jpg|20px|baseline]] [[File:Example.jpg|40px|baseline]] [[File:Example.jpg|100px|baseline]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+<sub>'''sub:'''</sub> [[File:Example.jpg|20px|sub]] [[File:Example.jpg|40px|sub]] [[File:Example.jpg|100px|sub]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''default:''' [[File:Example.jpg|20px]][[File:Example.jpg|40px]] [[File:Example.jpg|100px]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''middle:''' [[File:Example.jpg|20px|middle]] [[File:Example.jpg|40px|middle]] [[File:Example.jpg|100px|middle]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''text-bottom:''' [[File:Example.jpg|20px|text-bottom]] [[File:Example.jpg|40px|text-bottom]] [[File:Example.jpg|100px|text-bottom]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''bottom:'' [[File:Example.jpg|20px|bottom]] [[File:Example.jpg|40px|bottom]] [[File:Example.jpg|100px|bottom]]
+<del>text</del></u></span></p>
+</syntaxhighlight></div></div>
+
+<translate>
+<!--T:93-->
+To show the alignment result more clearly, the text spans are overlined and underlined, the font-size is increased to 200%, and the paragraph block is outlined with a thin border; additionally images of different sizes are aligned:
+</translate>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''top:''' [[File:Example.jpg|20px|top]] [[File:Example.jpg|40px|top]] [[File:Example.jpg|100px|top]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''text-top:''' [[File:Example.jpg|20px|text-top]] [[File:Example.jpg|40px|text-top]] [[File:Example.jpg|100px|text-top]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+<sup>'''super:'''</sup> [[File:Example.jpg|20px|super]] [[File:Example.jpg|40px|super]] [[File:Example.jpg|100px|super]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''baseline:''' [[File:Example.jpg|20px|baseline]] [[File:Example.jpg|40px|baseline]] [[File:Example.jpg|100px|baseline]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+<sub>'''sub:'''</sub> [[File:Example.jpg|20px|sub]] [[File:Example.jpg|40px|sub]] [[File:Example.jpg|100px|sub]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''default:''' [[File:Example.jpg|20px]] [[File:Example.jpg|40px]] [[File:Example.jpg|100px]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''middle:''' [[File:Example.jpg|20px|middle]] [[File:Example.jpg|40px|middle]] [[File:Example.jpg|100px|middle]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''text-bottom:''' [[File:Example.jpg|20px|text-bottom]] [[File:Example.jpg|40px|text-bottom]] [[File:Example.jpg|100px|text-bottom]]
+<del>text</del></u></span></p>
+
+<p style="border:1px solid #AAA;padding:0;font-size:150%;line-height:2">
+<span style="background:#FFF;color:#000;text-decoration:overline"><u><del>text</del>
+'''bottom:''' [[File:Example.jpg|20px|bottom]] [[File:Example.jpg|40px|bottom]] [[File:Example.jpg|100px|bottom]]
+<del>text</del></u></span></p>
+
+<translate>
+<!--T:94-->
+Notes:
+
+<!--T:95-->
+# The "middle" vertical alignment position of the image (which is also the default) usually refers to the middle between the x-height and the baseline of the text (on which the vertical middle of the image will be aligned, and on which usually the text may be overstroke), but not to the middle of the line-height of the font-height that refers to the space between the "text-top" and "text-bottom" positions ; the font-height excludes:</translate>
+<translate>
+<!--T:96-->
+#* the additional line separation spacing normally divided equally into two line-margins (here 0.5em, according to line-height set to 200%) above and below the font-height).</translate>
+<translate>
+<!--T:97-->
+#* the additional line spacing which may be added by superscripts and subscripts.</translate>
+<translate>
+<!--T:98-->
+# However, if the image height causes its top or bottom position to go above or below the normal full line-height of text, the middle position will be adjusted after the increasing the top and/or bottom line-margins so that the image can fit and align properly, and all images (including those with smaller heights) will be vertically centered on the adjusted middle position (for computing the effective line-height, the text of each rendered row with the larger font-height will be considered).</translate>
+<translate>
+<!--T:99-->
+# The "text-top" and "text-bottom" alignment positions also excludes the extra line spacing added by superscripts and subscripts, but not the additional line-spacing defined by the line-height.</translate>
+<translate>
+<!--T:100-->
+# The "top" and "bottom" alignment positions take into account all these extra line spacings (including superscripts and subscripts, if they are present in a rendered line span).</translate> <translate><!--T:101--> When the image alignment constrains the image to grow above or below the normal line-spacing, and the image is not absolutely positioned, the image will cause the "top" and "bottom" positions to be adjusted (just like superscripts and subscripts), so the effective line-height between rendered lines of text will be higher.</translate>
+<translate>
+<!--T:102-->
+# The "underline", "overline" and "overstrike" text-decoration positions should be somewhere within these two limits and ''may'' depend on the type and height of fonts used (the superscript and subscript styles may be taken into account in some browsers, but usually these styles are ignored and the position of these decorations may not be adjusted); so these decorations normally don't affect the vertical position of images, relatively to the text.
+
+=== Stopping the text flow === <!--T:103-->
+</translate>
+<translate><!--T:104--> On occasion it is desirable to stop text (or other inline non-floating images) from flowing around a floating image.</translate>
+<translate><!--T:105--> Depending on the web browser's screen resolution and such, text flow on the right side of an image may cause a section header (for instance, <nowiki>== My Header ==</nowiki>) to appear to the right of the image, instead of below it, as a user may expect.</translate>
+<translate><!--T:106--> The text flow can be stopped by placing <tvar name=code2><syntaxhighlight lang=html inline><div style="clear: both"></div></syntaxhighlight></tvar> before the text that should start below the floating image.</translate>
+<translate><!--T:107--> (This may also be done without an empty line by wrapping the section with the floating images with <tvar name=code><syntaxhighlight lang=html inline><div style="overflow: hidden">…</div></syntaxhighlight></tvar>, which clears all floats inside the <code>div</code> element.)</translate>
+
+<translate><!--T:108--> All images rendered as blocks (including non-floating '''center'''ed images, '''left'''- or '''right'''-floating images, as well as '''framed''' or '''thumbnail'''ed floating images) are implicitly breaking the surrounding lines of text (terminating the current block of text before the image, and creating a new paragraph for the text after them).</translate>
+<translate><!--T:109--> They will then stack vertically along their left or right alignment margin (or along the center line between these margins for '''center'''ed images).</translate>
+
+<translate>
+=== Altering the default link target === <!--T:110-->
+</translate>
+<translate><!--T:111--> The following table shows how to alter the link target (whose default is the image {{<tvar name=1>ll|Help:Managing files#Description page</tvar>|description page}}) or how to remove it.</translate>
+<translate><!--T:112--> Changing the link does not alter the format described in the previous sections.</translate>
+
+<div class="noresize">
+{|class="wikitable plainlinks"
+|-
+!<translate><!--T:113--> Description</translate>
+!<translate><!--T:114--> You type</translate>
+!<translate><!--T:115--> You get</translate>
+{{Help:Images/frame|2=link=Main Page|ex=<translate><!--T:116--> internal link</translate>}}
+{{Help:Images/frame|2=link=http://wikipedia.org/wiki/Test|ex=<translate><!--T:117--> external link</translate>}}
+{{Help:Images/frame|2=link=|ex=<translate><!--T:118--> no link (external or file page)</translate>}}
+|}
+</div>
+
+{{note|type=warning|text='''<translate><!--T:119--> Warning</translate>:'''
+
+: <translate><!--T:120--> The licencing requirements on your wiki may not allow you to remove all links to the description page that displays the required authors attributions, the copyrights statements, the applicable licencing terms, or a more complete description of the rendered image (including its history of modifications).</translate>
+: <translate><!--T:121--> If you change or remove the target link of an image, you will then have to provide somewhere else on your page an explicit link to this description page, or to display the copyright and author statement and a link to the applicable licence, if they are different from the elements applicable to the embedding page itself.</translate>
+: <translate><!--T:122--> Your wiki policy may restrict the use of the alternate link parameter, or may even enforce a prohibition of alternate link parameters for embedded media files (in which case, the link parameter will be ignored), or may only accept them after validation by authorized users or administrators.</translate>}}
+
+<translate>
+== Rendering a gallery of images == <!--T:123-->
+
+=== Gallery syntax === <!--T:124-->
+</translate>
+<translate><!--T:125--> It's easy to make a gallery of thumbnails with the <tvar name=gallery>{{tag|gallery|open}}</tvar> tag.</translate>
+<translate><!--T:126--> The syntax is:</translate>
+
+<syntaxhighlight lang=wikitext>
+<gallery>
+File:file_name.ext|caption|alt=alt language
+File:file_name.ext|caption|alt=alt language
+{...}
+</gallery>
+</syntaxhighlight>
+
+<translate>
+<!--T:127-->
+Note that the image code is not enclosed in brackets when enclosed in gallery tags.
+</translate>
+
+<translate><!--T:128--> Captions are optional, and may contain wiki links or other formatting.</translate>
+{{note|1=<translate><!--T:258--> The words "center", "left", and "right" used as captions cause false-positive Linter errors.</translate> <translate><!--T:270--> See <tvar name=1>{{phab|T275074}}</tvar> for details.</translate>}}
+<translate><!--T:129--> Some of the parameters controlling thumb output can also be used here, specifically the ones that modify the file (as opposed to ones that control where in the page the image falls).</translate>
+<translate><!--T:130--> For example, with multi-paged media like pdfs, you can use code like <tvar name=1><code>page=4</code></tvar> and with videos you can use <tvar name=2><code>thumbtime=10</code></tvar>.</translate>
+
+<translate><!--T:131--> The <tvar name=file><code>File:</code></tvar> prefix can be omitted.</translate>
+<translate><!--T:216--> However, it is helpful to include it as an aid for quickly locating image specifiers in the wikitext (for example, when cleaning up page layout).</translate>
+
+<translate><!--T:290--> If the image links to an external site, the caption must come ''before'' the link parameter or the caption will not render.</translate>
+
+<translate>
+<!--T:132-->
+For example:
+</translate>
+
+<syntaxhighlight lang="moin">
+<gallery>
+File:Example.jpg|<translate nowrap><!--T:293--> Item 1</translate>
+File:Example.jpg|<translate nowrap><!--T:294--> a link to <tvar name=1>[[Help:Contents]]</tvar></translate>
+File:Example.jpg
+File:Example.jpg|alt=<translate nowrap><!--T:295--> An example image. It has flowers</translate>
+File:Example.jpg|''<translate nowrap><!--T:296--> italic caption</translate>''
+File:Example.jpg|link=https://example.com|<translate nowrap><!--T:297--> This text will not render because an external link came first</translate>
+File:Example.jpg|<translate nowrap><!--T:298--> Links to external website</translate>|link=https://example.com
+File:Example.jpg|link=w:Main_Page|<translate nowrap><!--T:299--> Internal link</translate>
+Example.jpg|on page "{{PAGENAME}}"
+File:Using Firefox.pdf|page=72
+</gallery>
+</syntaxhighlight>
+
+<translate>
+<!--T:133-->
+is formatted as:
+</translate>
+
+<gallery>
+File:Example.jpg|<translate><!--T:300--> Item 1</translate>
+File:Example.jpg|<translate><!--T:301--> a link to <tvar name=1>[[Help:Contents]]</tvar></translate>
+File:Example.jpg
+File:Example.jpg|alt=<translate><!--T:302--> An example image. It has flowers</translate>
+File:Example.jpg|''<translate><!--T:303--> italic caption</translate>''
+File:Example.jpg|link=https://example.com|<translate><!--T:304--> This text will not render because an external link came first</translate>
+File:Example.jpg|<translate><!--T:305--> Links to external website</translate>|link=https://example.com
+File:Example.jpg|link=w:Main_Page|<translate><!--T:306--> Internal link</translate>
+Example.jpg|on page "{{PAGENAME}}"
+File:Using Firefox.pdf|page=72
+</gallery>
+
+<translate>
+=== <tvar name=1>mode</tvar> parameter === <!--T:134-->
+</translate>
+{{MW 1.22|and after}}
+<translate>
+<!--T:135-->
+Starting in MediaWiki version 1.22 a <tvar name=1><code>mode</code></tvar> parameter is available, taking options as follows:
+
+<!--T:136-->
+* <tvar name=1><code>traditional</code></tvar> is the original gallery type used by MediaWiki.</translate>
+<translate>
+<!--T:137-->
+* <tvar name=1><code>nolines</code></tvar> is similar to <tvar name=2><code>traditional</code></tvar>, but with no border lines.</translate>
+<translate>
+<!--T:138-->
+* <tvar name=1><code>packed</code></tvar> causes images to have the same height but different widths, with little space between the images.</translate> <translate><!--T:139--> The rows in this [[w:Responsive web design|responsive]] mode organize themselves according to the width of the screen.</translate>
+<translate>
+<!--T:140-->
+* <tvar name=1><code>packed-overlay</code></tvar> shows the caption overlaid on the image, in a semi-transparent white box.</translate>
+<translate>
+<!--T:141-->
+* <tvar name=1><code>packed-hover</code></tvar> is similar to <tvar name=2><code>packed-overlay</code></tvar>, but with the caption and box only showing up on hover.</translate>
+* <translate><!--T:206--> <tvar name=1><code>slideshow</code></tvar> creates a slideshow of the images.</translate>
+
+<translate>
+<!--T:142-->
+For example:
+</translate>
+
+<syntaxhighlight lang="tid">
+<gallery mode="packed-hover">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+File:Pterois volitans Manado-e.jpg|''[[commons:Pterois volitans|Pterois volitans]]'' (Red Lionfish)
+File:Macropodus opercularis - front (aka).jpg|''[[commons:Macropodus opercularis|Macropodus opercularis]]'' (Paradise fish)
+File:Canthigaster valentini 1.jpg|''[[commons:Canthigaster valentini|Canthigaster valentini]]'' (Valentinni's sharpnose puffer)
+File:Flughahn.jpg|[[File:POTY ribbon 2007.svg|25px]] ''[[commons:Dactylopterus volitans|Dactylopterus volitans]]'' (Flying gurnard)
+File:Fishmarket 01.jpg|''[[commons:Semicossyphus pulcher|Semicossyphus pulcher]]'' (California Sheephead)
+File:Pseudorasbora parva(edited version).jpg|''[[commons:Category:Pseudorasbora parva|Pseudorasbora parva]]'' (Topmouth gudgeon)
+File:MC Rotfeuerfisch.jpg|''[[commons:Category:Pterois antennata|Pterois antennata]]'' (Antennata Lionfish)
+File:Cleaning station konan.jpg|''[[commons:Novaculichthys taeniourus|Novaculichthys taeniourus]]''
+File:Synchiropus splendidus 2 Luc Viatour.jpg|''[[commons:Synchiropus splendidus|Synchiropus splendidus]]'' (Mandarin fish)
+File:Psetta maxima Luc Viatour.jpg|''[[commons:Psetta maxima|Psetta maxima]]'' (Turbot)
+File:Australian blenny.jpg|''[[commons:Category:Ecsenius|Ecsenius axelrodi]]''
+</gallery>
+</syntaxhighlight>
+
+<translate>
+<!--T:143-->
+Gives (mode: <tvar name=hover><code>packed-hover</code></tvar>):
+</translate>
+
+<gallery mode="packed-hover">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+File:Pterois volitans Manado-e.jpg|''[[commons:Pterois volitans|Pterois volitans]]'' (Red Lionfish)
+File:Macropodus opercularis - front (aka).jpg|''[[commons:Macropodus opercularis|Macropodus opercularis]]'' (Paradise fish)
+File:Canthigaster valentini 1.jpg|''[[commons:Canthigaster valentini|Canthigaster valentini]]'' (Valentinni's sharpnose puffer)
+File:Flughahn.jpg|[[File:POTY ribbon 2007.svg|25px]] ''[[commons:Dactylopterus volitans|Dactylopterus volitans]]'' (Flying gurnard)
+File:Fishmarket 01.jpg|''[[commons:Semicossyphus pulcher|Semicossyphus pulcher]]'' (California Sheephead)
+File:Pseudorasbora parva(edited version).jpg|''[[commons:Category:Pseudorasbora parva|Pseudorasbora parva]]'' (Topmouth gudgeon)
+File:MC Rotfeuerfisch.jpg|''[[commons:Category:Pterois antennata|Pterois antennata]]'' (Antennata Lionfish)
+File:Cleaning station konan.jpg|''[[commons:Novaculichthys taeniourus|Novaculichthys taeniourus]]''
+File:Synchiropus splendidus 2 Luc Viatour.jpg|''[[commons:Synchiropus splendidus|Synchiropus splendidus]]'' (Mandarin fish)
+File:Psetta maxima Luc Viatour.jpg|''[[commons:Psetta maxima|Psetta maxima]]'' (Turbot)
+File:Australian blenny.jpg|''[[commons:Category:Ecsenius|Ecsenius axelrodi]]''
+</gallery>
+
+<translate>
+<!--T:144-->
+Examples of the other modes:
+</translate>
+
+<code>mode="traditional"</code>
+<gallery mode="traditional">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+</gallery>
+
+<code>mode="nolines"</code>
+<gallery mode="nolines">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+</gallery>
+
+<code>mode="packed"</code>
+<gallery mode="packed">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+</gallery>
+
+<code>mode="packed-overlay"</code>
+<gallery mode="packed-overlay">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+</gallery>
+
+<code>mode="packed-hover"</code>
+<gallery mode="packed-hover">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+</gallery>
+
+{{MW 1.28|and after}}
+<code id="slideshow-demo">mode="slideshow"</code>
+<gallery mode="slideshow">
+File:Astronotus_ocellatus.jpg|''[[commons:Astronotus ocellatus|Astronotus ocellatus]]'' (Oscar)
+File:Salmonlarvakils.jpg|''[[commons:Salmo salar|Salmo salar]]'' (Salmon Larva)
+File:Georgia Aquarium - Giant Grouper.jpg|''[[commons:Epinephelus lanceolatus|Epinephelus lanceolatus]]'' (Giant grouper)
+File:Pterois volitans Manado-e.jpg|''[[commons:Pterois volitans|Pterois volitans]]'' (Red Lionfish)
+File:Macropodus opercularis - front (aka).jpg|''[[commons:Macropodus opercularis|Macropodus opercularis]]'' (Paradise fish)
+File:Canthigaster valentini 1.jpg|''[[commons:Canthigaster valentini|Canthigaster valentini]]'' (Valentinni's sharpnose puffer)
+File:Flughahn.jpg|[[File:POTY ribbon 2007.svg|25px]] ''[[commons:Dactylopterus volitans|Dactylopterus volitans]]'' (Flying gurnard)
+File:Fishmarket 01.jpg|''[[commons:Semicossyphus pulcher|Semicossyphus pulcher]]'' (California Sheephead)
+File:Pseudorasbora parva(edited version).jpg|''[[commons:Category:Pseudorasbora parva|Pseudorasbora parva]]'' (Topmouth gudgeon)
+File:MC Rotfeuerfisch.jpg|''[[commons:Category:Pterois antennata|Pterois antennata]]'' (Antennata Lionfish)
+File:Cleaning station konan.jpg|''[[commons:Novaculichthys taeniourus|Novaculichthys taeniourus]]''
+File:Synchiropus splendidus 2 Luc Viatour.jpg|''[[commons:Synchiropus splendidus|Synchiropus splendidus]]'' (Mandarin fish)
+File:Psetta maxima Luc Viatour.jpg|''[[commons:Psetta maxima|Psetta maxima]]'' (Turbot)
+File:Australian blenny.jpg|''[[commons:Category:Ecsenius|Ecsenius axelrodi]]''
+</gallery>
+
+<translate>
+=== Optional gallery attributes === <!--T:145-->
+
+<!--T:146-->
+The gallery tag itself takes several additional parameters, specified as attribute name-value pairs:
+</translate>
+
+<syntaxhighlight lang=html>
+<gallery {parameters}>
+{images}
+</gallery>
+</syntaxhighlight>
+
+<translate>
+<!--T:147-->
+* <code>caption="{caption}"</code>: (caption text between double quotes for more than one word) sets a caption centered atop the gallery. Only plain text may be used in the caption; formatting, templates and the like will not work.</translate>
+<translate>
+<!--T:148-->
+* <code>widths={width}</code>: sets the (max) widths of the images in pixels; the [[<tvar name=options>Special:MyLanguage/Manual:$wgGalleryOptions</tvar>|default value]] is 120px.</translate> <translate><!--T:271--> (It has no effect if mode is set to one of the following: <tvar name=1>packed, packed-overlay, packed-hover, slideshow</tvar>.)</translate> ''<translate><!--T:149--> Note the plural: width'''s'''</translate>''.
+<translate>
+<!--T:150-->
+* <code>heights={heights}</code>: sets the (max) heights of the images in pixels; the default value is 120px.</translate> <translate><!--T:272--> (It has no effect if mode is set to <tvar name=1>slideshow</tvar>.)</translate>
+<translate>
+<!--T:151-->
+* <code>perrow={integer}</code>: sets the number of images per row.</translate> <translate><!--T:273--> (It has no effect if mode is set to one of the following: <tvar name=1>packed, packed-overlay, packed-hover, slideshow</tvar>.)</translate> <translate><!--T:152--> The default is <tvar name=1><code>perrow=0</code></tvar> which automatically adjusts the number of images per row based on width of screen.</translate>
+<translate>
+<!--T:153-->
+* <code>showfilename={anything}</code>: Show the filenames of the images in the individual captions for each image (1.17+).</translate>
+<translate>
+<!--T:154-->
+* <code>mode={traditional|nolines|packed|packed-hover|packed-overlay|slideshow}</code>: See section above (1.22+; 1.28+ for "slideshow").</translate>
+<translate>
+<!--T:241-->
+* <code>showthumbnails</code>: For "slideshow" mode only, display the strip with image thumbnails below the slideshow by default (1.29+).
+</translate>
+* <translate><!--T:289--> Any html attribute allowed on a <tvar name=1><code>&lt;ul&gt;</code></tvar> tag (e.g. <tvar name=2><code>id</code></tvar>, <tvar name=3><code>title</code></tvar>, <tvar name=4><code>class</code></tvar>)</translate>
+
+{{note|1=<translate><!--T:292--> In packed (and related) modes, the widths parameter has no effect; instead, the heights parameter determines the minimum height of the images.</translate> <translate><!--T:156--> Packed modes adjust the width of images to ensure that each row is of equal length, except when a row contains too few images to achieve this without excessively enlarging the images.</translate>}}
+
+<translate>
+<!--T:260-->
+; Example 1
+
+<!--T:261-->
+Syntax:
+</translate>
+
+<syntaxhighlight lang=html>
+<gallery widths=300 heights=200>
+File:Example.jpg|Lorem ipsum
+File:Example.jpg|Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+</gallery>
+</syntaxhighlight>
+
+<translate>
+<!--T:262-->
+Result:
+</translate>
+
+<gallery widths="300" heights="200">
+File:Example.jpg|Lorem ipsum
+File:Example.jpg|Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+</gallery>
+
+<translate>
+<!--T:157-->
+; Example 2
+
+<!--T:263-->
+Syntax:
+</translate>
+
+<syntaxhighlight lang=html>
+<gallery widths=60 heights=60 perrow=7 caption="<translate nowrap><!--T:288--> sunflowers are groovy</translate>">
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+</gallery>
+</syntaxhighlight>
+
+<translate>
+<!--T:159-->
+Result:
+</translate>
+
+<gallery widths="60" heights="60" perrow="7" caption="{{Tunit|288|sunflowers are groovy}}">
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+File:Example.jpg
+</gallery>
+
+<translate>
+== Row of images that will wrap to browser width == <!--T:160-->
+</translate>
+<translate><!--T:161--> One way that works for a row of images with varying widths is not to use "thumb" or "left" or "none".</translate>
+<translate><!--T:162--> If "thumb" is not used (and thus no captions) a row of images will wrap to the browser width.</translate>
+<translate><!--T:163--> If necessary, narrow the browser window to see the images wrap to the next row.</translate>
+
+<pre>
+[[File:Example.jpg|220px]]
+[[File:Example.jpg|100px]]
+[[File:Example.jpg|150px]]
+[[File:Example.jpg|250px]]
+[[File:Example.jpg|200px]]
+[[File:Example.jpg|50px]]
+[[File:Example.jpg|220px]]
+[[File:Example.jpg|175px]]
+</pre>
+
+[[File:Example.jpg|220px]]
+[[File:Example.jpg|100px]]
+[[File:Example.jpg|150px]]
+[[File:Example.jpg|250px]]
+[[File:Example.jpg|200px]]
+[[File:Example.jpg|50px]]
+[[File:Example.jpg|220px]]
+[[File:Example.jpg|175px]]
+
+<translate>
+<!--T:207-->
+'''To wrap images of varying widths with captions''' it is necessary to use div HTML for an unordered list. Along with <tvar name="code"><code>style="display: inline-block;"</code></tvar>. For more info and ideas see: [<tvar name=1>http://www.sitepoint.com/give-floats-the-flick-in-css-layouts</tvar> Give Floats the Flick in CSS Layouts].
+</translate>
+
+<syntaxhighlight lang="html">
+<div><ul>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|220px|Caption 1]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|100px|Caption 2]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|150px|Caption 3]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|250px|Caption 4]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|200px|Caption 5]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|50px|Caption 6]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|220px|Caption 7]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|175px|Caption 8]] </li>
+</ul></div>
+</syntaxhighlight>
+
+<div><ul>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|220px|Caption 1]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|100px|Caption 2]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|150px|Caption 3]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|250px|Caption 4]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|200px|Caption 5]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|50px|Caption 6]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|220px|Caption 7]] </li>
+<li style="display: inline-block;"> [[File:Example.jpg|thumb|none|175px|Caption 8]] </li>
+</ul></div>
+
+<translate><!--T:259--> To '''align the top edge of images''' add the vertical-align command</translate>
+
+<syntaxhighlight lang="html">
+<div><ul>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|220px|Caption 1]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|100px|Caption 2]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|150px|Caption 3]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|250px|Caption 4]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|200px|Caption 5]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|50px|Caption 6]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|220px|Caption 7]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|175px|Caption 8]] </li>
+</ul></div>
+</syntaxhighlight>
+
+<div><ul>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|220px|Caption 1]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|100px|Caption 2]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|150px|Caption 3]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|250px|Caption 4]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|200px|Caption 5]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|50px|Caption 6]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|220px|Caption 7]] </li>
+<li style="display: inline-block; vertical-align: top;"> [[File:Example.jpg|thumb|none|175px|Caption 8]] </li>
+</ul></div>
+
+<translate><!--T:164--> Some wiki farms do not have all gallery options (such as "widths").</translate>
+<translate><!--T:165--> Also, sometimes one wants varying widths for images in a row.</translate>
+<translate><!--T:166--> Outside of a gallery, or the div HTML, it is impossible to have individual captions for images in a row of images that will wrap to the browser width.</translate>
+<translate><!--T:167--> Try it and see. Nothing else using wikitext works correctly. Images will either overlap stuff on the right, or force a horizontal scroll bar.</translate>
+
+<translate><!--T:168--> Using a left float ("left") for some images, combined with "none" for some of the images, will not work consistently either, especially if there is also a right sidebar of images.</translate>
+<translate><!--T:169--> Weird things will occur.</translate>
+<translate><!--T:170--> At narrower browser or screen widths an image out of the row may appear far down the page after the end of the right sidebar of images.</translate>
+
+<translate>
+== Link behavior == <!--T:171-->
+</translate>
+<translate><!--T:172--> By default an image links to its file description page.</translate>
+<translate><!--T:173--> The "link=" option modifies this behavior to link to another page or website, or to turn off the image's linking behavior.</translate>
+
+<translate><!--T:174--> Alternatively, you can create a text link to a file description page or to the file itself.</translate>
+<translate><!--T:204--> See <tvar name=1>{{ll|Help:Linking to files}}</tvar>.</translate>
+
+<translate>
+=== Display image, link it to another page or website === <!--T:180-->
+
+<!--T:181-->
+Use "link=" option to link image to another page or website:
+
+<!--T:182-->
+Clicking on the below image will take you to [[MediaWiki]]:
+</translate>
+
+ <nowiki>[[</nowiki>File:MediaWiki-2020-logo.svg|50px|link=MediaWiki]]
+
+[[File:MediaWiki-2020-logo.svg|50px|link=MediaWiki]]
+
+<translate>
+<!--T:183-->
+Clicking on the below image will take you to ''example.com'':
+</translate>
+
+ <nowiki>[[</nowiki>File:MediaWiki-2020-logo.svg|50px|link=http://example.com]]
+
+[[File:MediaWiki-2020-logo.svg|50px|link=http://example.com]]
+
+<translate>
+=== Display image, turn off link === <!--T:184-->
+
+<!--T:185-->
+Use "link=" option with no value assigned to turn link off entirely; the below image is not a link:
+</translate>
+
+ <nowiki>[[</nowiki>File:MediaWiki-2020-logo.svg|50px|link=]]
+
+[[File:MediaWiki-2020-logo.svg|50px|link=]]
+
+<translate>
+=== Link to an image === <!--T:208-->
+
+<!--T:209-->
+Add <tvar name="colon"><code>:</code></tvar> as a prefix to the link you need to create.
+</translate>
+
+ <nowiki>[[:</nowiki>File:MediaWiki-2020-logo.svg]]
+[[:File:MediaWiki-2020-logo.svg]]
+ <nowiki>[[:</nowiki>File:MediaWiki-2020-logo.svg|Wiki]]
+[[:File:MediaWiki-2020-logo.svg|Wiki]]
+
+<translate>
+=== Directly linking to an image === <!--T:242-->
+</translate>
+<translate><!--T:243--> The above examples link to the image's description page.</translate>
+<translate><!--T:244--> To directly link to an image, the pseudo-namespace <tvar name=1><code>Media:</code></tvar> can be used on MediaWiki pages:</translate>
+
+<syntaxhighlight lang="moin">
+[[Media:MediaWiki-2020-logo.svg]]
+</syntaxhighlight>
+[[Media:MediaWiki-2020-logo.svg]]
+
+{{anchor|Direct image access}}
+<translate>
+====Direct links from external sites==== <!--T:245-->
+</translate>
+<translate><!--T:246--> Another possibility is to use the <tvar name=1>[[Special:Redirect/file]]</tvar> page (or its alias <tvar name=2>[[Special:Filepath]]</tvar>).</translate>
+<translate><!--T:247--> Unlike the above example, you can link to it from external websites as well as from MediaWiki pages.</translate>
+
+<syntaxhighlight lang="moin">
+[[Special:Redirect/file/Wikipedia.png]]
+</syntaxhighlight>
+
+<translate><!--T:248--> The parameters <code>height</code> and <code>width</code> can also be added to return a specific size of the image.</translate>
+<translate><!--T:220--> The image aspect ratio is always preserved.</translate>
+
+<syntaxhighlight lang="moin">
+https://www.mediawiki.org/w/index.php?title=Special:Redirect/file/Wikipedia.png&width=100&height=100
+</syntaxhighlight>
+
+{{anchor|Obtain a direct link to an image}}
+<translate>
+====Obtaining the full URL of an image==== <!--T:249-->
+
+<!--T:250-->
+To obtain the full path of an image (without going through redirects as shown above), some <tvar name=1>{{ll|Help:magic words|nsp=0}}</tvar> can be used.
+</translate>
+
+ <nowiki>{{filepath:MediaWiki-2020-logo.svg}}</nowiki>
+
+<translate><!--T:212--> Becomes:</translate>
+
+:{{filepath:MediaWiki-2020-logo.svg}}
+
+<translate><!--T:213--> In the event that this is used from a template where the <code>File:</code> namespace needs to be removed, <tvar name=1><code><nowiki>{{PAGENAME}}</nowiki></code></tvar> can do so:</translate>
+
+ <nowiki>{{filepath:{{PAGENAME:File:MediaWiki-2020-logo.svg}}}}</nowiki>
+
+<translate><!--T:214--> Becomes:</translate>
+
+:{{filepath:{{PAGENAME:File:MediaWiki-2020-logo.svg}}}}
+
+<translate>
+== Files at other websites == <!--T:190-->
+</translate>
+<translate><!--T:191--> You can link to an external file available online using the same syntax used for linking to an external web page.</translate>
+<translate><!--T:192--> With these syntaxes, the image will not be rendered, but only the text of the link to this image will be displayed.</translate>
+
+<pre>[http://url.for/some/image.png]</pre>
+
+<translate>
+<!--T:193-->
+Or with a different displayed text:
+</translate>
+
+<pre>[http://url.for/some/image.png <translate nowrap><!--T:195--> link text here</translate>]</pre>
+
+<translate>
+<!--T:196-->
+Additional MediaWiki markup or HTML/CSS formatting (for inline elements) is permitted in this displayed text (except for embedded links that would break the surrounding link):
+</translate>
+
+<pre>[http://www.example.com/some/image.png <translate nowrap><!--T:197--> Example '''<del>rich</del>''' ''<ins>link text</ins>'' here.</translate>]</pre>
+
+<translate>
+<!--T:215-->
+which renders as:</translate> [http://www.example.com/some/image.png <translate><!--T:198--> Example '''<del>rich</del>''' ''<ins>link text</ins>'' here.</translate>]
+
+<translate>
+<!--T:199-->
+If it is enabled on your wiki (see <tvar name=AllowExternalImages>{{ll|Manual:$wgAllowExternalImages}}</tvar>), you can also embed external images. To do that, simply insert the image's URL:
+</translate>
+<pre>http://url.for/some/image.png</pre>
+<translate>
+<!--T:200-->
+Embedded images can be resized by the CSS <tvar name=transform><code>transform</code></tvar> property. They also may be formatted by surrounding MediaWiki markup or HTML/CSS code.
+
+<!--T:201-->
+If this wiki option is not enabled, the image will not be embedded but rendered as a textual link to the external site, just like above, unless the site's <tvar name=AllowExternalImagesFrom>{{ll|Manual:$wgAllowExternalImagesFrom}}</tvar> has a value.
+
+<!--T:291-->
+It is also possible to use <tvar name=1>{{ll|InstantCommons}}</tvar> or other {{<tvar name=2>ll|Manual:$wgForeignFileRepos</tvar>|shared file repositories}} to load files from other wikis, which are treated as if they were local images.
+
+== See also == <!--T:202-->
+
+<!--T:203-->
+*[[w:Wikipedia:Extended image syntax|Wikipedia:Extended image syntax]]
+*[[w:Category:Wikipedia image help|Category:Wikipedia image help]]
+*[[w:Wikipedia:Picture tutorial|Wikipedia:Picture tutorial]]
+*[[w:Help:Gallery tag]]
+</translate>
+*{{ll|Manual:Adding support for new filetypes}}
+*[[phab:T113101]] &ndash; <translate><!--T:256--> responsive issues</translate>
+* <translate><!--T:269--> [[<tvar name=1>Special:MyLanguage/Extension:PageImages#Can I exclude certain page images?</tvar>|Extension:PageImages#Can I exclude certain page images?]]</translate>
+
+[[Category:Help{{#translation:}}|Images]]

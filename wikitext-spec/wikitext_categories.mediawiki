@@ -1,0 +1,236 @@
+<languages />
+{{PD Help Page}}
+<translate>
+<!--T:1-->
+Categories, a software feature of MediaWiki, provide automatic indexes that are useful as tables of contents.
+
+<!--T:2-->
+You can categorise pages and files by adding one or more '''Category''' tags to the content text. These tags create links at the bottom of the page that take you to the list of all pages in that category, which makes it easy to browse related articles.
+
+== Summary == <!--T:3-->
+
+<!--T:4-->
+Each of the pages in the '''Category''' [[<tvar name=ns>Special:MyLanguage/Help:Namespaces</tvar>|namespace]] represents a so-called '''category''', a grouping of related pages, and contains an index for the pages of its category. For example, this page belongs to "<tvar name=cat>{{ll|Category:Help}}</tvar>". If you open the category page, you will see a link to this page there.
+
+<!--T:5-->
+When a page belongs to one or more categories, these categories appear at the bottom of the page (or in the upper-right corner, depending on the [[<tvar name=1>Special:MyLanguage/Help:Preferences</tvar>|skin]] being used).
+
+<!--T:6-->
+The category pages themselves contain 2 parts:
+
+<!--T:7-->
+* at their beginning, an optional part may contain text that can be edited, like any other page,
+* at their end, an ever present, automatically generated, alphabetical list of all pages in that category, in the form of links. In fact, in the Unicode sort order.
+
+<!--T:8-->
+To assign a category to a page, simply add the link "<nowiki>[[</nowiki>Category:''Category name'']]" to the page's wikitext. The usual place to add it is at the bottom of the page.
+
+<!--T:9-->
+To link a category page within a page as a normal wiki link (without adding the page to the category), prefix the link name with a colon.  For example: {{<tvar name=1>tmpl|0=<nowiki>[[</nowiki><ins>:</ins>$1]]</tvar>|Category:Not in this category}}
+
+<!--T:10-->
+A new category can be [[<tvar name=1>Special:MyLanguage/Help:Starting a new page</tvar>|created]] before assigning any page to it, in the same way as any other regular page.
+
+<!--T:11-->
+Individual wikis may have their own top-level categories, such as [[w:Category:Contents|Category:Contents]] on Wikipedia.
+
+<!--T:12-->
+For a complete list of all categories which have at least one page, see <tvar name=1>[[Special:Categories]]</tvar>.
+
+<!--T:13-->
+For a complete list of all created/edited categories, including the ones that don't have any pages, see <tvar name=1>[[Special:Allpages/Category:]]</tvar> (note the colon at the end).
+
+==Adding a page to a category== <!--T:14-->
+
+<!--T:15-->
+To add a page or uploaded file to a category, simply edit the page and add the following text (where '''''Name''''' is the name of the category you want to add it to).
+</translate>
+
+ <nowiki>[[</nowiki>{{ns:category}}:'''''<translate><!--T:16--> Name</translate>''''']]
+
+<translate>
+<!--T:17-->
+Any number of <tvar name=2>{{ns:category}}</tvar> tags may be added to the page and the page will be listed in all of them. <tvar name=2>{{ns:category}}</tvar> tags, along with {{<tvar name=1>ll|Manual:Interwiki#Interwiki links to other languages</tvar>|interwiki language links}} placed in the sidebar, are usually added at the very bottom of the page for the convenience of other editors.
+
+<!--T:18-->
+On a categorised page, categories are displayed in the <tvar name=1><code>{{int|pagecategories}}:</code></tvar> box strictly in the order they appear in the wikitext.
+</translate>
+
+<translate><!--T:59--> (At least in MediaWiki 1.18.2) if a category is a subcategory of more than one parent, both hierarchies will be listed, but the tagged category will be stripped off all but one of these.</translate>
+<translate><!--T:60--> This creates the potential for what appear to be duplicate entries if a category with multiple parents ''and'' one of its parents are both tagged on a page.</translate>
+<translate><!--T:61--> For example suppose Maryanne is a subcategory of both Mary and Anne.</translate>
+<translate><!--T:62--> If a page tags categories Maryanne and Anne then the Category breadcrumbs will show</translate>
+
+ Anne
+ Anne
+ Mary -> Maryanne
+
+<translate>
+<!--T:20-->
+"Anne" appears to be duplicated, but what is meant is
+</translate>
+
+ Anne
+ Anne -> Maryanne
+ Mary -> Maryanne
+
+<translate>
+<!--T:21-->
+This is a bug, and has been reported in <tvar name=1>[[phab:T35614]]</tvar>.
+
+===Sort key=== <!--T:22-->
+</translate>
+<translate><!--T:23--> By default, a page is sorted within a category under the first letter of its name — ''without the namespace''.</translate>
+<translate><!--T:63--> Also, MediaWiki groups accented characters separately from their unaccented version, so pages starting by À, Á, Ä, will be listed under separate headings, instead of under heading A.</translate>
+<translate><!--T:64--> (If you have shell access, these defaults can be changed using <tvar name=CategoryCollation>{{wg|CategoryCollation}}</tvar>.)</translate>
+
+<translate>
+<!--T:24-->
+A ''sort key'' specifies under which letter heading, and where in the category list, the page will appear.
+
+<!--T:76-->
+There are two ways in which you can customise the category sortkey:
+</translate>
+
+* <translate><!--T:78--> Generically, for all categories, by adding the <tvar name=1>{{ll|Help:Magic words#DEFAULTSORT|DEFAULTSORT}}</tvar>  magic word on the page.</translate>
+* <translate><!--T:79--> On an individual 'per category' basis, by placing the value inside the tag after a pipe character.</translate> <translate><!--T:80--> For example, the tag below will add the page under heading <tvar name=1><code>S</code></tvar>.</translate>
+ <nowiki>[[</nowiki>{{ns:category}}:'''''<translate><!--T:25--> Name</translate>'''''|'''''<translate><!--T:26--> Sort</translate>''''']]
+
+<translate><!--T:52--> Whether or not sort keys are case-sensitive depends on your configuration settings.</translate>
+<translate><!--T:27--> The order of the sections within a category follows the Unicode sort order. The sort key does not change the page title displayed in the category.</translate>
+
+<translate>
+<!--T:53-->
+Spaces and other characters are perfectly valid.
+
+==Creating a category page== <!--T:29-->
+
+<!--T:30-->
+Categories exist even if their page has not been created, but these categories are isolated from others and serve little purpose for organisation or navigation.
+
+<!--T:31-->
+A category is created by creating a page in the '''''Category:''''' namespace. A category page can be created the same way as other wiki pages (see <tvar name=help>{{ll|Help:Starting a new page}}</tvar>); just add "<tvar name=code><code>{{ns:category}}:</code></tvar>" before the page title.
+
+<!--T:32-->
+To avoid extra work, try searching within your wiki before creating a new category. The list of all categories can be found in <tvar name=1><code>{{int|specialpages}}</code></tvar> in the "<tvar name=2>{{lcfirst:{{int|toolbox}}}}</tvar>" box of the [[<tvar name=3>Special:MyLanguage/Help:Navigation#Sidebar</tvar>|sidebar]].
+
+==Managing the category hierarchy== <!--T:34-->
+
+<!--T:35-->
+Categories may belong to other categories in a hierarchy. Since category pages are much like any other page, a <tvar name=1>{{ns:category}}</tvar> tag may be added to the bottom of a category page.
+
+<!--T:36-->
+It is a good idea to organise all categories into a hierarchy with a single top level category. The category structure can take the form of a tree with separate branches, but more often will have a graph structure. Generally, there should be a contiguous chain of parent-child links between each category and the top level category.
+
+=== Category tree === <!--T:65-->
+</translate>
+{{main|Extension:CategoryTree#Usage|l1=<translate><!--T:66--> CategoryTree extension manual</translate>}}
+
+<translate>
+<!--T:67-->
+Since MediaWiki 1.31, <tvar name=1>{{ll|Extension:CategoryTree|nsp=0}}</tvar> extension is packaged by default, allowing <tvar name=2>[[Special:CategoryTree]]</tvar> and <tvar name=3>{{tag|categorytree|open}}</tvar> to provide a tree-like structure display for the categories.
+
+==Hidden categories== <!--T:37-->
+
+<!--T:38-->
+The categories that a page is in are normally listed at the bottom of the page. In MediaWiki 1.13+, a category can be hidden from this list by adding the [[<tvar name=1>Special:MyLanguage/Help:Magic words</tvar>|magic word]] "<tvar name=2><code><nowiki>__HIDDENCAT__</nowiki></code></tvar>" to the category page.
+
+<!--T:39-->
+Users can choose to see hidden categories in a separate <tvar name=1><code>{{int|hidden-categories}}</code></tvar> list, by checking <tvar name=2><code>{{int|tog-showhiddencats}}</code></tvar> in the <tvar name=3><code>{{int|prefs-rendering}}</code></tvar> section of <tvar name=4>[[Special:Preferences]]</tvar>.
+</translate>
+
+<translate><!--T:40--> Hidden categories are automatically added to <tvar name=1>[[:Category:{{mediawiki:hidden-category-category}}]]</tvar>.</translate>
+<translate><!--T:55--> This category is specified in the system message <tvar name=1>[[MediaWiki:Hidden-category-category]]</tvar>.</translate>
+
+<translate>
+==Linking to a category== <!--T:42-->
+
+<!--T:43-->
+To create a link to a category, use a leading colon before the category name (without this colon, the current page would be added to the category):
+</translate>
+
+:<code><nowiki>[[</nowiki>:{{ns:category}}:Help]]</code> &rarr; '''[[:{{ns:category}}:Help]]'''
+
+<translate>
+<!--T:45-->
+To change the link text, write the text inside the link tag after a pipe:
+</translate>
+
+:<code><nowiki>[[</nowiki>:{{ns:category}}:Help|<translate><!--T:57--> Help category</translate>]]</code> &rarr; '''[[:{{ns:category}}:Help|<translate><!--T:58--> Help category</translate>]]'''
+
+<translate>
+<!--T:54-->
+[[<tvar name=1>Special:MyLanguage/Help:Redirects</tvar>|Redirect pages]] that redirect to categories must also use the colon, otherwise they will be added to the category instead of redirecting.
+
+== Categories and templates (transcluded pages) == <!--T:68-->
+
+<!--T:69-->
+If you add <tvar name=1><syntaxhighlight lang="wikitext" inline>[[Category:Cats]]</syntaxhighlight></tvar> inside a template (a transcluded page), ''both'' the template and pages which transclude this template will be categorised in <tvar name=2>Cats</tvar>.
+
+<!--T:70-->
+If you want ''only the template'' to be categorised, you should ensure to write category marker inside <tvar name=1><code>{{ll|Transclusion#Partial transclusion|<nowiki><noinclude></nowiki>}}</code></tvar> tags.
+
+<!--T:71-->
+If you want ''only the pages which use the template'' to be categorised, but not the template itself, you should ensure to write category marker inside <tvar name=1><code>{{ll|Transclusion#Partial transclusion|<nowiki><includeonly></nowiki>}}</code></tvar> tags.
+</translate>
+
+<translate><!--T:72--> Due to caching issues, editing categories applied through templates may take a while to be visible everywhere.</translate>
+<translate><!--T:73--> You can perform a [[<tvar name=1>Special:MyLanguage/Manual:Null edit</tvar>|null edit]] on a page to update immediately its categories.</translate>
+
+<translate>
+==Redirecting a category== <!--T:47-->
+</translate>
+<translate><!--T:48--> Like any other pages (templates, files, etc), category pages can be redirected to other normal or category pages.</translate>
+<translate><!--T:81--> However, '''unlike''' templates, files, and regular content pages, when you ''use'' a category, redirects will ''not'' apply (<tvar name=1>[[phab:T5311]]</tvar>).</translate>
+<translate><!--T:83--> For example:</translate>
+
+{| class="wikitable"
+! Premise
+! What you write
+! Result (categorization)
+! Result (link behavior)
+|-
+| Category:A redirects to Category:B
+| <nowiki>[[Category:A]]</nowiki>
+| The page is added to Category:A
+| Visitors cannot access the category page (it immediately redirects to Category:B)
+|-
+| Category:A redirects to Category:B
+| <nowiki>[[Category:B]]</nowiki>
+| The page is added to Category:B
+| Visitors can access it via Category:B or Category:A (normal redirect behavior)
+|-
+| Category:A redirects to Category:B
+| <nowiki>[[:Category:A]]</nowiki>
+| The page is not categorized
+| A direct link to Category:A is created; normal redirect behavior applies on click
+|-
+| Category:A redirects to Category:B
+| <nowiki>[[:Category:B]]</nowiki>
+| The page is not categorized
+| A direct link to Category:B is created; it behaves as expected
+|}
+
+<translate>
+<!--T:82-->
+Because this behavior may be confusing, some Wikimedia sites use a "category redirect" template to mark redirected categories, allowing manual or automated cleanup of pages categorised there.
+
+==Tracking categories== <!--T:49-->
+</translate>
+<translate><!--T:50--> Certain syntax issues, such as a broken image link, or too many expensive parser functions, can cause a page to be added to a tracking category.</translate>
+<translate><!--T:77--> Also, extensions may add pages to tracking categories, for example <tvar name=1>{{ll|Category:Pages with math errors}}</tvar>.</translate>
+<translate><!--T:56--> See <tvar name=1>{{ll|Help:Tracking categories}}</tvar> for details.</translate>
+
+<translate>
+== Renaming a category == <!--T:74-->
+
+<!--T:75-->
+If you move a category, since [[<tvar name=1>#Redirecting a category</tvar>|redirect will not work for categorising]], all category tags will be wrong, so you have to fix them.
+
+==See also== <!--T:51-->
+</translate>
+* {{ll|Category:Category extensions}}
+* <translate><!--T:19--> <tvar name=UseCategoryBrowser>{{ll|Extension:CategoryExplorer|nsp=0}}</tvar> - if this is set to true, under the first list each category is listed again, [[w:breadcrumb (navigation)|breadcrumb]]-style, with all its parent categories, sorted alphabetically.</translate>
+
+[[Category:Help{{#translation:}}|Categories]]
+[[Category:Category{{#translation:}}]]

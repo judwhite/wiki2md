@@ -53,7 +53,7 @@ pub fn line_trimmed_start(src: &str, line: LineRange) -> &str {
 pub fn parse_html_attrs(mut s: &str) -> Vec<HtmlAttr> {
     let mut attrs = Vec::new();
     while !s.is_empty() {
-        // Skip whitespace.
+        // skip whitespace.
         let trimmed = s.trim_start();
         let ws = s.len() - trimmed.len();
         s = &s[ws..];
@@ -61,7 +61,7 @@ pub fn parse_html_attrs(mut s: &str) -> Vec<HtmlAttr> {
             break;
         }
 
-        // Parse name.
+        // parse name.
         let mut name_end = 0usize;
         for (i, ch) in s.char_indices() {
             if ch.is_whitespace() || ch == '=' {
@@ -75,7 +75,7 @@ pub fn parse_html_attrs(mut s: &str) -> Vec<HtmlAttr> {
         let name = &s[..name_end];
         s = &s[name_end..];
 
-        // Optional value.
+        // optional value.
         let mut value: Option<String> = None;
         let trimmed = s.trim_start();
         let ws = s.len() - trimmed.len();
@@ -89,16 +89,16 @@ pub fn parse_html_attrs(mut s: &str) -> Vec<HtmlAttr> {
             if let Some(q) = s.chars().next() {
                 if q == '"' || q == '\'' {
                     s = &s[q.len_utf8()..];
-                    if let Some(endq) = s.find(q) {
-                        value = Some(s[..endq].to_string());
-                        s = &s[endq + q.len_utf8()..];
+                    if let Some(end_q) = s.find(q) {
+                        value = Some(s[..end_q].to_string());
+                        s = &s[end_q + q.len_utf8()..];
                     } else {
-                        // Unterminated quote; take rest.
+                        // unterminated quote; take rest.
                         value = Some(s.to_string());
                         s = "";
                     }
                 } else {
-                    // Unquoted token.
+                    // unquoted token.
                     let mut end = s.len();
                     for (i, ch) in s.char_indices() {
                         if ch.is_whitespace() {
@@ -181,7 +181,7 @@ pub fn parse_inlines(
                 continue;
             }
 
-        // Internal links [[...]]
+        // internal links [[...]]
         if rem.starts_with("[[")
             && let Some(close_rel) = rem[2..].find("]]" ) {
                 let inner_end = 2 + close_rel;
@@ -195,7 +195,7 @@ pub fn parse_inlines(
                 continue;
             }
 
-        // External links [https://... label]
+        // external links [https://... label]
         if rem.starts_with('[') && !rem.starts_with("[[")
             && let Some(end_rel) = rem[1..].find(']') {
                 let inner_end = 1 + end_rel;
@@ -230,7 +230,7 @@ pub fn parse_inlines(
                 }
             }
 
-        // Templates {{...}}
+        // templates {{...}}
         if rem.starts_with("{{")
             && let Some(consumed) = find_matching_braces(rem) {
                 let inner = &rem[2..consumed - 2];
@@ -241,7 +241,7 @@ pub fn parse_inlines(
                 continue;
             }
 
-        // Emphasis: ''italic'', '''bold''', '''''bold italic'''''
+        // emphasis: `''italic''`, `'''bold'''`, `'''''bold italic'''''`.
         if rem.starts_with("''")
             && let Some((node, consumed)) = try_parse_emphasis(full_src, base_abs + i, slice, i, diagnostics) {
                 flush_text(&mut out, &mut text_start, i);
@@ -251,7 +251,7 @@ pub fn parse_inlines(
                 continue;
             }
 
-        // Default: advance by one char.
+        // default: advance by one char.
         let ch_len = rem.chars().next().map(|c| c.len_utf8()).unwrap_or(1);
         i += ch_len;
     }
@@ -266,7 +266,7 @@ fn try_parse_line_break(abs_start: usize, rem: &str) -> Option<(InlineNode, usiz
         return None;
     }
     let end = rem.find('>')?;
-    // Accept <br>, <br/>, <br /> ...
+    // accept <br>, <br/>, <br /> ...
     let tag = &lower[..=end];
     if !tag.starts_with("<br") {
         return None;
@@ -289,21 +289,21 @@ fn try_parse_emphasis(
     diagnostics: &mut Vec<Diagnostic>,
 ) -> Option<(InlineNode, usize)> {
     let rem = &full_slice[rel_i..];
-    // Prefer longer delimiters.
+    // prefer longer delimiters.
     for (delim, kind) in [
         ("'''''", "bi"),
         ("'''", "b"),
         ("''", "i"),
     ] {
         if rem.starts_with(delim) {
-            let dlen = delim.len();
-            let after = &rem[dlen..];
+            let delim_len = delim.len();
+            let after = &rem[delim_len..];
             if let Some(close_rel) = after.find(delim) {
-                let inner_rel_start = rel_i + dlen;
+                let inner_rel_start = rel_i + delim_len;
                 let inner_rel_end = inner_rel_start + close_rel;
                 let inner = &full_slice[inner_rel_start..inner_rel_end];
-                let children = parse_inlines(full_src, abs_start + dlen, inner, diagnostics);
-                let consumed = dlen + close_rel + dlen;
+                let children = parse_inlines(full_src, abs_start + delim_len, inner, diagnostics);
+                let consumed = delim_len + close_rel + delim_len;
                 let span = Span::new(abs_start as u64, (abs_start + consumed) as u64);
                 let inline_kind = match kind {
                     "bi" => InlineKind::BoldItalic { content: children },
@@ -539,7 +539,7 @@ fn try_parse_simple_html_tag(
     let attrs_str = attrs_str.trim_end_matches('>').trim_end_matches('/').trim();
     let attrs = parse_html_attrs(attrs_str);
 
-    // Self-closing?
+    // self-closing?
     if open_tag.trim_end().ends_with("/>") {
         let consumed = open_end + 1;
         return Some((
@@ -620,7 +620,7 @@ fn parse_template(
     let mut name_kind = TemplateNameKind::Template;
     let mut params: Vec<TemplateParam> = Vec::new();
 
-    // Parser function: {{#name:arg|k=v}}
+    // parser function: {{#name:arg|k=v}}
     if first_raw.starts_with('#') {
         name_kind = TemplateNameKind::ParserFunction;
         if let Some((n, rest)) = first_raw.split_once(':') {
@@ -785,7 +785,7 @@ pub fn split_top_level(s: &str, delim: char) -> Vec<(usize, usize)> {
 }
 
 fn find_top_level_eq(s: &str) -> Option<usize> {
-    // For now: first '=' not inside nested templates or links.
+    // for now: first '=' not inside nested templates or links.
     let mut i = 0usize;
     let mut tpl_depth = 0usize;
     let mut link_depth = 0usize;

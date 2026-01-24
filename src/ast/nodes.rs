@@ -10,7 +10,7 @@ pub struct Document {
     #[serde(default)]
     pub blocks: Vec<BlockNode>,
 
-    /// Categories (i.e., `[[Category:Name|sort]]`) captured as metadata.
+    /// Categories (e.g., `[[Category:Name|sort]]`) captured as metadata.
     ///
     /// Categories are not typically rendered inline; they are stored separately
     /// so the renderer can decide whether to emit them and how.
@@ -75,7 +75,7 @@ pub enum BlockKind {
         table: Table,
     },
 
-    /// A fenced or otherwise verbatim code/pre block.
+    /// A fenced or otherwise verbatim `code`/`pre` block.
     CodeBlock {
         block: CodeBlock,
     },
@@ -191,7 +191,7 @@ pub struct HtmlAttr {
     pub span: Option<Span>,
 }
 
-/// Inline node with a span and tagged kind.
+/// An inline node with a span and tagged kind.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InlineNode {
     pub span: Span,

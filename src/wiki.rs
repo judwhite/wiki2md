@@ -15,9 +15,9 @@ fn extract_wiki_text_from_edit_html(html_body: &str) -> Result<String, Box<dyn E
     let document = Html::parse_document(html_body);
 
     // MediaWiki edit pages typically keep the article content in a textarea with this id.
-    // Fall back to the first textarea if the structure changes.
-    let selector_primary = Selector::parse("textarea#wpTextbox1").unwrap();
-    let selector_fallback = Selector::parse("textarea").unwrap();
+    // fall back to the first textarea if the structure changes.
+    let selector_primary = Selector::parse("textarea#wpTextbox1")?;
+    let selector_fallback = Selector::parse("textarea")?;
 
     let textarea = document
         .select(&selector_primary)
@@ -25,7 +25,7 @@ fn extract_wiki_text_from_edit_html(html_body: &str) -> Result<String, Box<dyn E
         .or_else(|| document.select(&selector_fallback).next())
         .ok_or("Could not find <textarea> element. Is the page valid?")?;
 
-    // For <textarea>, the content is HTML-escaped in the response.
+    // for <textarea>, the content is HTML-escaped in the response.
     let textarea_content = textarea.inner_html();
     Ok(html_escape::decode_html_entities(&textarea_content).to_string())
 }
@@ -62,7 +62,7 @@ mod tests {
     }
 
     #[test]
-    fn extract_prefers_wptextbox1_and_decodes_entities() {
+    fn extract_prefers_wp_textbox_1_and_decodes_entities() {
         let html = r#"
             <html>
               <body>

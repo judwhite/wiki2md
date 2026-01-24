@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// Offsets are measured in bytes (UTF-8). This is deliberate:
 /// - It matches Rust string indexing constraints.
-/// - It stays stable even when the text contains multi-byte Unicode.
+/// - It stays stable even when the text contains multibyte Unicode.
 ///
 /// IMPORTANT: Spans are defined over the *pre-normalization* input bytes.
 /// Do not rewrite line endings or otherwise transform the input before

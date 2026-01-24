@@ -7,8 +7,8 @@
 //! - Reasonable recovery for malformed markup.
 //!
 //! The current implementation targets the subset of Wikitext used by
-//! chessprogramming.org pages (headings, paragraphs, lists, links, refs,
-//! basic HTML tags, templates, and MediaWiki tables).
+//! https://chessprogramming.org pages (headings, paragraphs, lists,
+//! links, refs, basic HTML tags, templates, and MediaWiki tables).
 
 mod table;
 mod util;
@@ -36,7 +36,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
     let lines = collect_lines(src);
     let mut i: usize = 0;
 
-    // Redirect is typically the first non-empty line.
+    // redirect is typically the first non-empty line.
     while i < lines.len() {
         let line = lines[i];
         let text = strip_cr(&src[line.start..line.end]);
@@ -62,14 +62,14 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Categories as metadata (often at the bottom of the page)
+        // categories as metadata (often at the bottom of the page)
         if let Some(cat) = try_parse_category(line, text) {
             categories.push(cat);
             i += 1;
             continue;
         }
 
-        // Block-level <references />
+        // block-level <references />
         if let Some(node) = try_parse_references(line, text) {
             blocks.push(BlockNode {
                 span: Span::new(line.start as u64, line.end as u64),
@@ -79,7 +79,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Magic words like __TOC__
+        // magic words like __TOC__
         if let Some(name) = try_parse_magic_word(trimmed) {
             blocks.push(BlockNode {
                 span: Span::new(line.start as u64, line.end as u64),
@@ -89,7 +89,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Horizontal rule
+        // horizontal rule
         if trimmed == "----" {
             blocks.push(BlockNode {
                 span: Span::new(line.start as u64, line.end as u64),
@@ -99,7 +99,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Headings
+        // headings
         if let Some((level, inner_start, inner_end)) = try_parse_heading(src, line, text) {
             let content_slice = &src[inner_start..inner_end];
             let inlines = util::parse_inlines(src, inner_start, content_slice, &mut diagnostics);
@@ -111,7 +111,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Tables
+        // tables
         if line_trimmed_start(src, line).starts_with("{|") {
             match table::parse_table(src, &lines, i, &mut diagnostics) {
                 Ok((node, next_i)) => {
@@ -128,7 +128,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
                         span: Some(Span::new(line.start as u64, line.end as u64)),
                         notes: vec![],
                     });
-                    // Fall back to raw block.
+                    // fall back to raw block.
                     blocks.push(BlockNode {
                         span: Span::new(line.start as u64, line.end as u64),
                         kind: BlockKind::Raw {
@@ -148,7 +148,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Leading-space preformatted blocks.
+        // leading-space preformatted blocks.
         if text.starts_with(' ') {
             let (node, next_i) = parse_leading_space_block(src, &lines, i);
             blocks.push(node);
@@ -156,7 +156,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Lists
+        // lists
         if is_list_line(text) {
             let (node, next_i) = parse_list_block(src, &lines, i, &mut diagnostics);
             blocks.push(node);
@@ -164,7 +164,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
             continue;
         }
 
-        // Paragraph: gather until blank or a block-start.
+        // paragraph: gather until blank or a block-start.
         let start_i = i;
         let para_start = lines[start_i].start;
         let mut end_i = i;
@@ -181,7 +181,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
         }
 
         if end_i == start_i {
-            // Should not happen due to block-start handling above.
+            // should not happen due to the block-start handling above.
             i += 1;
             continue;
         }
@@ -213,7 +213,7 @@ fn try_parse_redirect(_src: &str, line: util::LineRange, text: &str) -> Option<R
         return None;
     }
     let leading_ws = text.len().saturating_sub(trimmed.len());
-    // Find first internal link after #REDIRECT.
+    // find the first internal link after #REDIRECT.
     if let Some(open) = trimmed.find("[[")
         && let Some(close_rel) = trimmed[open + 2..].find("]]" ) {
             let close = open + 2 + close_rel;
@@ -227,7 +227,7 @@ fn try_parse_redirect(_src: &str, line: util::LineRange, text: &str) -> Option<R
                 anchor: anchor.map(|s| s.to_string()),
             });
         }
-    // Fallback span: whole line.
+    // fallback span: whole line.
     Some(Redirect {
         span: Span::new(line.start as u64, line.end as u64),
         target: String::new(),
@@ -237,7 +237,7 @@ fn try_parse_redirect(_src: &str, line: util::LineRange, text: &str) -> Option<R
 
 fn try_parse_category(line: util::LineRange, text: &str) -> Option<CategoryTag> {
     let trimmed = text.trim();
-    // Common form: [[Category:Name|Sort]]
+    // common form: [[Category:Name|Sort]]
     if !trimmed.starts_with("[[") || !trimmed.ends_with("]]" ) {
         return None;
     }
@@ -268,7 +268,7 @@ fn try_parse_references(_line: util::LineRange, text: &str) -> Option<References
     if !lower.ends_with("/>") && !lower.ends_with("></references>") {
         return None;
     }
-    // Parse attributes in the opening tag.
+    // parse attributes in the opening tag.
     // <references ... />
     if let Some(end) = trimmed.find('>') {
         let open = &trimmed[..=end];
@@ -284,7 +284,7 @@ fn try_parse_references(_line: util::LineRange, text: &str) -> Option<References
 }
 
 fn try_parse_magic_word(trimmed: &str) -> Option<String> {
-    // Very small subset for now.
+    // very small subset for now.
     if trimmed.starts_with("__") && trimmed.ends_with("__") && trimmed.len() > 4 {
         return Some(trimmed.to_string());
     }
@@ -292,7 +292,7 @@ fn try_parse_magic_word(trimmed: &str) -> Option<String> {
 }
 
 fn try_parse_heading(src: &str, line: util::LineRange, _text: &str) -> Option<(u8, usize, usize)> {
-    // Allow leading whitespace, but compute spans against raw `src`.
+    // allow leading whitespace, but compute spans against raw `src`.
     let raw_line = &src[line.start..line.end];
     let mut offset_in_line = 0usize;
     for (idx, ch) in raw_line.char_indices() {
@@ -312,7 +312,7 @@ fn try_parse_heading(src: &str, line: util::LineRange, _text: &str) -> Option<(u
     if n == 0 || n > 6 {
         return None;
     }
-    // Must also end with same number of '=' (ignoring trailing whitespace).
+    // must also end with the same number of '=' (ignoring trailing whitespace).
     let mut end_idx = trimmed_start.len();
     while end_idx > 0 {
         let ch = trimmed_start[..end_idx].chars().last().unwrap();
@@ -329,10 +329,10 @@ fn try_parse_heading(src: &str, line: util::LineRange, _text: &str) -> Option<(u
     if !tail.ends_with(&"=".repeat(n)) {
         return None;
     }
-    // Inner range (exclude the '=' runs).
+    // inner range (exclude the '=' runs).
     let mut inner_start_rel = n;
     let mut inner_end_rel = tail.len() - n;
-    // Trim whitespace inside.
+    // trim whitespace inside.
     while inner_start_rel < inner_end_rel {
         let ch = tail[inner_start_rel..].chars().next().unwrap();
         if ch.is_whitespace() {
@@ -351,9 +351,9 @@ fn try_parse_heading(src: &str, line: util::LineRange, _text: &str) -> Option<(u
     }
     let inner_start = line.start + offset_in_line + inner_start_rel;
     let inner_end = line.start + offset_in_line + inner_end_rel;
-    // Level: n '=' => level n (allow level1).
+    // level: n '=' => level n (allow level1).
     let level = n as u8;
-    // Validate that the slice is UTF-8 aligned (it should be).
+    // validate that the slice is UTF-8 aligned (it should be).
     let _ = &src[inner_start..inner_end];
     Some((level, inner_start, inner_end))
 }
@@ -398,7 +398,7 @@ fn parse_tagged_code_block(
     if !remaining.to_ascii_lowercase().starts_with(&open_pat) {
         return None;
     }
-    // Find end of opening tag.
+    // find end of opening tag.
     let open_end_rel = remaining.find('>')?;
     let open_end_abs = start_abs + open_end_rel + 1;
     let open_tag = &src[start_abs..open_end_abs];
@@ -424,7 +424,7 @@ fn parse_tagged_code_block(
             span: Some(Span::new(start_abs as u64, (start_abs + open_end_rel + 1) as u64)),
             notes: vec![],
         });
-        // Consume only this line.
+        // consume only this line.
         let node = BlockNode {
             span: Span::new(start_abs as u64, start_line.end as u64),
             kind: BlockKind::CodeBlock {
@@ -441,7 +441,7 @@ fn parse_tagged_code_block(
     let close_end_abs = close_start_abs + close_pat.len();
     let code_text = &src[open_end_abs..close_start_abs];
 
-    // Determine how many lines we consumed.
+    // determine how many lines we consumed.
     let mut next_i = start_i;
     while next_i < lines.len() && lines[next_i].end_with_newline <= close_end_abs {
         next_i += 1;
@@ -509,7 +509,7 @@ fn parse_list_block(
     start_i: usize,
     diagnostics: &mut Vec<Diagnostic>,
 ) -> (BlockNode, usize) {
-    // Collect contiguous list lines.
+    // collect contiguous list lines.
     let mut i = start_i;
     let mut list_lines: Vec<(util::LineRange, String, usize, String)> = Vec::new();
     // (line_range, prefix, content_start_abs, content_slice)
@@ -537,7 +537,7 @@ fn parse_list_block(
         }
         let content_start_rel = leading_ws + prefix.len();
         let mut content_start_abs = lr.start + content_start_rel;
-        // Skip one optional space after markers.
+        // skip one optional space after markers.
         if src[content_start_abs..lr.end].starts_with(' ') {
             content_start_abs += 1;
         }
@@ -546,7 +546,7 @@ fn parse_list_block(
         i += 1;
     }
 
-    // Build nested lists with a stack of contexts.
+    // build nested lists with a stack of contexts.
     #[derive(Debug)]
     struct ListCtx {
         items: Vec<ListItem>,
@@ -581,20 +581,20 @@ fn parse_list_block(
             _ => ListMarker::Unordered,
         };
 
-        // Pop contexts until we are at the desired depth.
+        // pop contexts until we are at the desired depth.
         while stack.len() > depth {
             let child = stack.pop().unwrap();
             if let Some(parent_ctx) = stack.last_mut() {
                 if let Some(parent_item) = parent_ctx.items.last_mut() {
                     attach_child_list(parent_item, child);
                 } else {
-                    // No parent item: flatten.
+                    // no parent item: flatten.
                     parent_ctx.items.extend(child.items);
                 }
             }
         }
 
-        // Push contexts if the list is getting deeper.
+        // push contexts if the list is getting deeper.
         while stack.len() < depth {
             if let Some(parent_ctx) = stack.last_mut()
                 && parent_ctx.items.is_empty() {
@@ -615,7 +615,7 @@ fn parse_list_block(
             stack.push(ListCtx { items: Vec::new() });
         }
 
-        // Build list item blocks (single paragraph for now).
+        // build list item blocks (single paragraph for now).
         let content_slice = &src[content_start_abs..lr.end];
         let mut item_blocks: Vec<BlockNode> = Vec::new();
         if !content_slice.trim().is_empty() {
@@ -637,7 +637,7 @@ fn parse_list_block(
         stack.last_mut().unwrap().items.push(item);
     }
 
-    // Attach any remaining nested lists.
+    // attach any remaining nested lists.
     while stack.len() > 1 {
         let child = stack.pop().unwrap();
         let parent_ctx = stack.last_mut().unwrap();
@@ -674,7 +674,7 @@ fn is_block_start(src: &str, line: util::LineRange, text: &str) -> bool {
         return false;
     }
 
-    // Standalone categories are treated as document metadata, not paragraph content.
+    // standalone categories are treated as document metadata, not paragraph content.
     if try_parse_category(line, text).is_some() {
         return true;
     }

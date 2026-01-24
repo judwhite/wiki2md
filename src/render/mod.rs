@@ -35,13 +35,13 @@ pub fn render_ast_with_options(ast: &AstFile, opts: &RenderOptions) -> String {
     let mut out = String::new();
     for (bi, block) in ast.document.blocks.iter().enumerate() {
         if bi > 0 {
-            // Separate blocks with a single blank line.
+            // separate blocks with a single blank line.
             out.push_str("\n\n");
         }
         out.push_str(&render_block(block, &mut ctx, opts));
     }
 
-    // Trim trailing whitespace/newlines for stable output.
+    // trim trailing whitespace/newlines for stable output.
     while matches!(out.as_bytes().last(), Some(b'\n' | b' ' | b'\t' | b'\r')) {
         out.pop();
     }
@@ -72,14 +72,14 @@ fn render_block(block: &BlockNode, ctx: &mut RenderContext, opts: &RenderOptions
         BlockKind::HtmlBlock { node } => render_html_block(node, ctx, opts),
         BlockKind::MagicWord { name } => format!("<!-- {} -->", name),
         BlockKind::Raw { text } => {
-            // Keep raw blocks visible but non-destructive.
+            // keep raw blocks visible but non-destructive.
             format!("```text\n{}\n```", text.trim_end_matches('\n'))
         }
     }
 }
 
 fn render_heading(level: u8, content: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
-    // Special-case: leading <span id="..."></span> anchors are better emitted on their own line.
+    // special-case: leading <span id="..."></span> anchors are better emitted on their own line.
     let mut content_slice = content;
     let mut prefix = String::new();
     if let Some(first) = content.first()
@@ -91,7 +91,7 @@ fn render_heading(level: u8, content: &[InlineNode], ctx: &mut RenderContext, op
                     .find(|a| a.name.eq_ignore_ascii_case("id"))
                     .and_then(|a| a.value.as_ref())
                 {
-                    // Emit a stable HTML anchor.
+                    // emit a stable HTML anchor.
                     prefix.push_str(&format!("<a name=\"{}\"></a>\n", id_attr));
                     content_slice = &content[1..];
                 }
@@ -119,14 +119,14 @@ fn render_list(items: &[ListItem], ctx: &mut RenderContext, opts: &RenderOptions
         };
         out.push_str(&" ".repeat(indent));
 
-        // Render item blocks. If the first block is a paragraph, inline it on the list line.
+        // render item blocks. if the first block is a paragraph, inline it on the list line.
         if let Some(first) = item.blocks.first() {
             match &first.kind {
                 BlockKind::Paragraph { content: inlines } => {
                     out.push_str(&prefix);
                     out.push_str(render_inlines(inlines, ctx, opts).trim());
 
-                    // Render remaining blocks (including nested lists) indented.
+                    // render remaining blocks (including nested lists) indented.
                     for b in item.blocks.iter().skip(1) {
                         out.push('\n');
                         let rendered = render_block(b, ctx, opts);
@@ -135,7 +135,7 @@ fn render_list(items: &[ListItem], ctx: &mut RenderContext, opts: &RenderOptions
                 }
                 _ => {
                     out.push_str(&prefix);
-                    // No paragraph: render blocks on subsequent lines.
+                    // no paragraph: render blocks on subsequent lines.
                     let rendered = render_block(first, ctx, opts);
                     out.push_str(&prefix_lines(&rendered, &format!("{}  ", " ".repeat(indent))));
                     for b in item.blocks.iter().skip(1) {
@@ -161,7 +161,7 @@ fn render_code_block(
 ) -> String {
     match kind {
         CodeBlockKind::LeadingSpace if opts.leading_space_as_blockquote => {
-            // Treat as quoted text (matches the legacy behavior for chessprogramming pages).
+            // treat as quoted text (matches the legacy behavior for chessprogramming pages).
             prefix_lines(text.trim_end_matches('\n'), "> ")
         }
         _ => {
@@ -216,8 +216,8 @@ fn render_html_block(node: &HtmlBlock, ctx: &mut RenderContext, opts: &RenderOpt
 }
 
 fn render_table(table: &Table, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
-    // Basic Markdown table rendering.
-    // We flatten cell blocks into a single line of text.
+    // basic Markdown table rendering.
+    // we flatten cell blocks into a single line of text.
     let mut rows: Vec<Vec<String>> = Vec::new();
     for row in &table.rows {
         let mut cols: Vec<String> = Vec::new();
@@ -319,7 +319,7 @@ fn render_inlines(inlines: &[InlineNode], ctx: &mut RenderContext, opts: &Render
 fn render_inline(node: &InlineNode, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
     match &node.kind {
         InlineKind::Text { value } => {
-            // Normalize raw newlines into spaces for Markdown paragraphs.
+            // normalize raw newlines into spaces for Markdown paragraphs.
             value.replace(['\r', '\n'], " ")
         }
         InlineKind::Bold { content } => format!("**{}**", render_inlines(content, ctx, opts)),
@@ -350,7 +350,7 @@ fn render_internal_link(link: &InternalLink, ctx: &mut RenderContext, opts: &Ren
         None => link.target.replace('_', " "),
     };
 
-    // In-page link
+    // in-page link
     if link.target.is_empty() {
         if let Some(anchor) = &link.anchor {
             return format!("[{}](#{})", label.trim(), normalize_anchor(anchor));
@@ -379,11 +379,11 @@ fn render_external_link(link: &ExternalLink, ctx: &mut RenderContext, opts: &Ren
 }
 
 fn render_file_link(link: &FileLink, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
-    // Best-effort: link to the File: page on chessprogramming.org.
+    // best-effort: link to the File: page on chessprogramming.org.
     let file_target = link.target.replace(' ', "_");
     let file_page = format!("https://www.chessprogramming.org/File:{}", file_target);
 
-    // Caption: pick the last param that isn't an option-like token.
+    // caption: pick the last param that isn't an option-like token.
     let caption = link
         .params
         .last()
@@ -409,7 +409,7 @@ fn render_template(inv: &TemplateInvocation, ctx: &mut RenderContext, opts: &Ren
             }
         }
         _ => {
-            // Preserve unknown templates in a non-destructive way.
+            // preserve unknown templates in a non-destructive way.
             let mut s = String::new();
             s.push_str("{{");
             s.push_str(&inv.name.raw);
@@ -428,8 +428,8 @@ fn render_template(inv: &TemplateInvocation, ctx: &mut RenderContext, opts: &Ren
 }
 
 fn render_html_tag(tag: &HtmlTag, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
-    // Conservative pass-through for most tags.
-    // Special-case <span id="...">...</span> => <a name="...">...</a> for stable anchors.
+    // conservative pass-through for most tags.
+    // special-case <span id="...">...</span> => <a name="...">...</a> for stable anchors.
     if tag.name.eq_ignore_ascii_case("span")
         && let Some(id) = tag
             .attrs

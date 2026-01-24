@@ -68,11 +68,11 @@ pub enum SpanBase {
 /// Optional information about the input source used to produce the AST.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SourceInfo {
-    /// If available, a path to the `.wiki` file used.
+    /// If available, the path to the `.wiki` file used.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub path: Option<String>,
 
-    /// If available, a SHA-256 of the `.wiki` content used.
+    /// If available, the SHA-256 of the `.wiki` content used.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sha256: Option<String>,
 

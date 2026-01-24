@@ -23,7 +23,6 @@ fn main() {
             std::process::exit(1);
         }
     } else {
-        // We know title is Some because of clap's required_unless_present
         let title = args.title.as_ref().unwrap();
         if let Err(e) = run(title) {
             eprintln!("Error processing '{}': {}", title, e);

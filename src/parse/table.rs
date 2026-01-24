@@ -8,7 +8,8 @@ use super::util;
 
 // NOTE: This is a deliberately conservative implementation of the MediaWiki
 // table grammar. It focuses on the common "wikitable" patterns found in the
-// chessprogramming wiki export and aims to preserve spans for debugging.
+// https://chessprogramming.org wiki export and aims to preserve spans for 
+// debugging.
 
 #[derive(Debug)]
 struct CellBuilder {
@@ -84,7 +85,7 @@ pub fn parse_table(
         return Err("not a table".to_string());
     }
 
-    // Table attributes come after "{|" on the same line.
+    // table attributes come after "{|" on the same line.
     let attrs_str = trimmed.strip_prefix("{|").unwrap_or("").trim();
     let table_attrs = parse_html_attrs(attrs_str);
 
@@ -107,7 +108,7 @@ pub fn parse_table(
         let line_raw = strip_cr(&src[lr.start..lr.end]);
         let trimmed_start = line_raw.trim_start();
 
-        // Track nesting depth (nested tables within cells).
+        // track nesting depth (nested tables within cells).
         if trimmed_start.starts_with("{|") {
             depth += 1;
             if depth > 1 {
@@ -121,7 +122,7 @@ pub fn parse_table(
         }
         if trimmed_start.starts_with("|}") {
             if depth == 1 {
-                // End of this table.
+                // end of this table.
                 finish_cell(src, &mut current_cell, &mut current_row, diagnostics);
                 finish_row(&mut current_row, &mut table);
                 table_end_abs = lr.end;
@@ -139,7 +140,7 @@ pub fn parse_table(
         }
 
         if depth > 1 {
-            // Inside nested table; treat as raw content.
+            // inside a nested table; treat as raw content.
             if let Some(cell) = current_cell.as_mut() {
                 append_line(&mut cell.content, line_raw);
                 cell.span_end = lr.end;
@@ -148,9 +149,9 @@ pub fn parse_table(
             continue;
         }
 
-        // Caption
+        // caption
         if trimmed_start.starts_with("|+") {
-            // Finish any pending cell/row (caption should precede rows).
+            // finish any pending cell/row (caption should precede rows).
             finish_cell(src, &mut current_cell, &mut current_row, diagnostics);
             finish_row(&mut current_row, &mut table);
 
@@ -167,7 +168,7 @@ pub fn parse_table(
             continue;
         }
 
-        // Row separator
+        // row separator
         if trimmed_start.starts_with("|-") {
             finish_cell(src, &mut current_cell, &mut current_row, diagnostics);
             finish_row(&mut current_row, &mut table);
@@ -185,9 +186,9 @@ pub fn parse_table(
             continue;
         }
 
-        // Cell line (header or data)
+        // cell line (header or data)
         if trimmed_start.starts_with('!') || trimmed_start.starts_with('|') {
-            // Finish any pending cell (a new cell line implies previous cell ended).
+            // finish any pending cell (a new cell line implies a previous cell ended).
             finish_cell(src, &mut current_cell, &mut current_row, diagnostics);
 
             let is_header = trimmed_start.starts_with('!');
@@ -209,7 +210,7 @@ pub fn parse_table(
                 let (rowspan, colspan) = extract_spans(&attrs);
 
                 if seg_idx + 1 == segments.len() {
-                    // Last segment: allow multiline continuation.
+                    // last segment: allow multiline continuation.
                     current_cell = Some(CellBuilder {
                         kind,
                         span_start: seg_abs_start,
@@ -221,7 +222,7 @@ pub fn parse_table(
                         content: content.to_string(),
                     });
                 } else {
-                    // Immediate cell.
+                    // immediate cell.
                     let blocks = cell_content_to_blocks(src, content_abs, content, diagnostics);
                     let cell = TableCell {
                         kind,
@@ -249,7 +250,7 @@ pub fn parse_table(
             continue;
         }
 
-        // Continuation line for current cell content.
+        // continuation line for current cell content.
         if let Some(cell) = current_cell.as_mut() {
             append_line(&mut cell.content, line_raw);
             cell.span_end = lr.end;
@@ -257,7 +258,7 @@ pub fn parse_table(
             continue;
         }
 
-        // Otherwise: ignore stray lines inside a table, but record a diagnostic.
+        // otherwise: ignore stray lines inside the table and record a diagnostic.
         if !trimmed_start.is_empty() {
             diagnostics.push(Diagnostic {
                 severity: Severity::Warning,
@@ -291,7 +292,7 @@ struct Segment {
 }
 
 fn split_cell_segments(rest: &str, sep: &str) -> Vec<Segment> {
-    // Split on top-level separators ("||" or "!!") not inside nested templates/links.
+    // split on top-level separators ("||" or "!!") not inside nested templates/links.
     let mut out = Vec::new();
     let mut tpl_depth = 0i32;
     let mut link_depth = 0i32;
@@ -340,7 +341,7 @@ fn split_cell_segments(rest: &str, sep: &str) -> Vec<Segment> {
 /// `seg_abs_start` is the absolute byte offset of `seg_str` within the source.
 fn split_attrs_content(seg_str: &str, seg_abs_start: usize) -> (Vec<HtmlAttr>, &str, usize) {
     // MediaWiki tables use a single pipe `|` to separate attributes from content.
-    // If no separator, treat whole segment as content.
+    // if no separator, treat the whole segment as content.
     if let Some(pipe_pos) = find_attr_separator(seg_str) {
         let (left, right) = seg_str.split_at(pipe_pos);
         let right = &right[1..];
@@ -357,7 +358,7 @@ fn split_attrs_content(seg_str: &str, seg_abs_start: usize) -> (Vec<HtmlAttr>, &
 }
 
 fn find_attr_separator(seg_str: &str) -> Option<usize> {
-    // Find the first `|` not inside quotes or nested templates/links.
+    // find the first `|` not inside quotes or nested templates/links.
     let mut tpl_depth = 0i32;
     let mut link_depth = 0i32;
     let mut in_quote: Option<char> = None;

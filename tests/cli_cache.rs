@@ -7,7 +7,7 @@ use tempfile::tempdir;
 fn prints_existing_md_from_cache() {
     let dir = tempdir().unwrap();
 
-    // Cache layout: ./docs/md/{lower_first_letter}/{article_id}.md
+    // cache layout: ./docs/md/{lower_first_letter}/{article_id}.md
     let md_path = dir.path().join("docs").join("md").join("p").join("Perft.md");
     fs::create_dir_all(md_path.parent().unwrap()).unwrap();
     fs::write(&md_path, "cached markdown").unwrap();
@@ -25,7 +25,7 @@ fn prints_existing_md_from_cache() {
 fn generates_md_from_existing_wiki_cache() {
     let dir = tempdir().unwrap();
 
-    // Provide a .wiki cache so the tool does not try to hit the network.
+    // provide a .wiki cache so the tool does not try to hit the network.
     let wiki_path = dir
         .path()
         .join("docs")
@@ -42,7 +42,7 @@ fn generates_md_from_existing_wiki_cache() {
         .success()
         .stdout(predicate::eq("# Title\n\nSee [link](../o/Other_Page.md).\n"));
 
-    // It should have written the markdown cache.
+    // it should have written the .md cache.
     let md_path = dir
         .path()
         .join("docs")
@@ -52,7 +52,7 @@ fn generates_md_from_existing_wiki_cache() {
     let md = fs::read_to_string(&md_path).unwrap();
     assert_eq!(md, "# Title\n\nSee [link](../o/Other_Page.md).");
 
-    // It should also have written the JSON AST cache.
+    // it should also have written the .json AST cache.
     let json_path = dir
         .path()
         .join("docs")

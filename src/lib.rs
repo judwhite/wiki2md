@@ -1,4 +1,3 @@
-pub mod convert;
 pub mod ast;
 pub mod wiki;
 pub mod parse;
@@ -20,7 +19,7 @@ pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
     let json_dir = PathBuf::from("docs").join("json").join(&bucket);
     let md_dir = PathBuf::from("docs").join("md").join(&bucket);
 
-    // Ensure directories exist
+    // ensure directories exist
     fs::create_dir_all(&wiki_dir)?;
     fs::create_dir_all(&json_dir)?;
     fs::create_dir_all(&md_dir)?;
@@ -88,7 +87,7 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
             let mut json_path = json_root.join(relative);
             json_path.set_extension("json");
 
-            // ensure the parent and bucket directory exists for the target json and md files
+            // ensure the parent and bucket directory exists for the target .json and .md files
             if let Some(parent) = json_path.parent() {
                 fs::create_dir_all(parent)?;
             }
@@ -96,7 +95,7 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
                 fs::create_dir_all(parent)?;
             }
 
-            // Derive article_id/title from filename.
+            // derive article_id/title from the filename.
             let article_id = path
                 .file_stem()
                 .and_then(|s| s.to_str())
@@ -177,7 +176,7 @@ fn write_json_ast_for_wiki(
         document: parse_out.document,
     };
 
-    // Pretty JSON so it's easy to inspect / diff.
+    // prettify JSON so it's easy to inspect / diff.
     let json = serde_json::to_string_pretty(&ast_file)?;
     fs::write(json_path, json)?;
     Ok(())

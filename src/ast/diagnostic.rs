@@ -28,7 +28,7 @@ pub enum DiagnosticPhase {
 pub struct Diagnostic {
     pub severity: Severity,
 
-    /// Which phase produced this diagnostic.
+    /// The phase that produced this diagnostic.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub phase: Option<DiagnosticPhase>,
 
@@ -36,7 +36,7 @@ pub struct Diagnostic {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub code: Option<String>,
 
-    /// Human readable message.
+    /// Human-readable message.
     pub message: String,
 
     /// The source span this diagnostic refers to, if available.

@@ -21,7 +21,6 @@ pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
 
     // 2. CHECK: Does {title}.wiki exist? Fetch if not.
     if !Path::new(&wiki_filename).exists() {
-        eprintln!("Cache miss for '{}'.", clean_title);
         wiki::fetch_and_save(&clean_title, &wiki_filename)?;
     }
 

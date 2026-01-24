@@ -9,3 +9,8 @@ html-escape = "0.2.13"
 regex = "1.12.2"
 reqwest = { version = "0.13.1", features = ["blocking"] }
 scraper = "0.25.0"
+
+[dev-dependencies]
+assert_cmd = "2.0.16"
+predicates = "3.1.2"
+tempfile = "3.16.0"

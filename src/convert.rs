@@ -5,8 +5,10 @@ pub fn wiki_to_markdown(input: &str) -> String {
     let mut text = input.to_string();
 
     // code blocks
-    text = text.replace("<pre>", "\n```c\n");
-    text = text.replace("</pre>", "\n```\n");
+    let re_pre_open = Regex::new(r"(?i)<pre[^>]*>").unwrap();
+    text = re_pre_open.replace_all(&text, "\n```c\n").to_string();
+    let re_pre_close = Regex::new(r"(?i)</pre>").unwrap();
+    text = re_pre_close.replace_all(&text, "\n```\n").to_string();
 
     // convert <span id> to <a name>
     // convert this early so the header regex below sees the <a name...>
@@ -17,19 +19,24 @@ pub fn wiki_to_markdown(input: &str) -> String {
         })
         .to_string();
 
-    // heading level 3
+    // headings
+    let re_h4 = Regex::new(r"(?m)^\s*====(.+?)====\s*$").unwrap();
+    text = re_h4.replace_all(&text, "\n##### $1\n").to_string();
+
+    let re_h3 = Regex::new(r"(?m)^\s*===(.+?)===\s*$").unwrap();
+    text = re_h3.replace_all(&text, "\n#### $1\n").to_string();
+
     let re_h2 = Regex::new(r"(?m)^\s*==(.+?)==\s*$").unwrap();
     text = re_h2.replace_all(&text, "\n### $1\n").to_string();
 
-    // heading level 2
-    let re_h1 = Regex::new(r"(?m)^=(.+?)=\s*$").unwrap();
+    let re_h1 = Regex::new(r"(?m)^\s*=(.+?)=\s*$").unwrap();
     text = re_h1.replace_all(&text, "\n## $1\n").to_string();
 
     // extract anchor from header
     // matches: `### <a name="..."></a> Title`
     // replaces with: `<a name="..."></a>\n### Title`
-    let re_extract = Regex::new(r#"(?m)^(#{2,3})\s*(<a name="[^"]+"></a>)\s*(.*)$"#).unwrap();
-    text = re_extract.replace_all(&text, "$2\n$1 $3").to_string();
+    let re_anchor = Regex::new(r#"(?m)^(#{2,6})\s*(<a name="[^"]+"></a>)\s*(.*)$"#).unwrap();
+    text = re_anchor.replace_all(&text, "$2\n$1 $3").to_string();
 
     // wiki links: [[target|label]] or [[target]]
     let re_wiki_link = Regex::new(r"\[\[(?P<inner>.*?)]]").unwrap();
@@ -42,7 +49,25 @@ pub fn wiki_to_markdown(input: &str) -> String {
             };
             let target = target_raw.trim().replace(" ", "_");
             let label = label_raw.trim();
-            format!("[{}]({})", label, target)
+
+            // point to the generated local Markdown file.
+            // keep pure in-page anchors (e.g. [[#Section|label]]) unchanged.
+            if target.starts_with('#') {
+                return format!("[{}]({})", label, target);
+            }
+
+            let (page, anchor) = match target.split_once('#') {
+                Some((p, a)) => (p, Some(a)),
+                None => (target.as_str(), None),
+            };
+
+            let mut href = format!("{}.md", page);
+            if let Some(a) = anchor {
+                href.push('#');
+                href.push_str(a);
+            }
+
+            format!("[{}]({})", label, href)
         })
         .to_string();
 
@@ -50,10 +75,11 @@ pub fn wiki_to_markdown(input: &str) -> String {
     let re_ext_link = Regex::new(r"\[(?P<url>https?://\S+)\s+(?P<label>[^]]+)]").unwrap();
     text = re_ext_link.replace_all(&text, "[$label]($url)").to_string();
 
-    // Formatting
+    // bold
     let re_bold = Regex::new(r"'''(.*?)'''").unwrap();
     text = re_bold.replace_all(&text, "**$1**").to_string();
 
+    // perft(#)
     let re_perft = Regex::new(r"(?i)(perft\(\d+\))").unwrap();
     text = re_perft.replace_all(&text, "`$1`").to_string();
 
@@ -111,15 +137,11 @@ fn process_quote_spacing(input: &str) -> String {
             } else {
                 new_text.push_str(">\n");
             }
-        } else {
-            if was_in_quote && !line.trim().is_empty() {
-                if !new_text.ends_with("\n\n") {
-                    if new_text.ends_with('\n') {
-                        new_text.push('\n');
-                    } else {
-                        new_text.push_str("\n\n");
-                    }
-                }
+        } else if was_in_quote && !line.trim().is_empty() && !new_text.ends_with("\n\n") {
+            if new_text.ends_with('\n') {
+                new_text.push('\n');
+            } else {
+                new_text.push_str("\n\n");
             }
         }
 
@@ -149,7 +171,7 @@ mod tests {
     fn test_wiki_links() {
         let input = "See [[Initial Position|initial position]] and [[C]].";
         let output = wiki_to_markdown(input);
-        let expected = "See [initial position](Initial_Position) and [C](C).";
+        let expected = "See [initial position](Initial_Position.md) and [C](C.md).";
 
         assert_eq!(output, expected);
     }
@@ -177,6 +199,33 @@ mod tests {
         let input = "<pre>int main() { return 0; }</pre>";
         let output = wiki_to_markdown(input);
         let expected = "```c\nint main() { return 0; }\n```";
+
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_code_block_with_attributes_and_case() {
+        let input = r#"<PRE class="code">int x = 1;</PRE>"#;
+        let output = wiki_to_markdown(input);
+        let expected = "```c\nint x = 1;\n```";
+
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_deeper_headings() {
+        let input = "===Level 3===\n====Level 4====";
+        let output = wiki_to_markdown(input);
+        let expected = "#### Level 3\n\n##### Level 4";
+
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn test_wiki_link_with_anchor() {
+        let input = "See [[Perft Results#Initial Position|init]].";
+        let output = wiki_to_markdown(input);
+        let expected = "See [init](Perft_Results.md#Initial_Position).";
 
         assert_eq!(output, expected);
     }

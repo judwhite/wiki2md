@@ -500,10 +500,7 @@ fn parse_leading_space_block(src: &str, lines: &[util::LineRange], start_i: usiz
 
 fn is_list_line(text: &str) -> bool {
     let trimmed = text.trim_start();
-    match trimmed.chars().next() {
-        Some('*' | '#' | ';' | ':') => true,
-        _ => false,
-    }
+    matches!(trimmed.chars().next(), Some('*' | '#' | ';' | ':'))
 }
 
 fn parse_list_block(

@@ -231,17 +231,16 @@ pub fn parse_table(
                         colspan,
                         blocks,
                     };
-                    if current_row.is_none() {
+                    if let Some(r) = current_row.as_mut() {
+                        r.span_end = r.span_end.max(seg_abs_end);
+                        r.cells.push(cell);
+                    } else {
                         current_row = Some(RowBuilder {
                             span_start: seg_abs_start,
                             span_end: seg_abs_end,
                             attrs: vec![],
                             cells: vec![cell],
                         });
-                    } else {
-                        let r = current_row.as_mut().unwrap();
-                        r.span_end = r.span_end.max(seg_abs_end);
-                        r.cells.push(cell);
                     }
                 }
             }

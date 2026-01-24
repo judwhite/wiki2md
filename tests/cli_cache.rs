@@ -40,7 +40,7 @@ fn generates_md_from_existing_wiki_cache() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::eq("## Title\n\nSee [link](../o/Other_Page.md).\n"));
+        .stdout(predicate::eq("# Title\n\nSee [link](../o/Other_Page.md).\n"));
 
     // It should have written the markdown cache.
     let md_path = dir
@@ -50,5 +50,14 @@ fn generates_md_from_existing_wiki_cache() {
         .join("t")
         .join("Test_Page.md");
     let md = fs::read_to_string(&md_path).unwrap();
-    assert_eq!(md, "## Title\n\nSee [link](../o/Other_Page.md).");
+    assert_eq!(md, "# Title\n\nSee [link](../o/Other_Page.md).");
+
+    // It should also have written the JSON AST cache.
+    let json_path = dir
+        .path()
+        .join("docs")
+        .join("json")
+        .join("t")
+        .join("Test_Page.json");
+    assert!(json_path.exists());
 }

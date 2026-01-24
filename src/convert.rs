@@ -288,7 +288,6 @@ enum Align {
 
 #[derive(Debug, Clone)]
 struct Cell {
-    is_header: bool,
     text: String,
     align: Option<Align>,
     colspan: usize,
@@ -463,7 +462,6 @@ fn wikitable_to_markdown(table_wiki: &str) -> Result<String, ()> {
                 let text = wiki_inline_to_markdown(content);
 
                 let cell = Cell {
-                    is_header: true,
                     text,
                     align,
                     colspan,
@@ -495,7 +493,6 @@ fn wikitable_to_markdown(table_wiki: &str) -> Result<String, ()> {
                 let text = wiki_inline_to_markdown(content);
 
                 let cell = Cell {
-                    is_header: false,
                     text,
                     align,
                     colspan,
@@ -571,10 +568,10 @@ fn split_attrs_and_content(segment: &str) -> (&str, &str) {
     //
     // We only treat the first '|' as an attribute/content separator when the left side looks like attributes
     // (contains '='), which avoids breaking `<nowiki>|</nowiki>` or other content starting with tags.
-    if let Some((left, right)) = split_once_unquoted(segment, '|') {
-        if left.contains('=') {
-            return (left.trim(), right.trim());
-        }
+    if let Some((left, right)) = split_once_unquoted(segment, '|')
+        && left.contains('=')
+    {
+        return (left.trim(), right.trim());
     }
     ("", segment.trim())
 }
@@ -681,7 +678,6 @@ fn expand_spans(rows: &[Vec<Cell>]) -> Vec<Vec<Cell>> {
             if col_idx < pending_rowspans.len() && pending_rowspans[col_idx] > 0 {
                 pending_rowspans[col_idx] -= 1;
                 out_row.push(Cell {
-                    is_header: false,
                     text: String::new(),
                     align: None,
                     colspan: 1,
@@ -717,7 +713,6 @@ fn expand_spans(rows: &[Vec<Cell>]) -> Vec<Vec<Cell>> {
 
             for _ in 1..colspan {
                 out_row.push(Cell {
-                    is_header: false,
                     text: String::new(),
                     align: None,
                     colspan: 1,
@@ -734,7 +729,6 @@ fn expand_spans(rows: &[Vec<Cell>]) -> Vec<Vec<Cell>> {
             if pending_rowspans[col_idx] > 0 {
                 pending_rowspans[col_idx] -= 1;
                 out_row.push(Cell {
-                    is_header: false,
                     text: String::new(),
                     align: None,
                     colspan: 1,
@@ -752,7 +746,6 @@ fn expand_spans(rows: &[Vec<Cell>]) -> Vec<Vec<Cell>> {
     for r in expanded.iter_mut() {
         while r.len() < max_cols {
             r.push(Cell {
-                is_header: false,
                 text: String::new(),
                 align: None,
                 colspan: 1,
@@ -784,10 +777,10 @@ fn normalize_table_cell_text(s: &str) -> String {
 }
 
 fn derive_column_alignments(rows: &[Vec<Cell>]) -> Vec<Align> {
-    let cols = rows.get(0).map(|r| r.len()).unwrap_or(0);
+    let cols = rows.first().map(|r| r.len()).unwrap_or(0);
     let mut aligns = vec![Align::Left; cols];
 
-    for c in 0..cols {
+    for (c, item) in aligns.iter_mut().enumerate().take(cols) {
         let mut saw_center = false;
         let mut saw_right = false;
 
@@ -801,7 +794,7 @@ fn derive_column_alignments(rows: &[Vec<Cell>]) -> Vec<Align> {
             }
         }
 
-        aligns[c] = if saw_center {
+        *item = if saw_center {
             Align::Center
         } else if saw_right {
             Align::Right

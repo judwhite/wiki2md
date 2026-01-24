@@ -3,7 +3,7 @@ pub mod wiki;
 
 use std::error::Error;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
     let article_id = sanitize_article_id(raw_title);
@@ -51,7 +51,7 @@ fn sanitize_article_id(raw_title: &str) -> String {
     let mut id = raw_title.trim().replace(' ', "_");
 
     // Avoid accidental directory traversal or nested paths.
-    id = id.replace('/', "_").replace('\\', "_");
+    id = id.replace(['/', '\\'], "_");
 
     // Avoid empty ids.
     if id.is_empty() {

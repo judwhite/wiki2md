@@ -7,8 +7,9 @@ use tempfile::tempdir;
 fn prints_existing_md_from_cache() {
     let dir = tempdir().unwrap();
 
-    // The binary sanitizes spaces to underscores for filenames.
-    let md_path = dir.path().join("Perft.md");
+    // Cache layout: ./docs/md/{lower_first_letter}/{article_id}.md
+    let md_path = dir.path().join("docs").join("md").join("p").join("Perft.md");
+    fs::create_dir_all(md_path.parent().unwrap()).unwrap();
     fs::write(&md_path, "cached markdown").unwrap();
 
     let mut cmd = cargo_bin_cmd!("wiki2md");
@@ -25,7 +26,13 @@ fn generates_md_from_existing_wiki_cache() {
     let dir = tempdir().unwrap();
 
     // Provide a .wiki cache so the tool does not try to hit the network.
-    let wiki_path = dir.path().join("Test_Page.wiki");
+    let wiki_path = dir
+        .path()
+        .join("docs")
+        .join("wiki")
+        .join("t")
+        .join("Test_Page.wiki");
+    fs::create_dir_all(wiki_path.parent().unwrap()).unwrap();
     fs::write(&wiki_path, "=Title=\nSee [[Other Page|link]].\n").unwrap();
 
     let mut cmd = cargo_bin_cmd!("wiki2md");
@@ -33,10 +40,15 @@ fn generates_md_from_existing_wiki_cache() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::eq("## Title\n\nSee [link](Other_Page.md).\n"));
+        .stdout(predicate::eq("## Title\n\nSee [link](../o/Other_Page.md).\n"));
 
     // It should have written the markdown cache.
-    let md_path = dir.path().join("Test_Page.md");
+    let md_path = dir
+        .path()
+        .join("docs")
+        .join("md")
+        .join("t")
+        .join("Test_Page.md");
     let md = fs::read_to_string(&md_path).unwrap();
-    assert_eq!(md, "## Title\n\nSee [link](Other_Page.md).");
+    assert_eq!(md, "## Title\n\nSee [link](../o/Other_Page.md).");
 }

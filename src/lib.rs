@@ -63,14 +63,19 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
         return Err(format!("Wiki source directory not found: {}", wiki_root.display()).into());
     }
 
-    let mut count = 0;
     let mut entries: Vec<_> = WalkDir::new(&wiki_root)
         .into_iter()
         .filter_map(|e| e.ok())
+        .filter(|e| {
+            e.file_type().is_file() &&
+            e.path().extension().is_some_and(|ext| ext == "wiki")
+        })
         .collect();
 
-    entries.sort_by_key(|e| e.path().to_owned());
+    entries.sort_by(|a, b| a.path().cmp(b.path()));
+
     let total = entries.len();
+    let mut count = 0;
 
     for entry in entries {
         let path = entry.path();

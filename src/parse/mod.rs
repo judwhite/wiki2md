@@ -119,18 +119,10 @@ pub fn parse_document(src: &str) -> ParseOutput {
             match table::parse_table(src, &lines, i, &mut diagnostics) {
                 Ok((node, next_i)) => {
                     blocks.push(node);
-                    if next_i <= i {
-                        diagnostics.push(Diagnostic {
-                            severity: Severity::Error,
-                            phase: Some(DiagnosticPhase::Parse),
-                            code: Some("wikitext.table.parse_failed".to_string()),
-                            message: format!("Table parsing error: next index ({next_i}) is not greater than current index ({i})"),
-                            span: Some(Span::new(line.start as u64, line.end as u64)),
-                            notes: vec![],
-                        });
-                        i += 1;
-                        continue;
-                    }
+                    assert!(
+                        next_i > i,
+                        "BUG: table parser made no progress (i={}, next_i={})", i, next_i,
+                    );
                     i = next_i;
                     continue;
                 }
@@ -157,21 +149,16 @@ pub fn parse_document(src: &str) -> ParseOutput {
         }
 
         // <pre> and <syntaxhighlight> code blocks.
-        if let Some((node, next_i)) = try_parse_code_block(src, &lines, i, &mut diagnostics) {
-            blocks.push(node);
-            if next_i <= i {
-                diagnostics.push(Diagnostic {
-                    severity: Severity::Error,
-                    phase: Some(DiagnosticPhase::Parse),
-                    code: Some("wikitext.html_codeblock.parse_failed".to_string()),
-                    message: format!("Code block parsing error: next index ({next_i}) is not greater than current index ({i})"),
-                    span: Some(Span::new(line.start as u64, line.end as u64)),
-                    notes: vec![],
-                });
-                i += 1;
-                continue;
+        if let Some(res) = try_parse_code_block(src, &lines, i, &mut diagnostics) {
+            blocks.push(res.node);
+            if let Some(tail) = res.tail {
+                blocks.push(tail);
             }
-            i = next_i;
+            assert!(
+                res.next_i > i,
+                "BUG: code block parser made no progress (i={}, next_i={})", i, res.next_i
+            );
+            i = res.next_i;
             continue;
         }
 
@@ -179,18 +166,10 @@ pub fn parse_document(src: &str) -> ParseOutput {
         if text.starts_with(' ') {
             let (node, next_i) = parse_leading_space_block(src, &lines, i);
             blocks.push(node);
-            if next_i <= i {
-                diagnostics.push(Diagnostic {
-                    severity: Severity::Error,
-                    phase: Some(DiagnosticPhase::Parse),
-                    code: Some("wikitext.indented_codeblock.parse_failed".to_string()),
-                    message: format!("Code block parsing error: next index ({next_i}) is not greater than current index ({i})"),
-                    span: Some(Span::new(line.start as u64, line.end as u64)),
-                    notes: vec![],
-                });
-                i += 1;
-                continue;
-            }
+            assert!(
+                next_i > i,
+                "BUG: leading-space code block parser made no progress (i={i}, next_i={})", next_i,
+            );
             i = next_i;
             continue;
         }
@@ -199,18 +178,10 @@ pub fn parse_document(src: &str) -> ParseOutput {
         if is_list_line(text) {
             let (node, next_i) = parse_list_block(src, &lines, i, &mut diagnostics);
             blocks.push(node);
-            if next_i <= i {
-                diagnostics.push(Diagnostic {
-                    severity: Severity::Error,
-                    phase: Some(DiagnosticPhase::Parse),
-                    code: Some("wikitext.list.parse_failed".to_string()),
-                    message: format!("List parsing error: next index ({next_i}) is not greater than current index ({i})"),
-                    span: Some(Span::new(line.start as u64, line.end as u64)),
-                    notes: vec![],
-                });
-                i += 1;
-                continue;
-            }
+            assert!(
+                next_i > i,
+                "BUG: list parser made no progress (i={}, next_i={})", i, next_i,
+            );
             i = next_i;
             continue;
         }
@@ -413,12 +384,20 @@ fn try_parse_heading(src: &str, line: util::LineRange, _text: &str) -> Option<(u
     Some((level, inner_start, inner_end))
 }
 
+struct CodeBlockParseResult {
+    node: BlockNode,
+    next_i: usize,
+    /// Trailing text that appears after the closing tag on the same line.
+    /// This must be preserved; it is parsed as a paragraph fragment.
+    tail: Option<BlockNode>,
+}
+
 fn try_parse_code_block(
     src: &str,
     lines: &[util::LineRange],
     start_i: usize,
     diagnostics: &mut Vec<Diagnostic>,
-) -> Option<(BlockNode, usize)> {
+) -> Option<CodeBlockParseResult> {
     let line = lines[start_i];
     let trimmed = line_trimmed_start(src, line);
     let lower = trimmed.to_ascii_lowercase();
@@ -452,7 +431,7 @@ fn parse_tagged_code_block(
     tag: &str,
     kind: CodeBlockKind,
     diagnostics: &mut Vec<Diagnostic>,
-) -> Option<(BlockNode, usize)> {
+) -> Option<CodeBlockParseResult> {
     let start_line = lines[start_i];
     let start_abs = start_line.start
         + (src[start_line.start..start_line.end].len() - line_trimmed_start(src, start_line).len());
@@ -511,16 +490,41 @@ fn parse_tagged_code_block(
                 },
             },
         };
-        return Some((node, start_i + 1));
+        return Some(CodeBlockParseResult {
+            node,
+            next_i: start_i + 1,
+            tail: None,
+        });
     };
     let close_start_abs = start_abs + open_end_rel + 1 + close_rel;
     let close_end_abs = close_start_abs + close_pat.len();
     let code_text = &src[open_end_abs..close_start_abs];
 
-    // determine how many lines we consumed.
-    let mut next_i = start_i;
-    while next_i < lines.len() && lines[next_i].end_with_newline <= close_end_abs {
-        next_i += 1;
+    // determine which line contains the closing tag. this is subtle when the close tag
+    // is on the same line as the open tag: `close_end_abs` is before the trailing `\n`,
+    // so comparing against `end_with_newline` with `<=` can fail to advance.
+    let mut close_line_i = start_i;
+    while close_line_i < lines.len() && close_end_abs > lines[close_line_i].end_with_newline {
+        close_line_i += 1;
+    }
+    // we must consume at least the line that contains the closing tag.
+    let next_i = (close_line_i + 1).min(lines.len());
+
+    // preserve any trailing text after the closing tag on the same line.
+    let mut tail: Option<BlockNode> = None;
+    if close_line_i < lines.len() {
+        let line_end_abs = lines[close_line_i].end;
+        if close_end_abs < line_end_abs {
+            let raw_tail = &src[close_end_abs..line_end_abs];
+            let tail_text = strip_cr(raw_tail);
+            if !tail_text.trim().is_empty() {
+                let inlines = util::parse_inlines(src, close_end_abs, tail_text, diagnostics);
+                tail = Some(BlockNode {
+                    span: Span::new(close_end_abs as u64, line_end_abs as u64),
+                    kind: BlockKind::Paragraph { content: inlines },
+                });
+            }
+        }
     }
 
     let node = BlockNode {
@@ -533,7 +537,7 @@ fn parse_tagged_code_block(
             },
         },
     };
-    Some((node, next_i))
+    Some(CodeBlockParseResult { node, next_i, tail })
 }
 
 fn parse_leading_space_block(

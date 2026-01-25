@@ -395,7 +395,7 @@ fn parse_tagged_code_block(
     let start_abs = start_line.start + (src[start_line.start..start_line.end].len() - line_trimmed_start(src, start_line).len());
     let remaining = &src[start_abs..];
     let open_pat = format!("<{}", tag);
-    if !remaining.to_ascii_lowercase().starts_with(&open_pat) {
+    if remaining.len() < open_pat.len() || !remaining[..open_pat.len()].eq_ignore_ascii_case(&open_pat) {
         return None;
     }
     // find end of opening tag.
@@ -414,7 +414,14 @@ fn parse_tagged_code_block(
         .and_then(|a| a.value.clone());
 
     let close_pat = format!("</{}>", tag);
-    let close_rel = remaining[open_end_rel + 1..].to_ascii_lowercase().find(&close_pat);
+    let search_haystack = &remaining[open_end_rel + 1..];
+
+    // search using byte windows
+    // this replaces .to_ascii_lowercase().find() without the allocation
+    let close_rel = search_haystack.as_bytes()
+        .windows(close_pat.len())
+        .position(|window| window.eq_ignore_ascii_case(close_pat.as_bytes()));
+
     let Some(close_rel) = close_rel else {
         diagnostics.push(Diagnostic {
             severity: Severity::Warning,

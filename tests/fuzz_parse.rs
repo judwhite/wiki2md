@@ -169,12 +169,12 @@ impl XorShift64 {
 }
 
 fn gen_wikitext_like(rng: &mut XorShift64, len: usize) -> String {
-    // restrict to a "wikitext-relevant" alphabet so we hit interesting parsing paths
+    // restrict to a "wikitext-relevant" alphabet, so we hit interesting parsing paths
     // while keeping the string valid UTF-8.
-    const ALPH: &[u8] = b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \n\t[]{}|!<>='\"/:#*;-_";
+    const DICT: &[u8] = b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \n\t[]{}|!<>='\"/:#*;-_";
     let mut s = String::with_capacity(len);
     for _ in 0..len {
-        let ch = ALPH[rng.gen_range(ALPH.len())] as char;
+        let ch = DICT[rng.gen_range(DICT.len())] as char;
         s.push(ch);
     }
     s

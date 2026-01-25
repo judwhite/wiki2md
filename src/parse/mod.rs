@@ -587,6 +587,19 @@ fn is_list_line(text: &str) -> bool {
     matches!(trimmed.chars().next(), Some('*' | '#' | ';' | ':'))
 }
 
+/// Hard cap on list nesting depth.
+///
+/// MediaWiki itself supports fairly deep nesting, but in practice real articles
+/// rarely exceed a small handful of levels. Untrusted / fuzzed input can use an
+/// extremely long list of marker prefixes (e.g. `:::::::::::::::::`) which causes
+/// this parser to build a deeply nested list AST. That, in turn, can exceed
+/// `serde_json`'s recursion limit when we round-trip the AST through pretty
+/// printed JSON.
+///
+/// Clamping the depth keeps the parser robust while still producing a
+/// reasonable best-effort structure for pathological inputs.
+const MAX_LIST_DEPTH: usize = 20;
+
 fn parse_list_block(
     src: &str,
     lines: &[util::LineRange],
@@ -655,9 +668,26 @@ fn parse_list_block(
     let mut stack: Vec<ListCtx> = vec![ListCtx { items: Vec::new() }];
 
     for (lr, prefix, content_start_abs, _content_owned) in list_lines {
-        let depth = prefix.chars().count().max(1);
-        let last_marker_ch = prefix.chars().last().unwrap();
-        let marker = match last_marker_ch {
+        let depth_raw = prefix.chars().count().max(1);
+        let depth = depth_raw.min(MAX_LIST_DEPTH);
+        if depth_raw > MAX_LIST_DEPTH {
+            diagnostics.push(Diagnostic {
+                severity: Severity::Warning,
+                phase: Some(DiagnosticPhase::Parse),
+                code: Some("wikitext.list.depth_clamped".to_string()),
+                message: format!(
+                    "List nesting depth {} exceeds max {}; clamping",
+                    depth_raw, MAX_LIST_DEPTH
+                ),
+                span: Some(Span::new(lr.start as u64, lr.end as u64)),
+                notes: vec![],
+            });
+        }
+
+        // use the marker character at the effective depth (after clamping).
+        // this is most relevant for pathological input with many markers.
+        let marker_ch = prefix.chars().nth(depth - 1).unwrap();
+        let marker = match marker_ch {
             '*' => ListMarker::Unordered,
             '#' => ListMarker::Ordered,
             ';' => ListMarker::Term,

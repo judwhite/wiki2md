@@ -433,17 +433,36 @@ fn parse_tagged_code_block(
     diagnostics: &mut Vec<Diagnostic>,
 ) -> Option<CodeBlockParseResult> {
     let start_line = lines[start_i];
-    let start_abs = start_line.start
-        + (src[start_line.start..start_line.end].len() - line_trimmed_start(src, start_line).len());
-    let remaining = &src[start_abs..];
+    // IMPORTANT: compute the "trimmed start" offset without being affected by a trailing CR.
+    //
+    // `line_trimmed_start()` uses `strip_cr()` before trimming, but `start_line.end` includes
+    // the trailing '\r' for Windows-style CRLF inputs (because we split lines on '\n' only).
+    //
+    // The previous calculation:
+    //   src[line].len() - line_trimmed_start(src, line).len()
+    // accidentally treated the stripped trailing CR as leading whitespace and advanced
+    // `start_abs` by 1. That can shift the slice from "<pre" to "pre", and then any
+    // subsequent `[..open_pat.len()]` slice can panic if the next character is non-ASCII
+    // (e.g., replacement char '�' from lossy UTF-8 decoding).
+    let line_no_cr = strip_cr(&src[start_line.start..start_line.end]);
+    let leading_ws = line_no_cr.len() - line_no_cr.trim_start().len();
+    let start_abs = start_line.start + leading_ws;
+
+    // match the opening tag prefix using bytes so we never panic on UTF-8 boundaries.
     let open_pat = format!("<{}", tag);
-    if remaining.len() < open_pat.len()
-        || !remaining[..open_pat.len()].eq_ignore_ascii_case(&open_pat)
+    let remaining = &src[start_abs..];
+    let rem_bytes = remaining.as_bytes();
+    let open_bytes = open_pat.as_bytes();
+    if rem_bytes.len() < open_bytes.len()
+        || !rem_bytes[..open_bytes.len()].eq_ignore_ascii_case(open_bytes)
     {
         return None;
     }
-    // find end of opening tag.
-    let open_end_rel = remaining.find('>')?;
+
+    // find end of opening tag on the same line.
+    // if there's no closing '>' before the newline, treat it as plain text.
+    let open_line_tail = &src[start_abs..start_line.end];
+    let open_end_rel = open_line_tail.find('>')?;
     let open_end_abs = start_abs + open_end_rel + 1;
     let open_tag = &src[start_abs..open_end_abs];
     let attrs_str = open_tag
@@ -458,7 +477,7 @@ fn parse_tagged_code_block(
         .and_then(|a| a.value.clone());
 
     let close_pat = format!("</{}>", tag);
-    let search_haystack = &remaining[open_end_rel + 1..];
+    let search_haystack = &src[open_end_abs..];
 
     // search using byte windows
     // this replaces .to_ascii_lowercase().find() without the allocation
@@ -496,7 +515,7 @@ fn parse_tagged_code_block(
             tail: None,
         });
     };
-    let close_start_abs = start_abs + open_end_rel + 1 + close_rel;
+    let close_start_abs = open_end_abs + close_rel;
     let close_end_abs = close_start_abs + close_pat.len();
     let code_text = &src[open_end_abs..close_start_abs];
 

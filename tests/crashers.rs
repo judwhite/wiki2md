@@ -1,4 +1,7 @@
-use wiki2md::{ast::*, parse};
+use std::fs;
+use std::path::PathBuf;
+use wiki2md::ast::*;
+use wiki2md::parse;
 use wiki2md::parse::ParseOutput;
 
 fn get_ast_file(src: String, parse_out: ParseOutput) -> AstFile {
@@ -41,7 +44,7 @@ fn json_round_trip_survives_pathological_list_depth() {
 }
 
 #[test]
-fn regression_deeply_nested_colons() {
+fn crasher_deeply_nested_colons() {
     let src = include_str!("crashes/minimized000.txt").to_string();
     let parse_out = parse::parse_document(&src);
     let ast = get_ast_file(src, parse_out);
@@ -49,4 +52,49 @@ fn regression_deeply_nested_colons() {
     let json = serde_json::to_string_pretty(&ast).expect("serialize");
     let back: AstFile = serde_json::from_str(&json).expect("deserialize");
     assert_eq!(ast, back);
+}
+
+#[test]
+fn crasher_pre_and_syntaxhighlight() {
+    let crash_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tests")
+        .join("crashes");
+
+    let cases = ["minimized001.txt", "minimized002.txt"];
+
+    let mut failures = Vec::new();
+
+    for file in cases {
+        let path = crash_dir.join(file);
+
+        let bytes =
+            fs::read(&path).unwrap_or_else(|e| panic!("failed to read {}: {e}", path.display()));
+
+        // decode like a fuzz harness would: accept arbitrary bytes.
+        let src = String::from_utf8_lossy(&bytes).into_owned();
+
+        // catch panic so we can say which file caused it.
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _parse_out = parse::parse_document(&src);
+        }));
+
+        if let Err(panic_payload) = result {
+            // extract a useful panic message when possible
+            let msg = if let Some(s) = panic_payload.downcast_ref::<&str>() {
+                (*s).to_string()
+            } else if let Some(s) = panic_payload.downcast_ref::<String>() {
+                s.clone()
+            } else {
+                "<non-string panic payload>".to_string()
+            };
+
+            failures.push(format!("{} panicked: {}", file, msg));
+        }
+    }
+
+    assert!(
+        failures.is_empty(),
+        "parser panicked on one or more minimized inputs:\n{}",
+        failures.join("\n")
+    );
 }

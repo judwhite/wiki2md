@@ -105,7 +105,10 @@ pub fn parse_document(src: &str) -> ParseOutput {
             let inlines = util::parse_inlines(src, inner_start, content_slice, &mut diagnostics);
             blocks.push(BlockNode {
                 span: Span::new(line.start as u64, line.end as u64),
-                kind: BlockKind::Heading { level, content: inlines },
+                kind: BlockKind::Heading {
+                    level,
+                    content: inlines,
+                },
             });
             i += 1;
             continue;
@@ -116,6 +119,18 @@ pub fn parse_document(src: &str) -> ParseOutput {
             match table::parse_table(src, &lines, i, &mut diagnostics) {
                 Ok((node, next_i)) => {
                     blocks.push(node);
+                    if next_i <= i {
+                        diagnostics.push(Diagnostic {
+                            severity: Severity::Error,
+                            phase: Some(DiagnosticPhase::Parse),
+                            code: Some("wikitext.table.parse_failed".to_string()),
+                            message: format!("Table parsing error: next index ({next_i}) is not greater than current index ({i})"),
+                            span: Some(Span::new(line.start as u64, line.end as u64)),
+                            notes: vec![],
+                        });
+                        i += 1;
+                        continue;
+                    }
                     i = next_i;
                     continue;
                 }
@@ -144,6 +159,18 @@ pub fn parse_document(src: &str) -> ParseOutput {
         // <pre> and <syntaxhighlight> code blocks.
         if let Some((node, next_i)) = try_parse_code_block(src, &lines, i, &mut diagnostics) {
             blocks.push(node);
+            if next_i <= i {
+                diagnostics.push(Diagnostic {
+                    severity: Severity::Error,
+                    phase: Some(DiagnosticPhase::Parse),
+                    code: Some("wikitext.html_codeblock.parse_failed".to_string()),
+                    message: format!("Code block parsing error: next index ({next_i}) is not greater than current index ({i})"),
+                    span: Some(Span::new(line.start as u64, line.end as u64)),
+                    notes: vec![],
+                });
+                i += 1;
+                continue;
+            }
             i = next_i;
             continue;
         }
@@ -152,6 +179,18 @@ pub fn parse_document(src: &str) -> ParseOutput {
         if text.starts_with(' ') {
             let (node, next_i) = parse_leading_space_block(src, &lines, i);
             blocks.push(node);
+            if next_i <= i {
+                diagnostics.push(Diagnostic {
+                    severity: Severity::Error,
+                    phase: Some(DiagnosticPhase::Parse),
+                    code: Some("wikitext.indented_codeblock.parse_failed".to_string()),
+                    message: format!("Code block parsing error: next index ({next_i}) is not greater than current index ({i})"),
+                    span: Some(Span::new(line.start as u64, line.end as u64)),
+                    notes: vec![],
+                });
+                i += 1;
+                continue;
+            }
             i = next_i;
             continue;
         }
@@ -160,6 +199,18 @@ pub fn parse_document(src: &str) -> ParseOutput {
         if is_list_line(text) {
             let (node, next_i) = parse_list_block(src, &lines, i, &mut diagnostics);
             blocks.push(node);
+            if next_i <= i {
+                diagnostics.push(Diagnostic {
+                    severity: Severity::Error,
+                    phase: Some(DiagnosticPhase::Parse),
+                    code: Some("wikitext.list.parse_failed".to_string()),
+                    message: format!("List parsing error: next index ({next_i}) is not greater than current index ({i})"),
+                    span: Some(Span::new(line.start as u64, line.end as u64)),
+                    notes: vec![],
+                });
+                i += 1;
+                continue;
+            }
             i = next_i;
             continue;
         }
@@ -203,7 +254,10 @@ pub fn parse_document(src: &str) -> ParseOutput {
         redirect,
     };
 
-    ParseOutput { document: doc, diagnostics }
+    ParseOutput {
+        document: doc,
+        diagnostics,
+    }
 }
 
 fn try_parse_redirect(_src: &str, line: util::LineRange, text: &str) -> Option<Redirect> {
@@ -215,18 +269,19 @@ fn try_parse_redirect(_src: &str, line: util::LineRange, text: &str) -> Option<R
     let leading_ws = text.len().saturating_sub(trimmed.len());
     // find the first internal link after #REDIRECT.
     if let Some(open) = trimmed.find("[[")
-        && let Some(close_rel) = trimmed[open + 2..].find("]]" ) {
-            let close = open + 2 + close_rel;
-            let inner = &trimmed[open + 2..close];
-            let (target, anchor) = split_target_anchor(inner.trim());
-            let start_abs = line.start + leading_ws + open;
-            let end_abs = line.start + leading_ws + close + 2;
-            return Some(Redirect {
-                span: Span::new(start_abs as u64, end_abs as u64),
-                target: target.to_string(),
-                anchor: anchor.map(|s| s.to_string()),
-            });
-        }
+        && let Some(close_rel) = trimmed[open + 2..].find("]]")
+    {
+        let close = open + 2 + close_rel;
+        let inner = &trimmed[open + 2..close];
+        let (target, anchor) = split_target_anchor(inner.trim());
+        let start_abs = line.start + leading_ws + open;
+        let end_abs = line.start + leading_ws + close + 2;
+        return Some(Redirect {
+            span: Span::new(start_abs as u64, end_abs as u64),
+            target: target.to_string(),
+            anchor: anchor.map(|s| s.to_string()),
+        });
+    }
     // fallback span: whole line.
     Some(Redirect {
         span: Span::new(line.start as u64, line.end as u64),
@@ -238,7 +293,7 @@ fn try_parse_redirect(_src: &str, line: util::LineRange, text: &str) -> Option<R
 fn try_parse_category(line: util::LineRange, text: &str) -> Option<CategoryTag> {
     let trimmed = text.trim();
     // common form: [[Category:Name|Sort]]
-    if !trimmed.starts_with("[[") || !trimmed.ends_with("]]" ) {
+    if !trimmed.starts_with("[[") || !trimmed.ends_with("]]") {
         return None;
     }
     let inner = &trimmed[2..trimmed.len() - 2];
@@ -368,7 +423,14 @@ fn try_parse_code_block(
     let trimmed = line_trimmed_start(src, line);
     let lower = trimmed.to_ascii_lowercase();
     if lower.starts_with("<pre") {
-        return parse_tagged_code_block(src, lines, start_i, "pre", CodeBlockKind::PreTag, diagnostics);
+        return parse_tagged_code_block(
+            src,
+            lines,
+            start_i,
+            "pre",
+            CodeBlockKind::PreTag,
+            diagnostics,
+        );
     }
     if lower.starts_with("<syntaxhighlight") {
         return parse_tagged_code_block(
@@ -392,10 +454,13 @@ fn parse_tagged_code_block(
     diagnostics: &mut Vec<Diagnostic>,
 ) -> Option<(BlockNode, usize)> {
     let start_line = lines[start_i];
-    let start_abs = start_line.start + (src[start_line.start..start_line.end].len() - line_trimmed_start(src, start_line).len());
+    let start_abs = start_line.start
+        + (src[start_line.start..start_line.end].len() - line_trimmed_start(src, start_line).len());
     let remaining = &src[start_abs..];
     let open_pat = format!("<{}", tag);
-    if remaining.len() < open_pat.len() || !remaining[..open_pat.len()].eq_ignore_ascii_case(&open_pat) {
+    if remaining.len() < open_pat.len()
+        || !remaining[..open_pat.len()].eq_ignore_ascii_case(&open_pat)
+    {
         return None;
     }
     // find end of opening tag.
@@ -418,7 +483,8 @@ fn parse_tagged_code_block(
 
     // search using byte windows
     // this replaces .to_ascii_lowercase().find() without the allocation
-    let close_rel = search_haystack.as_bytes()
+    let close_rel = search_haystack
+        .as_bytes()
         .windows(close_pat.len())
         .position(|window| window.eq_ignore_ascii_case(close_pat.as_bytes()));
 
@@ -428,7 +494,10 @@ fn parse_tagged_code_block(
             phase: Some(DiagnosticPhase::Parse),
             code: Some("wikitext.codeblock.unclosed".to_string()),
             message: format!("Unclosed <{}> tag", tag),
-            span: Some(Span::new(start_abs as u64, (start_abs + open_end_rel + 1) as u64)),
+            span: Some(Span::new(
+                start_abs as u64,
+                (start_abs + open_end_rel + 1) as u64,
+            )),
             notes: vec![],
         });
         // consume only this line.
@@ -467,7 +536,11 @@ fn parse_tagged_code_block(
     Some((node, next_i))
 }
 
-fn parse_leading_space_block(src: &str, lines: &[util::LineRange], start_i: usize) -> (BlockNode, usize) {
+fn parse_leading_space_block(
+    src: &str,
+    lines: &[util::LineRange],
+    start_i: usize,
+) -> (BlockNode, usize) {
     let mut i = start_i;
     let start = lines[start_i].start;
     let mut end = lines[start_i].end;
@@ -604,21 +677,22 @@ fn parse_list_block(
         // push contexts if the list is getting deeper.
         while stack.len() < depth {
             if let Some(parent_ctx) = stack.last_mut()
-                && parent_ctx.items.is_empty() {
-                    diagnostics.push(Diagnostic {
-                        severity: Severity::Warning,
-                        phase: Some(DiagnosticPhase::Parse),
-                        code: Some("wikitext.list.missing_parent".to_string()),
-                        message: "Nested list item without a parent; inserting dummy item".to_string(),
-                        span: Some(Span::new(lr.start as u64, lr.end as u64)),
-                        notes: vec![],
-                    });
-                    parent_ctx.items.push(ListItem {
-                        span: Span::new(lr.start as u64, lr.start as u64),
-                        marker: ListMarker::Unordered,
-                        blocks: vec![],
-                    });
-                }
+                && parent_ctx.items.is_empty()
+            {
+                diagnostics.push(Diagnostic {
+                    severity: Severity::Warning,
+                    phase: Some(DiagnosticPhase::Parse),
+                    code: Some("wikitext.list.missing_parent".to_string()),
+                    message: "Nested list item without a parent; inserting dummy item".to_string(),
+                    span: Some(Span::new(lr.start as u64, lr.end as u64)),
+                    notes: vec![],
+                });
+                parent_ctx.items.push(ListItem {
+                    span: Span::new(lr.start as u64, lr.start as u64),
+                    marker: ListMarker::Unordered,
+                    blocks: vec![],
+                });
+            }
             stack.push(ListCtx { items: Vec::new() });
         }
 
@@ -737,7 +811,11 @@ mod tests {
         }
         match &out.document.blocks[1].kind {
             BlockKind::Paragraph { content } => {
-                assert!(content.iter().any(|n| matches!(n.kind, InlineKind::InternalLink { .. })));
+                assert!(
+                    content
+                        .iter()
+                        .any(|n| matches!(n.kind, InlineKind::InternalLink { .. }))
+                );
             }
             _ => panic!("expected paragraph"),
         }
@@ -751,12 +829,19 @@ mod tests {
 
         match &out.document.blocks[0].kind {
             BlockKind::Paragraph { content } => {
-                assert!(content.iter().any(|n| matches!(n.kind, InlineKind::Ref { .. })));
+                assert!(
+                    content
+                        .iter()
+                        .any(|n| matches!(n.kind, InlineKind::Ref { .. }))
+                );
             }
             _ => panic!("expected paragraph"),
         }
 
-        assert!(matches!(out.document.blocks[1].kind, BlockKind::References { .. }));
+        assert!(matches!(
+            out.document.blocks[1].kind,
+            BlockKind::References { .. }
+        ));
     }
 
     #[test]
@@ -764,7 +849,11 @@ mod tests {
         let src = "[[FILE:Example.jpg|thumb|An example]]";
         let mut diagnostics = Vec::new();
         let inlines = util::parse_inlines(src, 0, src, &mut diagnostics);
-        assert!(inlines.iter().any(|n| matches!(n.kind, InlineKind::FileLink { .. })));
+        assert!(
+            inlines
+                .iter()
+                .any(|n| matches!(n.kind, InlineKind::FileLink { .. }))
+        );
     }
 
     #[test]

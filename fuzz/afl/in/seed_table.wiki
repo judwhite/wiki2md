@@ -1,0 +1,13 @@
+==Table==
+{| class="wikitable"
+|-
+! H !! 10 !! 50
+|-
+! 0
+| style="text-align:center;" | 50.00%
+| style="text-align:center;" | 50.00%
+|-
+! 1
+| style="text-align:center;" | 64.51%
+| style="text-align:center;" | 56.77%
+|}

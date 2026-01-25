@@ -6,7 +6,6 @@ edition = "2024"
 [dependencies]
 clap = { version = "4.5.54", features = ["derive"] }
 html-escape = "0.2.13"
-regex = "1.12.2"
 reqwest = { version = "0.13.1", features = ["blocking"] }
 scraper = "0.25.0"
 serde = { version = "1", features = ["derive"] }
@@ -17,3 +16,12 @@ walkdir = "2.5.0"
 assert_cmd = "2.0.16"
 predicates = "3.1.2"
 tempfile = "3.16.0"
+
+[features]
+afl_fuzz = []
+
+[[bin]]
+# AFL++ fuzz target (stdin-driven). build/run with `cargo-afl`.
+name = "wiki2md_afl_parse"
+path = "src/bin/wiki2md_afl_parse.rs"
+required-features = ["afl_fuzz"]

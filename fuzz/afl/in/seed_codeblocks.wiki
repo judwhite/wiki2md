@@ -1,0 +1,5 @@
+<pre>Since 1972 (1970 Editor) in the USA and Canada were hold the yearly ... its regular congress took upon itself.</pre>
+
+<syntaxhighlight lang="c">
+int main(void) { return 0; }
+</syntaxhighlight>

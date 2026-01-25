@@ -1,0 +1,7 @@
+=Title=
+
+A paragraph with ''italic'', '''bold''', and '''''both'''''.
+
+A link to [[Ken Thompson|Ken]] and an external link [https://example.com Example].
+
+__TOC__

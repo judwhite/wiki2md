@@ -1,0 +1,57 @@
+# AFL++ dictionary for MediaWiki/Wikitext-ish inputs
+#
+# One token per line in the form:
+#   name="token"
+# or:
+#   "token"
+#
+# See AFL++ dictionary docs for full details.
+
+"[["
+"]]"
+"{{"
+"}}"
+"["
+"]"
+"{|"
+"|}"
+"|-"
+"!"
+"|"
+"||"
+"!!"
+"="
+"=="
+"==="
+"===="
+"====="
+"------"
+"----"
+"''"
+"'''"
+"'''''"
+
+"[[Category:"
+"[[CATEGORY:"
+"[[File:"
+"[[FILE:"
+
+"<pre>"
+"</pre>"
+"<syntaxhighlight"
+"</syntaxhighlight>"
+"lang="
+
+"<ref"
+"</ref>"
+"<references"
+"</references>"
+"<references />"
+"/>"
+
+"<br>"
+"<br/>"
+"<br />"
+
+"__TOC__"
+"#REDIRECT"

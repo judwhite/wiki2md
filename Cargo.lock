@@ -2102,7 +2102,6 @@ dependencies = [
  "clap",
  "html-escape",
  "predicates",
- "regex",
  "reqwest",
  "scraper",
  "serde",

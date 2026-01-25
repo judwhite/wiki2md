@@ -1,0 +1,7 @@
+[[FILE:Example.png|thumb|200px|A caption<br/>with a line break]]
+
+Text with a ref<ref name="a">Ref content</ref> and another <ref name="b" />.
+
+<references />
+
+[[Category:Example]]

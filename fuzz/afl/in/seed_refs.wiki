@@ -1,0 +1,6 @@
+==Refs==
+
+Text before a ref.<ref name="a">Ref ''content'' with [[Link]].</ref>
+More text.<ref name="b" />
+
+<references />

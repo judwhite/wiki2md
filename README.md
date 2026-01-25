@@ -35,3 +35,11 @@ $ cargo build --release && target/release/wiki2md --regenerate-all
 [1157/1157] [00:02.552] Regenerated: "docs/md/é/Zwischenzug.md"
 Done. Regenerated 1157 files in 2.553s (avg 0.002s/doc).
 ```
+
+### Fuzzing <small>🧨</small>
+
+The parser is intentionally tolerant, but it must *never* panic, hang, or produce out-of-bounds spans.
+
+This repo includes an AFL++-style fuzz target:
+
+- See `fuzz/afl/README.md` for instructions.

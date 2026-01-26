@@ -132,6 +132,10 @@ case "$ACTION" in
 
             # capture the stack trace
             output=$("$DEBUG_BIN" < "$f" 2>&1)
+
+            # TODO: check that the binary actually exited with a non-zero exit code.
+            # TODO: also check that `$output` isn't empty.
+
             # grep for "panicked at" to capture the location line
             panic_loc=$(echo "$output" | grep "panicked at")
 
@@ -172,7 +176,7 @@ case "$ACTION" in
             [ -e "$f" ] || continue
             echo -n "Testing $(basename "$f")... "
 
-            # timeout after 4 seconds. if it takes longer, it's a real hang.
+            # timeout after 2 seconds. if it takes longer, it's a real hang.
             timeout 2s "$TARGET_BIN" < "$f" >/dev/null 2>&1
             exit_code=$?
 

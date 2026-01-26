@@ -130,6 +130,28 @@ pub fn parse_inlines(
     slice: &str,
     diagnostics: &mut Vec<Diagnostic>,
 ) -> Vec<InlineNode> {
+    // Pathological inputs can contain extremely long runs of opening delimiters like
+    // "{{{{{{{{..." or "[[[[[[[[...".
+    //
+    // Our inline parser tries to detect templates/links by searching for a matching
+    // closing token. If we attempt that search at every byte offset within a huge
+    // delimiter run, we can devolve into quadratic behavior (O(n^2)).
+    //
+    // To keep parsing robust on adversarial / fuzzed inputs, we treat very long runs
+    // of these delimiters as plain text and skip over them in one step.
+    const MAX_OPEN_DELIM_RUN: usize = 16;
+
+    #[inline]
+    fn count_ascii_prefix_byte(s: &str, byte: u8) -> usize {
+        // safe because we're only counting ASCII bytes.
+        let bytes = s.as_bytes();
+        let mut n = 0usize;
+        while n < bytes.len() && bytes[n] == byte {
+            n += 1;
+        }
+        n
+    }
+
     let mut out: Vec<InlineNode> = Vec::new();
     let mut i: usize = 0;
     let mut text_start: usize = 0;
@@ -149,6 +171,51 @@ pub fn parse_inlines(
 
     while i < slice.len() {
         let rem = &slice[i..];
+
+        // Fast-path: avoid quadratic behavior for pathological delimiter runs.
+        //
+        // Example pathological cases:
+        // - "{{{{{{{{{{{{{{..." (no closing braces)
+        // - "[[[[[[[[[[[[[[..." (no closing brackets)
+        //
+        // Without this guard, we repeatedly attempt to find a matching close token at
+        // every byte offset within the run, leading to O(n^2) scanning.
+        if rem.starts_with("{{") {
+            let run = count_ascii_prefix_byte(rem, b'{');
+            if run >= MAX_OPEN_DELIM_RUN {
+                diagnostics.push(Diagnostic {
+                    severity: Severity::Warning,
+                    phase: Some(DiagnosticPhase::Parse),
+                    code: Some("wikitext.inline.pathological_delim_run".to_string()),
+                    message: format!(
+                        "Pathological run of '{{' characters (len={}); treating as text",
+                        run
+                    ),
+                    span: Some(Span::new((base_abs + i) as u64, (base_abs + i + run) as u64)),
+                    notes: vec![],
+                });
+                i += run;
+                continue;
+            }
+        }
+        if rem.starts_with("[[") {
+            let run = count_ascii_prefix_byte(rem, b'[');
+            if run >= MAX_OPEN_DELIM_RUN {
+                diagnostics.push(Diagnostic {
+                    severity: Severity::Warning,
+                    phase: Some(DiagnosticPhase::Parse),
+                    code: Some("wikitext.inline.pathological_delim_run".to_string()),
+                    message: format!(
+                        "Pathological run of '[' characters (len={}); treating as text",
+                        run
+                    ),
+                    span: Some(Span::new((base_abs + i) as u64, (base_abs + i + run) as u64)),
+                    notes: vec![],
+                });
+                i += run;
+                continue;
+            }
+        }
 
         // <br>, <br/>, <br />
         if rem.starts_with('<')

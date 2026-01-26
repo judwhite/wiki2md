@@ -6,3 +6,5 @@ docs/
 # AFL++ fuzzing artifacts
 fuzz/afl/out/
 fuzz/afl/.cur_input
+coverage/
+

@@ -7,51 +7,130 @@
 #
 # See AFL++ dictionary docs for full details.
 
+# Links
 "[["
 "]]"
-"{{"
-"}}"
 "["
 "]"
+"[[Category:"
+"[[CATEGORY:"
+"[[File:"
+"[[FILE:"
+"[[Image:"
+"[[Media:"
+"[[Template:"
+"[[Wikipedia:"
+
+# Templates
+"{{"
+"}}"
+"{{PAGENAME}}"
+
+# Tables
 "{|"
 "|}"
 "|-"
-"!"
 "|"
 "||"
+"!"
 "!!"
+"| "
+"|| "
+"| style="
+"| class="
+
+# Headings
 "="
 "=="
 "==="
 "===="
 "====="
-"------"
+
+# Horizontal rules
 "----"
+"------"
+
+# Text formatting
 "''"
 "'''"
 "'''''"
 
-"[[Category:"
-"[[CATEGORY:"
-"[[File:"
-"[[FILE:"
+# Lists — unordered
+"*"
+"* "
+"**"
+"** "
+"***"
+"*** "
 
+# Lists — ordered
+"#"
+"# "
+
+# Lists — definition/indent
+":"
+": "
+"::"
+":::"
+"::::"
+":::::"
+";"
+
+# Lists — mixed/nested
+":*"
+":* "
+"#*"
+"#:"
+"#;"
+":: - "
+"*: - "
+":: -"
+"::-"
+"*:-"
+"*: -"
+
+# Comments
+"<!--"
+"-->"
+
+# HTML tags
 "<pre>"
 "</pre>"
 "<syntaxhighlight"
 "</syntaxhighlight>"
 "lang="
-
 "<ref"
 "</ref>"
 "<references"
 "</references>"
-"<references />"
 "/>"
-
 "<br>"
 "<br/>"
 "<br />"
+"<nowiki>"
+"</nowiki>"
+"<span>"
+"<span id=\"aaa\">"
+"</span>"
 
+# HTML attributes
+"style=\""
+"class=\""
+"id=\""
+"href=\""
+
+# Entities
+"&nbsp;"
+"&amp;"
+"&lt;"
+"&gt;"
+
+# Magic words
 "__TOC__"
+"__NOTOC__"
+"__NOEDITSECTION__"
 "#REDIRECT"
+
+# Whitespace
+"\x0a"
+"\x0d\x0a"

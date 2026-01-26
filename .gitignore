@@ -1,6 +1,8 @@
 .idea/
 target/
-docs/
+docs/md
+docs/json
+docs/wiki
 *.zip
 
 # AFL++ fuzzing artifacts

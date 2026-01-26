@@ -10,7 +10,7 @@ use std::time::Instant;
 use walkdir::WalkDir;
 
 /// Single file mode: Fetch if needed, then convert.
-pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
+pub fn run(raw_title: &str, write_json: bool) -> Result<(), Box<dyn Error>> {
     let article_id = sanitize_article_id(raw_title);
     let bucket = lower_first_letter_bucket(&article_id);
 
@@ -20,8 +20,11 @@ pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
 
     // ensure directories exist
     fs::create_dir_all(&wiki_dir)?;
-    fs::create_dir_all(&json_dir)?;
     fs::create_dir_all(&md_dir)?;
+
+    if write_json {
+        fs::create_dir_all(&json_dir)?;
+    }
 
     let wiki_path = wiki_dir.join(format!("{}.wiki", article_id));
     let json_path = json_dir.join(format!("{}.json", article_id));
@@ -39,15 +42,24 @@ pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
         wiki::fetch_and_save(raw_title.trim(), wiki_path.to_string_lossy().as_ref())?;
     }
 
-    // parse wikitext -> AST
-    let parse_ast = parse_file(&wiki_path)?;
+    // parse wikitext into ast
+    let ast = parse_file(&wiki_path)?;
 
-    // write JSON
-    write_json_ast_for_wiki(&article_id, &wiki_path, &parse_ast, &json_path)?;
+    match write_json {
+        true => {
+            // write .json
+            write_json_ast_for_wiki(&article_id, &wiki_path, &ast, &json_path)?;
 
-    // write Markdown
-    let md_content = render_markdown_from_json(&json_path, &md_path)?;
-    println!("{}", md_content);
+            // write .md
+            let md_content = render_markdown_from_json(&json_path, &md_path)?;
+            println!("{}", md_content);
+        }
+        false => {
+            let md_content = render::render_doc(&ast.document);
+            fs::write(&md_path, &md_content)?;
+            println!("{}", md_content);
+        }
+    }
 
     Ok(())
 }
@@ -89,8 +101,8 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
             fs::create_dir_all(parent)?;
         }
 
-        let parse_ast = parse_file(&path)?;
-        render::render_doc(&parse_ast.document);
+        let ast = parse_file(path)?;
+        render::render_doc(&ast.document);
 
         count += 1;
 

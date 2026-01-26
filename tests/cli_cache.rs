@@ -51,13 +51,4 @@ fn generates_md_from_existing_wiki_cache() {
         .join("Test_Page.md");
     let md = fs::read_to_string(&md_path).unwrap();
     assert_eq!(md, "# Title\n\nSee [link](../o/Other_Page.md).");
-
-    // it should also have written the .json AST cache.
-    let json_path = dir
-        .path()
-        .join("docs")
-        .join("json")
-        .join("t")
-        .join("Test_Page.json");
-    assert!(json_path.exists());
 }

@@ -178,37 +178,13 @@ fn run_one_input(data: &[u8]) {
     // lossy conversion keeps the harness total (no early returns that reduce coverage).
     let src = String::from_utf8_lossy(data).to_string();
 
-    let out = parse::parse_document(&src);
+    let ast = parse::parse_document(&src);
 
-    // build a full envelope to exercise JSON serialization.
-    let ast_file = AstFile {
-        schema_version: SCHEMA_VERSION,
-        parser: ParserInfo {
-            name: PARSER_NAME.to_string(),
-            version: PARSER_VERSION.to_string(),
-        },
-        span_encoding: SpanEncoding::default(),
-        article_id: "fuzz".to_string(),
-        source: SourceInfo {
-            path: None,
-            sha256: None,
-            byte_len: src.len() as u64,
-        },
-        diagnostics: out.diagnostics,
-        document: out.document,
-    };
+    // check spans never go out of bounds
+    validate_document(&ast.document, src.len());
 
-    // invariants that must hold for any input (valid or invalid):
-    // - spans never go out of bounds
-    // - renderer never panics
-    validate_document(&ast_file.document, src.len());
-
-    // JSON round-trip must never panic.
-    let json = serde_json::to_vec(&ast_file).unwrap();
-    let back: AstFile = serde_json::from_slice(&json).unwrap();
-
-    // rendering should never panic.
-    let _md = render::render_ast(&back);
+    // renderer should never panic.
+    let _md = render::render_doc(&ast.document);
 }
 
 fn main() {

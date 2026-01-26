@@ -24,7 +24,7 @@ fn main() {
         }
     } else {
         let title = args.title.as_ref().unwrap();
-        if let Err(e) = run(title) {
+        if let Err(e) = run(title, false) {
             eprintln!("Error processing '{}': {}", title, e);
             std::process::exit(1);
         }

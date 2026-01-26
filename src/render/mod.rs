@@ -26,14 +26,14 @@ struct RenderContext {
     refs: Vec<String>,
 }
 
-pub fn render_ast(ast: &AstFile) -> String {
-    render_ast_with_options(ast, &RenderOptions::default())
+pub fn render_doc(doc: &Document) -> String {
+    render_doc_with_options(doc, &RenderOptions::default())
 }
 
-pub fn render_ast_with_options(ast: &AstFile, opts: &RenderOptions) -> String {
+pub fn render_doc_with_options(doc: &Document, opts: &RenderOptions) -> String {
     let mut ctx = RenderContext::default();
     let mut out = String::new();
-    for (bi, block) in ast.document.blocks.iter().enumerate() {
+    for (bi, block) in doc.blocks.iter().enumerate() {
         if bi > 0 {
             // separate blocks with a single blank line.
             out.push_str("\n\n");
@@ -549,7 +549,7 @@ mod tests {
             },
         };
 
-        let md = render_ast(&ast_file);
+        let md = render_doc(&ast_file.document);
         assert!(md.contains("Text[^1]"));
         assert!(md.contains("[^1]: Ref body"));
     }

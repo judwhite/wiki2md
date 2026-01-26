@@ -22,6 +22,7 @@ use util::{collect_lines, line_trimmed_start, parse_html_attrs, strip_cr};
 pub struct ParseOutput {
     pub document: Document,
     pub diagnostics: Vec<Diagnostic>,
+    pub byte_len: usize,
 }
 
 /// Parse a `.wiki` file (Wikitext) into an AST `Document`.
@@ -32,6 +33,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
     let mut blocks: Vec<BlockNode> = Vec::new();
     let mut categories: Vec<CategoryTag> = Vec::new();
     let mut redirect: Option<Redirect> = None;
+    let byte_len = src.len();
 
     let lines = collect_lines(src);
     let mut i: usize = 0;
@@ -228,6 +230,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
     ParseOutput {
         document: doc,
         diagnostics,
+        byte_len,
     }
 }
 

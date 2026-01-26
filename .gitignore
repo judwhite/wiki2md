@@ -3,6 +3,9 @@ target/
 docs/md
 docs/json
 docs/wiki
+flamegraph.svg
+perf.data
+perf.data.*
 *.zip
 
 # AFL++ fuzzing artifacts

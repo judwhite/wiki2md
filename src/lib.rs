@@ -1,14 +1,13 @@
 pub mod ast;
-pub mod wiki;
 pub mod parse;
 pub mod render;
+pub mod wiki;
 
 use std::error::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use walkdir::WalkDir;
-
 
 /// Single file mode: Fetch if needed, then convert.
 pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
@@ -40,14 +39,13 @@ pub fn run(raw_title: &str) -> Result<(), Box<dyn Error>> {
         wiki::fetch_and_save(raw_title.trim(), wiki_path.to_string_lossy().as_ref())?;
     }
 
-    // parse wikitext -> AST(JSON) -> render Markdown
-    write_json_ast_for_wiki(
-        &article_id,
-        raw_title.trim(),
-        &bucket,
-        &wiki_path,
-        &json_path,
-    )?;
+    // parse wikitext -> AST
+    let parse_ast = parse_file(&wiki_path)?;
+
+    // write JSON
+    write_json_ast_for_wiki(&article_id, &wiki_path, &parse_ast, &json_path)?;
+
+    // write Markdown
     let md_content = render_markdown_from_json(&json_path, &md_path)?;
     println!("{}", md_content);
 
@@ -67,8 +65,7 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| {
-            e.file_type().is_file() &&
-            e.path().extension().is_some_and(|ext| ext == "wiki")
+            e.file_type().is_file() && e.path().extension().is_some_and(|ext| ext == "wiki")
         })
         .collect();
 
@@ -79,59 +76,33 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
 
     for entry in entries {
         let path = entry.path();
-        if path.extension().is_some_and(|ext| ext == "wiki") {
-            // determine relative path structure to maintain the same structure in the md/ directory.
-            let relative = path.strip_prefix(&wiki_root)?;
+        // determine relative path structure to maintain the same structure in the md/ directory.
+        let relative = path.strip_prefix(&wiki_root)?;
 
-            // construct target paths: docs/json/<relative_with_json_extension>, docs/md/<relative_with_md_extension>
-            let md_root = PathBuf::from("docs").join("md");
-            let mut md_path = md_root.join(relative);
-            md_path.set_extension("md");
+        // construct target paths: docs/json/<relative_with_json_extension>, docs/md/<relative_with_md_extension>
+        let md_root = PathBuf::from("docs").join("md");
+        let mut md_path = md_root.join(relative);
+        md_path.set_extension("md");
 
-            let json_root = PathBuf::from("docs").join("json");
-            let mut json_path = json_root.join(relative);
-            json_path.set_extension("json");
-
-            // ensure the parent and bucket directory exists for the target .json and .md files
-            if let Some(parent) = json_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            if let Some(parent) = md_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-
-            // derive article_id/title from the filename.
-            let article_id = path
-                .file_stem()
-                .and_then(|s| s.to_str())
-                .unwrap_or("Untitled")
-                .to_string();
-            let bucket = relative
-                .components()
-                .next()
-                .and_then(|c| c.as_os_str().to_str())
-                .unwrap_or("x")
-                .to_string();
-            let title = article_id.replace('_', " ");
-
-            match write_json_ast_for_wiki(&article_id, &title, &bucket, path, &json_path)
-                .and_then(|_| render_markdown_from_json(&json_path, &md_path).map(|_| ()))
-            {
-                Ok(_) => {
-                    count += 1;
-                    let elapsed = start_time.elapsed();
-                    let total_ms = elapsed.as_millis();
-                    let mins = total_ms / 60_000;
-                    let secs = (total_ms % 60_000) / 1_000;
-                    let ms = total_ms % 1_000;
-                    eprintln!(
-                        "[{:>4}/{:>4}] [{:02}:{:02}.{:03}] Regenerated: {:?}",
-                        count, total, mins, secs, ms, md_path
-                    );
-                }
-                Err(e) => eprintln!("Failed to process {:?}: {}", path, e),
-            }
+        // ensure the parent and bucket directory exists for the target .md file
+        if let Some(parent) = md_path.parent() {
+            fs::create_dir_all(parent)?;
         }
+
+        let parse_ast = parse_file(&path)?;
+        render::render_doc(&parse_ast.document);
+
+        count += 1;
+
+        let elapsed = start_time.elapsed();
+        let total_ms = elapsed.as_millis();
+        let mins = total_ms / 60_000;
+        let secs = (total_ms % 60_000) / 1_000;
+        let ms = total_ms % 1_000;
+        eprintln!(
+            "[{:>4}/{:>4}] [{:02}:{:02}.{:03}] Regenerated: {:?}",
+            count, total, mins, secs, ms, md_path
+        );
     }
 
     let total_elapsed = start_time.elapsed();
@@ -149,21 +120,22 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn write_json_ast_for_wiki(
-    article_id: &str,
-    _title: &str,
-    _bucket: &str,
-    wiki_path: &Path,
-    json_path: &Path,
-) -> Result<(), Box<dyn Error>> {
+fn parse_file(wiki_path: &Path) -> Result<parse::ParseOutput, Box<dyn Error>> {
     let bytes = fs::read(wiki_path)?;
-    // Wikitext exports should be UTF-8. If we ever encounter invalid UTF-8,
-    // fall back to a lossy conversion so we can still produce a debuggable AST.
+
+    // if we ever encounter invalid UTF-8, fallback to lossy conversion
     let wiki_content = String::from_utf8(bytes.clone())
         .unwrap_or_else(|e| String::from_utf8_lossy(&e.into_bytes()).to_string());
 
-    let parse_out = parse::parse_document(&wiki_content);
+    Ok(parse::parse_document(&wiki_content))
+}
 
+fn write_json_ast_for_wiki(
+    article_id: &str,
+    wiki_path: &Path,
+    parse_out: &parse::ParseOutput,
+    json_path: &Path,
+) -> Result<(), Box<dyn Error>> {
     let ast_file = ast::AstFile {
         schema_version: ast::SCHEMA_VERSION,
         parser: ast::ParserInfo {
@@ -175,10 +147,10 @@ fn write_json_ast_for_wiki(
         source: ast::SourceInfo {
             path: Some(wiki_path.to_string_lossy().to_string()),
             sha256: None,
-            byte_len: bytes.len() as u64,
+            byte_len: parse_out.byte_len as u64,
         },
-        diagnostics: parse_out.diagnostics,
-        document: parse_out.document,
+        diagnostics: parse_out.diagnostics.clone(),
+        document: parse_out.document.clone(),
     };
 
     // prettify JSON so it's easy to inspect / diff.
@@ -190,7 +162,7 @@ fn write_json_ast_for_wiki(
 fn render_markdown_from_json(json_path: &Path, md_path: &Path) -> Result<String, Box<dyn Error>> {
     let json_text = fs::read_to_string(json_path)?;
     let ast_file: ast::AstFile = serde_json::from_str(&json_text)?;
-    let md = render::render_ast_with_options(&ast_file, &render::RenderOptions::default());
+    let md = render::render_doc_with_options(&ast_file.document, &render::RenderOptions::default());
     fs::write(md_path, &md)?;
     Ok(md)
 }
@@ -208,4 +180,3 @@ pub(crate) fn lower_first_letter_bucket(article_id: &str) -> String {
     let first = article_id.chars().next().unwrap_or('x');
     first.to_lowercase().collect()
 }
-

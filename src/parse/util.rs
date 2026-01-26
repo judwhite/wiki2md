@@ -248,18 +248,22 @@ pub fn parse_inlines(
                 continue;
             }
 
-        // internal links [[...]]
+        // internal links and file links [[...]]
+        //
+        // NOTE: `[[File:...|...]]` captions can legally contain nested internal links
+        // (e.g. `[[File:X|... [[Other]] ...]]`). A naive `find("]]" )` would stop at
+        // the first nested link and truncate the outer link.
         if rem.starts_with("[[")
-            && let Some(close_rel) = rem[2..].find("]]" ) {
-                let inner_end = 2 + close_rel;
-                let inner = &rem[2..inner_end];
-                let consumed = inner_end + 2;
-
-                flush_text(&mut out, &mut text_start, i);
-                out.push(parse_bracket_link(full_src, base_abs + i, base_abs + i + 2, inner, diagnostics));
-                i += consumed;
-                text_start = i;
-                continue;
+            && let Some(consumed) = find_matching_double_brackets(rem) {
+                // consumed includes the closing `]]`.
+                if consumed >= 4 {
+                    let inner = &rem[2..consumed - 2];
+                    flush_text(&mut out, &mut text_start, i);
+                    out.push(parse_bracket_link(full_src, base_abs + i, base_abs + i + 2, inner, diagnostics));
+                    i += consumed;
+                    text_start = i;
+                    continue;
+                }
             }
 
         // external links [https://... label]
@@ -781,6 +785,46 @@ fn find_matching_braces(s: &str) -> Option<usize> {
         }
         let ch_len = rem.chars().next().map(|c| c.len_utf8()).unwrap_or(1);
         i += ch_len;
+    }
+    None
+}
+
+/// Find the end (in bytes) of a balanced `[[...]]` sequence starting at `s[0..]`.
+///
+/// This is more robust than a naive `find("]]" )` because MediaWiki file links
+/// can contain nested internal links in captions, e.g.:
+///
+/// `[[File:X|thumb|See [[Other]]]]`
+///
+/// Returns the total number of bytes to consume (including the closing `]]`).
+fn find_matching_double_brackets(s: &str) -> Option<usize> {
+    if !s.starts_with("[[") {
+        return None;
+    }
+    let bytes = s.as_bytes();
+    let mut i = 0usize;
+    let mut depth: usize = 0;
+    while i + 1 < bytes.len() {
+        let a = bytes[i];
+        let b = bytes[i + 1];
+        if a == b'[' && b == b'[' {
+            depth += 1;
+            i += 2;
+            continue;
+        }
+        if a == b']' && b == b']' {
+            if depth == 0 {
+                // shouldn't happen, but keep it safe.
+                return None;
+            }
+            depth -= 1;
+            i += 2;
+            if depth == 0 {
+                return Some(i);
+            }
+            continue;
+        }
+        i += 1;
     }
     None
 }

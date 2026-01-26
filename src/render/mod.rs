@@ -11,12 +11,61 @@ pub struct RenderOptions {
     /// If true, render `CodeBlockKind::LeadingSpace` as a Markdown blockquote rather than
     /// a fenced code block.
     pub leading_space_as_blockquote: bool,
+
+    /// Obsidian's Markdown renderer can misinterpret multiple literal `*` characters
+    /// in normal text as emphasis, even when they are surrounded by spaces.
+    ///
+    /// When enabled, if a text block contains more than one literal `*` that
+    /// would otherwise be rendered as text (not bold/italic markup), each one is
+    /// replaced with `&middot;`.
+    pub obsidian_text_asterisk_workaround: bool,
+
+    /// Text to replace `*` with when `obsidian_text_asterisk_workaround` is true.
+    /// The default value is `&middot;`.
+    pub obsidian_text_asterisk_replacement: String,
+
+    /// If true, render standalone `[[File:...]]` links as Markdown images.
+    pub render_file_links_as_images: bool,
+
+    /// Base URL used for MediaWiki file resolution.
+    ///
+    /// For chessprogramming.org, this should be `https://www.chessprogramming.org`.
+    pub mediawiki_base_url: String,
+
+    /// Default width (in pixels) to request for embedded images.
+    pub default_image_width_px: u32,
+
+    /// If true, prefer a `NNNpx` option from the wikitext file params.
+    ///
+    /// We default this to `false` because Markdown/Obsidian layouts differ from
+    /// the wiki and a stable default size is usually more readable.
+    pub respect_wikitext_image_width: bool,
+
+    /// If true, insert a horizontal rule (`---`) after the first top-of-document
+    /// rendered figure/image block.
+    pub insert_hr_after_top_image: bool,
+
+    /// If true, include a `# References` heading when rendering references.
+    pub emit_references_heading: bool,
+
+    /// If true, emit a `<br/>` line before the references heading to visually
+    /// separate it from preceding content.
+    pub emit_br_before_references: bool,
 }
 
 impl Default for RenderOptions {
     fn default() -> Self {
         Self {
             leading_space_as_blockquote: true,
+            obsidian_text_asterisk_workaround: true,
+            obsidian_text_asterisk_replacement: "&middot;".to_string(),
+            render_file_links_as_images: true,
+            mediawiki_base_url: "https://www.chessprogramming.org".to_string(),
+            default_image_width_px: 300,
+            respect_wikitext_image_width: false,
+            insert_hr_after_top_image: true,
+            emit_references_heading: true,
+            emit_br_before_references: true,
         }
     }
 }
@@ -33,12 +82,43 @@ pub fn render_doc(doc: &Document) -> String {
 pub fn render_doc_with_options(doc: &Document, opts: &RenderOptions) -> String {
     let mut ctx = RenderContext::default();
     let mut out = String::new();
+    let mut inserted_top_image_hr = false;
+    let mut seen_heading = false;
+
     for (bi, block) in doc.blocks.iter().enumerate() {
-        if bi > 0 {
+        if !out.is_empty() {
             // separate blocks with a single blank line.
             out.push_str("\n\n");
         }
-        out.push_str(&render_block(block, &mut ctx, opts));
+
+        let is_top_image = !seen_heading
+            && opts.insert_hr_after_top_image
+            && !inserted_top_image_hr
+            && block_is_standalone_image_paragraph(block, opts);
+
+        let rendered = match &block.kind {
+            BlockKind::References { .. } => {
+                let prev_is_refs_heading = bi
+                    .checked_sub(1)
+                    .and_then(|pi| doc.blocks.get(pi))
+                    .map(|b| heading_is_named_references(b, opts))
+                    .unwrap_or(false);
+
+                render_references(&mut ctx, opts, /*emit_heading*/ !prev_is_refs_heading)
+            }
+            _ => render_block(block, &mut ctx, opts),
+        };
+
+        out.push_str(&rendered);
+
+        if is_top_image {
+            out.push_str("\n\n---");
+            inserted_top_image_hr = true;
+        }
+
+        if matches!(&block.kind, BlockKind::Heading { .. }) {
+            seen_heading = true;
+        }
     }
 
     // trim trailing whitespace/newlines for stable output.
@@ -51,7 +131,7 @@ pub fn render_doc_with_options(doc: &Document, opts: &RenderOptions) -> String {
 fn render_block(block: &BlockNode, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
     match &block.kind {
         BlockKind::Heading { level, content } => render_heading(*level, content, ctx, opts),
-        BlockKind::Paragraph { content } => render_inlines(content, ctx, opts),
+        BlockKind::Paragraph { content } => render_paragraph(content, ctx, opts),
         BlockKind::List { items } => render_list(items, ctx, opts, 0),
         BlockKind::CodeBlock { block } => {
             render_code_block(block.kind, block.lang.as_deref(), &block.text, ctx, opts)
@@ -68,7 +148,9 @@ fn render_block(block: &BlockNode, ctx: &mut RenderContext, opts: &RenderOptions
             prefix_lines(&inner, "> ")
         }
         BlockKind::HorizontalRule => "---".to_string(),
-        BlockKind::References { .. } => render_references(ctx),
+        // most documents render references via `render_doc_with_options` so that
+        // we can decide whether to emit a heading based on the surrounding context.
+        BlockKind::References { .. } => render_references(ctx, opts, /*emit_heading*/ true),
         BlockKind::HtmlBlock { node } => render_html_block(node, ctx, opts),
         BlockKind::MagicWord { name } => format!("<!-- {} -->", name),
         BlockKind::Raw { text } => {
@@ -76,6 +158,211 @@ fn render_block(block: &BlockNode, ctx: &mut RenderContext, opts: &RenderOptions
             format!("```text\n{}\n```", text.trim_end_matches('\n'))
         }
     }
+}
+
+fn heading_is_named_references(block: &BlockNode, opts: &RenderOptions) -> bool {
+    match &block.kind {
+        BlockKind::Heading { content, .. } => {
+            let mut dummy = RenderContext::default();
+            render_inlines(content, &mut dummy, opts)
+                .trim()
+                .eq_ignore_ascii_case("references")
+        }
+        _ => false,
+    }
+}
+
+fn block_is_standalone_image_paragraph(block: &BlockNode, opts: &RenderOptions) -> bool {
+    if !opts.render_file_links_as_images {
+        return false;
+    }
+    match &block.kind {
+        BlockKind::Paragraph { content } => extract_standalone_file_link(content)
+            .is_some_and(|l| matches!(l.namespace, FileNamespace::File | FileNamespace::Image)),
+        _ => false,
+    }
+}
+
+fn render_paragraph(content: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+    if opts.render_file_links_as_images
+        && let Some(link) = extract_standalone_file_link(content)
+        && matches!(link.namespace, FileNamespace::File | FileNamespace::Image)
+    {
+        return render_file_figure(link, ctx, opts);
+    }
+    render_inlines(content, ctx, opts)
+}
+
+fn extract_standalone_file_link(content: &[InlineNode]) -> Option<&FileLink> {
+    let mut file: Option<&FileLink> = None;
+    for node in content {
+        match &node.kind {
+            InlineKind::FileLink { link } => {
+                if file.is_some() {
+                    return None;
+                }
+                file = Some(link);
+            }
+            InlineKind::Text { value } => {
+                if !value.trim().is_empty() {
+                    return None;
+                }
+            }
+            _ => return None,
+        }
+    }
+    file
+}
+
+fn render_file_figure(link: &FileLink, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+    let caption_param = link
+        .params
+        .iter()
+        .rev()
+        .find(|p| !file_param_is_option_like(p));
+
+    let caption_inlines: Vec<InlineNode> = match caption_param {
+        Some(p) => p.content.clone(),
+        None => {
+            // FileLink has no span; this node is synthetic and only used for rendering.
+            // use a best-effort span from existing params (if any), otherwise default.
+            let span = link.params.first().map(|p| p.span).unwrap_or_default();
+
+            vec![InlineNode {
+                span,
+                kind: InlineKind::Text {
+                    value: link.target.clone(),
+                },
+            }]
+        }
+    };
+
+    // split the caption into the visible portion and any `<ref>` markers.
+    let mut display: Vec<InlineNode> = Vec::new();
+    let mut ref_nodes: Vec<&InlineNode> = Vec::new();
+    for n in &caption_inlines {
+        if matches!(n.kind, InlineKind::Ref { .. }) {
+            ref_nodes.push(n);
+        } else {
+            display.push(n.clone());
+        }
+    }
+
+    let caption_text = render_inlines(&display, ctx, opts).trim().to_string();
+    let alt = if caption_text.is_empty() {
+        link.target.trim().to_string()
+    } else {
+        caption_text.clone()
+    };
+
+    let width = if opts.respect_wikitext_image_width {
+        file_link_width_px(link).unwrap_or(opts.default_image_width_px)
+    } else {
+        opts.default_image_width_px
+    };
+    let url = mediawiki_file_thumb_url(&opts.mediawiki_base_url, &link.target, width);
+
+    let mut refs = String::new();
+    for rn in ref_nodes {
+        refs.push_str(&render_inline(rn, ctx, opts));
+    }
+
+    // keep the caption on the same line as the image using HTML.
+    format!(
+        "![{}]({})<br />*{}*{}",
+        alt.trim(),
+        url,
+        alt.trim(),
+        refs
+    )
+}
+
+fn mediawiki_file_thumb_url(base: &str, filename: &str, width_px: u32) -> String {
+    let base = base.trim_end_matches('/');
+    let name = canonicalize_mediawiki_filename(filename);
+
+    // MediaWiki stores files under /images/<h1>/<h2>/<name>, where <h1> and <h2>
+    // are derived from the MD5 of the canonical filename.
+    let digest = md5::compute(name.as_bytes());
+    let hex = format!("{:x}", digest);
+    let h1 = &hex[0..1];
+    let h2 = &hex[0..2];
+
+    // Match common MediaWiki thumbnail URL format:
+    // /images/thumb/<h1>/<h2>/<name>/<width>px-<name>
+    if width_px > 0 {
+        format!(
+            "{}/images/thumb/{}/{}/{}/{}px-{}",
+            base, h1, h2, name, width_px, name
+        )
+    } else {
+        // Fall back to original file URL.
+        format!("{}/images/{}/{}/{}", base, h1, h2, name)
+    }
+}
+
+fn canonicalize_mediawiki_filename(filename: &str) -> String {
+    let trimmed = filename.trim().replace(' ', "_");
+    let mut chars = trimmed.chars();
+    let Some(first) = chars.next() else {
+        return String::new();
+    };
+    let mut out = String::new();
+    for c in first.to_uppercase() {
+        out.push(c);
+    }
+    out.push_str(chars.as_str());
+    out
+}
+
+fn file_link_width_px(link: &FileLink) -> Option<u32> {
+    for p in &link.params {
+        let Some(token) = file_param_plain_text(p) else {
+            continue;
+        };
+        if let Some(px) = parse_px(token.trim()) {
+            return Some(px);
+        }
+    }
+    None
+}
+
+fn file_param_plain_text(p: &FileParam) -> Option<String> {
+    let mut s = String::new();
+    for n in &p.content {
+        match &n.kind {
+            InlineKind::Text { value } => s.push_str(value),
+            InlineKind::Raw { text } => s.push_str(text),
+            _ => return None,
+        }
+    }
+    Some(s)
+}
+
+fn file_param_is_option_like(p: &FileParam) -> bool {
+    let Some(raw) = file_param_plain_text(p) else {
+        return false;
+    };
+    let t = raw.trim().to_ascii_lowercase();
+    if t.is_empty() {
+        return true;
+    }
+    matches!(
+        t.as_str(),
+        "thumb" | "thumbnail" | "frame" | "frameless" | "border" | "right" | "left" | "center" | "none" | "upright"
+    ) || parse_px(&t).is_some()
+}
+
+fn parse_px(s: &str) -> Option<u32> {
+    let s = s.trim();
+    let s = s.strip_suffix("px")?;
+    if s.is_empty() {
+        return None;
+    }
+    if !s.as_bytes().iter().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    s.parse::<u32>().ok().filter(|n| *n > 0 && *n <= 4096)
 }
 
 fn render_heading(level: u8, content: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
@@ -290,12 +577,18 @@ fn render_table_cell(cell: &TableCell, ctx: &mut RenderContext, opts: &RenderOpt
     parts.join(" ")
 }
 
-fn render_references(ctx: &mut RenderContext) -> String {
+fn render_references(ctx: &mut RenderContext, opts: &RenderOptions, emit_heading: bool) -> String {
     if ctx.refs.is_empty() {
         return String::new();
     }
 
     let mut out = String::new();
+    if emit_heading && opts.emit_br_before_references {
+        out.push_str("<br/>\n\n");
+    }
+    if emit_heading && opts.emit_references_heading {
+        out.push_str("# References\n\n");
+    }
     for (i, r) in ctx.refs.iter().enumerate() {
         let n = i + 1;
         let body = r.trim();
@@ -309,9 +602,60 @@ fn render_references(ctx: &mut RenderContext) -> String {
 }
 
 fn render_inlines(inlines: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+    // Obsidian misinterprets multiple literal asterisks in normal text as
+    // emphasis markers, even when surrounded by spaces. apply a conservative
+    // workaround only when there are >1 literal `*` characters in the inline run.
+    let apply_star_workaround = if opts.obsidian_text_asterisk_workaround {
+        let mut count = 0usize;
+        for n in inlines {
+            match &n.kind {
+                InlineKind::Text { value } => {
+                    count += value.matches('*').count();
+                }
+                InlineKind::Raw { text } => {
+                    count += text.matches('*').count();
+                }
+                _ => {}
+            }
+            if count > 1 {
+                break;
+            }
+        }
+        count > 1
+    } else {
+        false
+    };
+
     let mut out = String::new();
     for node in inlines {
-        out.push_str(&render_inline(node, ctx, opts));
+        // footnote markers should attach to the preceding token (no extra space).
+        if matches!(node.kind, InlineKind::Ref { .. }) {
+            while matches!(out.as_bytes().last(), Some(b' ' | b'\t')) {
+                out.pop();
+            }
+        }
+
+        let mut rendered = render_inline(node, ctx, opts);
+
+        if apply_star_workaround {
+            match node.kind {
+                InlineKind::Text { .. } | InlineKind::Raw { .. } => {
+                    rendered = rendered.replace('*', &opts.obsidian_text_asterisk_replacement);
+                }
+                _ => {}
+            }
+        }
+
+        // if the previous inline emitted an explicit newline (e.g. <br/>\n),
+        // strip leading spaces on the next fragment for cleaner output.
+        if out.ends_with('\n') {
+            let trimmed = rendered.trim_start_matches([' ', '\t']);
+            if trimmed.len() != rendered.len() {
+                rendered = trimmed.to_string();
+            }
+        }
+
+        out.push_str(&rendered);
     }
     out
 }
@@ -325,7 +669,9 @@ fn render_inline(node: &InlineNode, ctx: &mut RenderContext, opts: &RenderOption
         InlineKind::Bold { content } => format!("**{}**", render_inlines(content, ctx, opts)),
         InlineKind::Italic { content } => format!("*{}*", render_inlines(content, ctx, opts)),
         InlineKind::BoldItalic { content } => format!("***{}***", render_inlines(content, ctx, opts)),
-        InlineKind::LineBreak => "<br/>".to_string(),
+        // emit a real newline after the HTML break so that Markdown renderers (e.g., Obsidian)
+        // don't treat the following text as part of the same visual line.
+        InlineKind::LineBreak => "<br/>\n".to_string(),
         InlineKind::InternalLink { link } => render_internal_link(link, ctx, opts),
         InlineKind::ExternalLink { link } => render_external_link(link, ctx, opts),
         InlineKind::FileLink { link } => render_file_link(link, ctx, opts),
@@ -379,14 +725,19 @@ fn render_external_link(link: &ExternalLink, ctx: &mut RenderContext, opts: &Ren
 }
 
 fn render_file_link(link: &FileLink, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
-    // best-effort: link to the File: page on chessprogramming.org.
+    // best-effort: link to the "File:" page on the configured MediaWiki base.
+    let base = opts.mediawiki_base_url.trim_end_matches('/');
     let file_target = link.target.replace(' ', "_");
-    let file_page = format!("https://www.chessprogramming.org/File:{}", file_target);
+    let file_page = format!("{}/File:{}", base, file_target);
 
-    // caption: pick the last param that isn't an option-like token.
-    let caption = link
+    // caption: pick the last param that isn't an option-like token;
+    // fall back to the file name.
+    let caption_param = link
         .params
-        .last()
+        .iter()
+        .rev()
+        .find(|p| !file_param_is_option_like(p));
+    let caption = caption_param
         .map(|p| render_inlines(&p.content, ctx, opts))
         .unwrap_or_else(|| link.target.clone());
 
@@ -489,6 +840,76 @@ fn prefix_lines(text: &str, prefix: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn barend_swets_markdown_formatting_features() {
+        // tests:
+        // - literal-asterisk substitution workaround
+        // - file links with nested links in captions
+        // - `<ref>` extraction (including refs in file captions)
+        // - leading-space block quotes (including blank-line continuation)
+        // - reference placement and formatting
+        let src = r#"'''[[Main Page|Home]] * [[People]] * Barend Swets'''
+
+[[FILE:BarendSwets.jpg|thumb|200px| Barend Swets <ref>Image from [[Barend Swets]] ('''1977'''). ''Computers in de opmars''.</ref>]]
+
+'''Barend Swets''',<br/>
+a Dutch engineer <ref>Bio ref</ref>.
+
+=Quotes=
+==1997==
+By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
+ Problem is, no one else has stepped forward in [[WCCC 1977|1977]].
+
+
+ Problem continues after a blank line.
+
+<references />
+"#;
+
+        let parsed = crate::parse::parse_document(src);
+        let md = crate::render::render_doc(&parsed.document);
+
+        // asterisks in plain text become middots, but bold markers remain.
+        assert!(md.contains("&middot;"), "expected Obsidian middot workaround in output: {md}");
+
+        // file links become a figure-like Markdown image block.
+        assert!(
+            md.contains(
+                "![Barend Swets](https://www.chessprogramming.org/images/thumb/a/a9/BarendSwets.jpg/300px-BarendSwets.jpg)<br />*Barend Swets*[^1]"
+            ),
+            "expected file link to render as an image figure: {md}"
+        );
+
+        // top-of-document image gets a horizontal rule separator.
+        assert!(md.contains("\n\n---\n\n"), "expected horizontal rule after top image: {md}");
+
+        // `<br/>` should force a newline and not leave a leading space.
+        assert!(
+            md.contains("**Barend Swets**,<br/>\na Dutch engineer"),
+            "expected `<br/>` to be followed by a newline in Markdown: {md}"
+        );
+
+        // the quote should render as a Markdown blockquote, and the internal link inside should render.
+        assert!(md.contains("\n> Problem is, no one else"), "expected blockquote rendering: {md}");
+        assert!(md.contains("[1977](../w/WCCC_1977.md)"), "expected internal link rendering inside blockquote: {md}");
+
+        // blank lines inside leading-space quotes should not terminate the quote.
+        assert!(
+            md.contains("> \n> Problem continues"),
+            "expected blank-line continuation inside blockquote: {md}"
+        );
+
+        // refs should attach without a preceding space.
+        assert!(md.contains("1997[^"), "expected ref marker to attach to preceding token: {md}");
+
+        // refs should not leak raw `<ref>` tags.
+        assert!(!md.contains("<ref>"), "did not expect literal `<ref>` tags in Markdown: {md}");
+
+        // references section should be emitted and include the first ref from the image caption.
+        assert!(md.contains("# References"), "expected a references section: {md}");
+        assert!(md.contains("[^1]: Image from [Barend Swets](../b/Barend_Swets.md)"), "expected first reference to be the image caption ref: {md}");
+    }
 
     #[test]
     fn renders_refs_as_footnotes_at_references_block() {

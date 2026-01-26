@@ -222,7 +222,7 @@ pub enum InlineKind {
     /// `<ref ...>...</ref>` or `<ref ... />`.
     Ref { node: RefNode },
 
-    /// Generic HTML-ish inline tag, e.g. `<span id="..."></span>`.
+    /// Generic HTML-ish inline tag, e.g. `<span id=...></span>`.
     HtmlTag { node: HtmlTag },
 
     /// `{{...}}` templates and parser functions.
@@ -262,7 +262,7 @@ pub struct FileLink {
     /// Pipe-separated parameters after the filename.
     ///
     /// We intentionally keep these as a list of parsed inline fragments rather
-    /// than prematurely classifying them into "options" vs "caption".
+    /// than prematurely classifying them into "options" vs. "caption".
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub params: Vec<FileParam>,
 }

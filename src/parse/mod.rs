@@ -166,7 +166,7 @@ pub fn parse_document(src: &str) -> ParseOutput {
 
         // leading-space preformatted blocks.
         if text.starts_with(' ') {
-            let (node, next_i) = parse_leading_space_block(src, &lines, i);
+            let (node, next_i) = parse_leading_space_block(src, &lines, i, &mut diagnostics);
             blocks.push(node);
             assert!(
                 next_i > i,
@@ -566,39 +566,142 @@ fn parse_leading_space_block(
     src: &str,
     lines: &[util::LineRange],
     start_i: usize,
+    diagnostics: &mut Vec<Diagnostic>,
 ) -> (BlockNode, usize) {
+
+    // on chessprogramming pages, a single leading space is commonly used for
+    // quote-like blocks (even though MediaWiki treats it as preformatted text).
+    //
+    // we parse these blocks into a structured BlockQuote so that:
+    // - internal links / refs inside the quote still get parsed;
+    // - blank lines within a quote don't prematurely terminate it;
+    // - the renderer can emit clean Markdown blockquotes.
+
+    #[derive(Debug)]
+    enum QLine {
+        Content { line_i: usize, content_start_abs: usize, content: String },
+        Blank { },
+    }
+
     let mut i = start_i;
-    let start = lines[start_i].start;
-    let mut end = lines[start_i].end;
-    let mut buf = String::new();
+    let start_abs = lines[start_i].start;
+    let mut end_abs = lines[start_i].end;
+    let mut qlines: Vec<QLine> = Vec::new();
+
     while i < lines.len() {
-        let line = lines[i];
-        let text = strip_cr(&src[line.start..line.end]);
-        if !text.starts_with(' ') {
+        let lr = lines[i];
+        let text = strip_cr(&src[lr.start..lr.end]);
+
+        if text.starts_with(' ') {
+            end_abs = lr.end;
+            let content_start_abs = lr.start + 1;
+            let content = text.strip_prefix(' ').unwrap_or(text).to_string();
+            qlines.push(QLine::Content {
+                line_i: i,
+                content_start_abs,
+                content,
+            });
+            i += 1;
+            continue;
+        }
+
+        // blank line: keep it inside the quote iff the next non-blank line is
+        // still a leading-space quote line.
+        if text.trim().is_empty() {
+            let mut j = i + 1;
+            while j < lines.len() {
+                let lr2 = lines[j];
+                let t2 = strip_cr(&src[lr2.start..lr2.end]);
+                if t2.trim().is_empty() {
+                    j += 1;
+                    continue;
+                }
+                break;
+            }
+
+            if j < lines.len() {
+                let lr2 = lines[j];
+                let t2 = strip_cr(&src[lr2.start..lr2.end]);
+                if t2.starts_with(' ') {
+                    // include this blank line as a paragraph separator within the quote.
+                    end_abs = lr.end;
+                    qlines.push(QLine::Blank { });
+                    i += 1;
+                    continue;
+                }
+            }
             break;
         }
-        end = line.end;
-        let mut content = text;
-        if let Some(rest) = content.strip_prefix(' ') {
-            content = rest;
+
+        break;
+    }
+
+    // convert quote lines into paragraph blocks inside the BlockQuote.
+    let mut blocks: Vec<BlockNode> = Vec::new();
+    let mut cur_para: Vec<InlineNode> = Vec::new();
+    let mut cur_span: Option<Span> = None;
+
+    let flush_para = |blocks: &mut Vec<BlockNode>, cur_para: &mut Vec<InlineNode>, cur_span: &mut Option<Span>| {
+        if cur_para.is_empty() {
+            *cur_span = None;
+            return;
         }
-        buf.push_str(content);
-        buf.push('\n');
-        i += 1;
+        let span = cur_span.unwrap_or_else(|| Span::new(0, 0));
+        blocks.push(BlockNode {
+            span,
+            kind: BlockKind::Paragraph {
+                content: std::mem::take(cur_para),
+            },
+        });
+        *cur_span = None;
+    };
+
+    for ql in qlines {
+        match ql {
+            QLine::Blank { .. } => {
+                flush_para(&mut blocks, &mut cur_para, &mut cur_span);
+            }
+            QLine::Content {
+                line_i,
+                content_start_abs,
+                content,
+            } => {
+                // join multiple lines in the same quote paragraph with an explicit newline.
+                // the renderer will normalize this into a space.
+                if !cur_para.is_empty() {
+                    let lr_prev = lines[line_i.saturating_sub(1)];
+                    cur_para.push(InlineNode {
+                        span: Span::new(lr_prev.end as u64, lr_prev.end_with_newline as u64),
+                        kind: InlineKind::Text {
+                            value: "\n".to_string(),
+                        },
+                    });
+                }
+
+                let nodes = util::parse_inlines(src, content_start_abs, &content, diagnostics);
+                if let Some(first) = nodes.first() {
+                    cur_span = Some(match cur_span {
+                        Some(s) => s.cover(first.span),
+                        None => first.span,
+                    });
+                }
+                if let Some(last) = nodes.last() {
+                    cur_span = Some(match cur_span {
+                        Some(s) => s.cover(last.span),
+                        None => last.span,
+                    });
+                }
+
+                cur_para.extend(nodes);
+            }
+        }
     }
-    if buf.ends_with('\n') {
-        buf.pop();
-    }
+    flush_para(&mut blocks, &mut cur_para, &mut cur_span);
+
     (
         BlockNode {
-            span: Span::new(start as u64, end as u64),
-            kind: BlockKind::CodeBlock {
-                block: CodeBlock {
-                    kind: CodeBlockKind::LeadingSpace,
-                    lang: None,
-                    text: buf,
-                },
-            },
+            span: Span::new(start_abs as u64, end_abs as u64),
+            kind: BlockKind::BlockQuote { blocks },
         },
         i,
     )
@@ -809,6 +912,13 @@ fn is_block_start(src: &str, line: util::LineRange, text: &str) -> bool {
     let trimmed = text.trim();
     if trimmed.is_empty() {
         return false;
+    }
+
+    // leading-space blocks are handled as their own blocks. if we don't treat
+    // them as a paragraph terminator here, they can get swallowed into a
+    // preceding paragraph during the "gather paragraph lines" pass.
+    if text.starts_with(' ') {
+        return true;
     }
 
     // standalone categories are treated as document metadata, not paragraph content.

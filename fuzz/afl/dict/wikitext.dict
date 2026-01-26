@@ -20,11 +20,19 @@
 "[[Media:"
 "[[Template:"
 "[[Wikipedia:"
+"|alignment="
+"|valignment="
+"left"
+"top"
 
 # Templates
 "{{"
 "}}"
 "{{PAGENAME}}"
+"#evu:"
+"{{#evu:"
+"{{#evu:http://example.com"
+"{{#evu:http://example.com|text="
 
 # Tables
 "{|"

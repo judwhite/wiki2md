@@ -1,0 +1,34 @@
+=Prt=
+{| class="wikitable"
+! rowspan="2" | Eng
+! rowspan="2" | CC
+! rowspan="2" | Ath
+! colspan="6" | Dv Rnk
+|-
+! [[#Fth|Q]]
+! [[#Thrd|3rd]]
+! [[#Scnd|2nd]]
+! [[#Frst|1st]]
+! [[#Prmr|P]]
+! [[#Sprfnl|Sufi]]
+|-
+|  [[All#AllStn|AllStn]]
+! US/<br/>IN/++
+|  [[Adm Trt]], [[Mrk Jrdn]],<br/>[[Ankn Bnrj]], [[Ll Chss Zr|Lc0]] tm
+|
+|
+|
+|
+| style="text-align:center;" | 3rd
+|
+|-
+| [[Arsn]]
+! US
+| [[Jn Drt]]
+|
+|
+|
+| style="text-align:center;" | 8th
+|
+|
+|}

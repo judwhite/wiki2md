@@ -1,0 +1,9 @@
+{{#evu:https://exmpl.cm/wtch?v=a1}}
+
+{{#evu:}}
+
+=Extrnl Lnks=
+* [https://exmpl.com Exmpl from exmpl]
+* [https://exmpl.com Exmpl] <ref>[https://exmpl.com Exmpl]</ref>, Exmpl, [https://exmpl.com Exmpl] Vd
+: [[:Category:Exhbts|Exhbt A]], [https://exmpl.com Exhbt], [[:Category:Exmpls|Exmpl 1]], [https://exmpl.com Exmpl]
+: {{#evu:https://exmpl.com/w?v=G|alignment=left|valignment=top}}

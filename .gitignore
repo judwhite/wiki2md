@@ -7,4 +7,4 @@ docs/
 fuzz/afl/out/
 fuzz/afl/.cur_input
 coverage/
-
+*.profdata

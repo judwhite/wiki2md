@@ -1,4 +1,5 @@
 pub mod ast;
+pub mod frontmatter;
 pub mod parse;
 pub mod render;
 pub mod wiki;
@@ -9,9 +10,22 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 use walkdir::WalkDir;
 
+/// Options controlling how Markdown files are written on disk.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct WriteOptions {
+    /// If true, regenerate YAML frontmatter even when the destination `.md`
+    /// already contains a frontmatter block.
+    pub regenerate_frontmatter: bool,
+}
+
 /// Single file mode: Fetch if needed, then convert.
 pub fn run(raw_title: &str, write_json: bool) -> Result<(), Box<dyn Error>> {
-    run_with_render_options(raw_title, write_json, &render::RenderOptions::default())
+    run_with_options(
+        raw_title,
+        write_json,
+        &render::RenderOptions::default(),
+        &WriteOptions::default(),
+    )
 }
 
 /// Single file mode: like [`run`], but allows callers to customize Markdown rendering.
@@ -19,6 +33,17 @@ pub fn run_with_render_options(
     raw_title: &str,
     write_json: bool,
     render_opts: &render::RenderOptions,
+) -> Result<(), Box<dyn Error>> {
+    run_with_options(raw_title, write_json, render_opts, &WriteOptions::default())
+}
+
+/// Single file mode: like [`run_with_render_options`], but also controls how
+/// Markdown files are written (frontmatter preservation, etc.).
+pub fn run_with_options(
+    raw_title: &str,
+    write_json: bool,
+    render_opts: &render::RenderOptions,
+    write_opts: &WriteOptions,
 ) -> Result<(), Box<dyn Error>> {
     let article_id = sanitize_article_id(raw_title);
     let bucket = lower_first_letter_bucket(&article_id);
@@ -60,12 +85,27 @@ pub fn run_with_render_options(
             write_json_ast_for_wiki(&article_id, &wiki_path, &ast, &json_path)?;
 
             // write .md
-            let md_content = render_markdown_from_json(&json_path, &md_path, render_opts)?;
+            let md_content = render_markdown_from_json(
+                &article_id,
+                &wiki_path,
+                &json_path,
+                &md_path,
+                render_opts,
+                write_opts,
+            )?;
             println!("{}", md_content);
         }
         false => {
-            let md_content = render::render_doc_with_options(&ast.document, render_opts);
-            fs::write(&md_path, &md_content)?;
+            let md_body = render::render_doc_with_options(&ast.document, render_opts);
+            let md_content = write_markdown_file(
+                &md_path,
+                &wiki_path,
+                &article_id,
+                &ast.document,
+                &md_body,
+                write_opts,
+                render_opts,
+            )?;
             println!("{}", md_content);
         }
     }
@@ -75,21 +115,42 @@ pub fn run_with_render_options(
 
 /// Bulk mode: Walk ./docs/wiki and regenerate all corresponding .md files.
 pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
-    regenerate_all_with_render_options(&render::RenderOptions::default())
+    regenerate_all_with_options(&render::RenderOptions::default(), &WriteOptions::default())
 }
 
 /// Bulk mode: like [`regenerate_all`], but allows callers to customize Markdown rendering.
 pub fn regenerate_all_with_render_options(
     render_opts: &render::RenderOptions,
 ) -> Result<(), Box<dyn Error>> {
-    let start_time = Instant::now();
+    regenerate_all_with_options(render_opts, &WriteOptions::default())
+}
+
+/// Bulk mode: like [`regenerate_all_with_render_options`], but also controls how
+/// Markdown files are written (frontmatter preservation, etc.).
+pub fn regenerate_all_with_options(
+    render_opts: &render::RenderOptions,
+    write_opts: &WriteOptions,
+) -> Result<(), Box<dyn Error>> {
     let wiki_root = PathBuf::from("docs").join("wiki");
+    let md_root = PathBuf::from("docs").join("md");
+    regenerate_all_in_dirs(&wiki_root, &md_root, render_opts, write_opts)
+}
+
+/// Bulk mode: Walk the provided wiki root directory and regenerate all corresponding Markdown files
+/// under the provided md root directory.
+pub fn regenerate_all_in_dirs(
+    wiki_root: &Path,
+    md_root: &Path,
+    render_opts: &render::RenderOptions,
+    write_opts: &WriteOptions,
+) -> Result<(), Box<dyn Error>> {
+    let start_time = Instant::now();
 
     if !wiki_root.exists() {
         return Err(format!("Wiki source directory not found: {}", wiki_root.display()).into());
     }
 
-    let mut entries: Vec<_> = WalkDir::new(&wiki_root)
+    let mut entries: Vec<_> = WalkDir::new(wiki_root)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| {
@@ -105,10 +166,8 @@ pub fn regenerate_all_with_render_options(
     for entry in entries {
         let path = entry.path();
         // determine relative path structure to maintain the same structure in the md/ directory.
-        let relative = path.strip_prefix(&wiki_root)?;
+        let relative = path.strip_prefix(wiki_root)?;
 
-        // construct target paths: docs/json/<relative_with_json_extension>, docs/md/<relative_with_md_extension>
-        let md_root = PathBuf::from("docs").join("md");
         let mut md_path = md_root.join(relative);
         md_path.set_extension("md");
 
@@ -117,9 +176,23 @@ pub fn regenerate_all_with_render_options(
             fs::create_dir_all(parent)?;
         }
 
+        let article_id = path
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("Untitled")
+            .to_string();
+
         let ast = parse_file(path)?;
-        let md_content = render::render_doc_with_options(&ast.document, render_opts);
-        fs::write(&md_path, &md_content)?;
+        let md_body = render::render_doc_with_options(&ast.document, render_opts);
+        let _full_md = write_markdown_file(
+            &md_path,
+            path,
+            &article_id,
+            &ast.document,
+            &md_body,
+            write_opts,
+            render_opts,
+        )?;
 
         count += 1;
 
@@ -188,15 +261,87 @@ fn write_json_ast_for_wiki(
 }
 
 fn render_markdown_from_json(
+    article_id: &str,
+    wiki_path: &Path,
     json_path: &Path,
     md_path: &Path,
     render_opts: &render::RenderOptions,
+    write_opts: &WriteOptions,
 ) -> Result<String, Box<dyn Error>> {
     let json_text = fs::read_to_string(json_path)?;
     let ast_file: ast::AstFile = serde_json::from_str(&json_text)?;
-    let md = render::render_doc_with_options(&ast_file.document, render_opts);
-    fs::write(md_path, &md)?;
-    Ok(md)
+    let md_body = render::render_doc_with_options(&ast_file.document, render_opts);
+    let full = write_markdown_file(
+        md_path,
+        wiki_path,
+        article_id,
+        &ast_file.document,
+        &md_body,
+        write_opts,
+        render_opts,
+    )?;
+    Ok(full)
+}
+
+fn write_markdown_file(
+    md_path: &Path,
+    wiki_path: &Path,
+    article_id: &str,
+    doc: &ast::Document,
+    md_body: &str,
+    write_opts: &WriteOptions,
+    render_opts: &render::RenderOptions,
+) -> Result<String, Box<dyn Error>> {
+    let existing = if md_path.exists() {
+        Some(fs::read_to_string(md_path)?)
+    } else {
+        None
+    };
+
+    let mut frontmatter_text: Option<String> = None;
+
+    if let Some(existing_text) = existing.as_deref()
+        && let Some((fm, _)) = frontmatter::split_yaml_frontmatter(existing_text)
+        && !write_opts.regenerate_frontmatter
+    {
+        frontmatter_text = Some(fm);
+    }
+
+    if frontmatter_text.is_none() {
+        let mut fm = frontmatter::build_frontmatter(
+            article_id,
+            wiki_path,
+            doc,
+            &render_opts.mediawiki_base_url,
+        )?;
+
+        // when explicitly regenerating frontmatter, preserve user-authored summary and any
+        // unknown top-level YAML keys.
+        if write_opts.regenerate_frontmatter
+            && let Some(existing_text) = existing.as_deref()
+        {
+            frontmatter::merge_existing_frontmatter_for_regeneration(&mut fm, existing_text);
+        }
+
+        frontmatter_text = Some(fm.to_yaml_string());
+    }
+
+    let mut out = String::new();
+    if let Some(fm) = frontmatter_text {
+        out.push_str(&fm);
+        if !out.ends_with('\n') {
+            out.push('\n');
+        }
+        // blank line after frontmatter for readability.
+        out.push('\n');
+    }
+
+    // avoid leading blank lines in the body to keep output stable.
+    let body = md_body.trim_start_matches(['\n', '\r']);
+    out.push_str(body);
+
+    fs::write(md_path, &out)?;
+    Ok(out)
 }
 
 pub(crate) fn sanitize_article_id(raw_title: &str) -> String {

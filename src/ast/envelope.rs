@@ -72,10 +72,6 @@ pub struct SourceInfo {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub path: Option<String>,
 
-    /// If available, the SHA-256 of the `.wiki` content used.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sha256: Option<String>,
-
     /// Length of the input in bytes.
     pub byte_len: u64,
 }

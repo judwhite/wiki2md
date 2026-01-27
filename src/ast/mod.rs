@@ -69,7 +69,6 @@ mod tests {
             article_id: "Ken_Thompson".to_string(),
             source: SourceInfo {
                 path: Some("docs/wiki/k/Ken_Thompson.wiki".to_string()),
-                sha256: None,
                 byte_len: 42,
             },
             diagnostics: vec![Diagnostic {

@@ -2,26 +2,6 @@ use std::fs;
 use std::path::PathBuf;
 use wiki2md::ast::*;
 use wiki2md::parse;
-use wiki2md::parse::ParseOutput;
-
-fn get_ast_file(src: String, parse_out: ParseOutput) -> AstFile {
-    AstFile {
-        schema_version: SCHEMA_VERSION,
-        parser: ParserInfo {
-            name: PARSER_NAME.to_string(),
-            version: PARSER_VERSION.to_string(),
-        },
-        span_encoding: SpanEncoding::default(),
-        article_id: "Test".to_string(),
-        source: SourceInfo {
-            path: None,
-            sha256: None,
-            byte_len: src.as_bytes().len() as u64,
-        },
-        diagnostics: parse_out.diagnostics,
-        document: parse_out.document,
-    }
-}
 
 /// Regression test for pathological list marker prefixes like `:::::::::::::::::`.
 ///
@@ -33,8 +13,7 @@ fn json_round_trip_survives_pathological_list_depth() {
     // 200 levels is well beyond anything we'd want to support structurally.
     // the parser should clamp this down to a safe depth.
     let src = format!("{}item\n", ":".repeat(200));
-    let parse_out = parse::parse_document(&src);
-    let ast = get_ast_file(src, parse_out);
+    let ast = parse::parse_wiki_to_envelope(&src);
 
     // the key part of this test: pretty JSON should serialize and deserialize
     // without triggering recursion-limit errors.
@@ -64,8 +43,7 @@ fn crashers_do_not_panic() {
 
         // catch panics so the test can report which file blew up.
         let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(move || -> Result<(), String> {
-            let parse_out = parse::parse_document(&src);
-            let ast = get_ast_file(src, parse_out);
+            let ast = parse::parse_wiki_to_envelope(&src);
 
             let json = serde_json::to_string_pretty(&ast)
                 .map_err(|e| format!("serialize failed: {e}"))?;

@@ -25,10 +25,32 @@ pub struct ParseOutput {
     pub byte_len: usize,
 }
 
+fn create_envelope(src: String, parse_out: ParseOutput) -> AstFile {
+    AstFile {
+        schema_version: SCHEMA_VERSION,
+        parser: ParserInfo {
+            name: PARSER_NAME.to_string(),
+            version: PARSER_VERSION.to_string(),
+        },
+        span_encoding: SpanEncoding::default(),
+        article_id: "Test".to_string(),
+        source: SourceInfo {
+            path: Some(src.clone()),
+            byte_len: src.len() as u64,
+        },
+        diagnostics: parse_out.diagnostics,
+        document: parse_out.document,
+    }
+}
+
+/// Parse a `.wiki` file (Wikitext) into an `AstFile`, ready for JSON serialization..
+pub fn parse_wiki_to_envelope(src: &str) -> AstFile {
+    let doc = parse_wiki(src);
+    create_envelope(src.to_string(), doc)
+}
+
 /// Parse a `.wiki` file (Wikitext) into an AST `Document`.
-///
-/// Spans are byte offsets into the raw `src` input.
-pub fn parse_document(src: &str) -> ParseOutput {
+pub fn parse_wiki(src: &str) -> ParseOutput {
     let mut diagnostics: Vec<Diagnostic> = Vec::new();
     let mut blocks: Vec<BlockNode> = Vec::new();
     let mut categories: Vec<CategoryTag> = Vec::new();
@@ -965,7 +987,7 @@ mod tests {
     #[test]
     fn parses_basic_heading_and_link() {
         let src = "=Title=\nSee [[Other Page|link]].\n";
-        let out = parse_document(src);
+        let out = parse_wiki(src);
         assert!(out.diagnostics.is_empty());
         assert_eq!(out.document.blocks.len(), 2);
         match &out.document.blocks[0].kind {
@@ -990,7 +1012,7 @@ mod tests {
     #[test]
     fn parses_ref_and_references_block() {
         let src = "Text<ref name=\"a\">Ref body</ref>\n<references />\n";
-        let out = parse_document(src);
+        let out = parse_wiki(src);
         assert_eq!(out.document.blocks.len(), 2);
 
         match &out.document.blocks[0].kind {
@@ -1025,7 +1047,7 @@ mod tests {
     #[test]
     fn parses_basic_table() {
         let src = "{| class=\"wikitable\"\n|-\n! H1 !! H2\n|-\n| A || B\n|}\n";
-        let out = parse_document(src);
+        let out = parse_wiki(src);
         assert_eq!(out.document.blocks.len(), 1);
         let BlockKind::Table { table } = &out.document.blocks[0].kind else {
             panic!("expected table block");

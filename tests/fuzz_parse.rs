@@ -187,7 +187,7 @@ fn fuzz_parse_random_inputs_total_and_in_bounds() {
     for _case in 0..2_000 {
         let len = rng.gen_range(4_000);
         let input = gen_wikitext_like(&mut rng, len);
-        let out = parse::parse_document(&input);
+        let out = parse::parse_wiki(&input);
         validate_document(&out.document, input.len());
     }
 }
@@ -197,7 +197,7 @@ fn fuzz_parse_codeblock_same_line_with_tail_does_not_hang() {
     // this targets the historical hang: `<pre>...</pre>` on a single line, followed by `\n\n`.
     // the parser must advance and must preserve any trailing text after `</pre>`.
     let input = "<pre>code</pre> tail\n\n";
-    let out = parse::parse_document(input);
+    let out = parse::parse_wiki(input);
     validate_document(&out.document, input.len());
 
     // basic structural assertion: we should have a code block, and we should not drop the tail.

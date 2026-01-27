@@ -1,0 +1,43 @@
+{| class="wikitable"
+|+ number of leaves with depth n and b = 40
+|-
+! depth n
+! b<span style="vertical-align: super;">n</span>
+! b<span style="vertical-align: super;">&#8968;n/2&#8969;</span> + b<span style="vertical-align: super;">&#8970;n/2&#8971;</span>  - 1
+|-
+! 0
+| style="text-align:right;" |  1
+| style="text-align:right;" |  1
+|-
+!  1
+| style="text-align:right;" | 40
+| style="text-align:right;" | 40
+|-
+! 2
+| style="text-align:right;" | 1,600
+| style="text-align:right;" | 79
+|-
+!  3
+| style="text-align:right;" | 64,000
+| style="text-align:right;" | 1,639
+|-
+!  4
+| style="text-align:right;" | 2,560,000
+| style="text-align:right;" | 3,199
+|-
+!  5
+| style="text-align:right;" | 102,400,000
+| style="text-align:right;" | 65,569
+|-
+!  6
+| style="text-align:right;" | 4,096,000,000
+| style="text-align:right;" | 127,999
+|-
+!  7
+| style="text-align:right;" | 163,840,000,000
+| style="text-align:right;" | 2,623,999
+|-
+!  8
+| style="text-align:right;" | 6,553,600,000,000
+| style="text-align:right;" | 5,119,999
+|}

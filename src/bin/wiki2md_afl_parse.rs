@@ -178,7 +178,7 @@ fn run_one_input(data: &[u8]) {
     // lossy conversion keeps the harness total (no early returns that reduce coverage).
     let src = String::from_utf8_lossy(data).to_string();
 
-    let ast = parse::parse_document(&src);
+    let ast = parse::parse_wiki(&src);
 
     // check spans never go out of bounds
     validate_document(&ast.document, src.len());

@@ -140,7 +140,7 @@ fn parse_file(wiki_path: &Path) -> Result<parse::ParseOutput, Box<dyn Error>> {
     let wiki_content = String::from_utf8(bytes.clone())
         .unwrap_or_else(|e| String::from_utf8_lossy(&e.into_bytes()).to_string());
 
-    Ok(parse::parse_document(&wiki_content))
+    Ok(parse::parse_wiki(&wiki_content))
 }
 
 fn write_json_ast_for_wiki(
@@ -159,7 +159,6 @@ fn write_json_ast_for_wiki(
         article_id: article_id.to_string(),
         source: ast::SourceInfo {
             path: Some(wiki_path.to_string_lossy().to_string()),
-            sha256: None,
             byte_len: parse_out.byte_len as u64,
         },
         diagnostics: parse_out.diagnostics.clone(),

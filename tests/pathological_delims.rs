@@ -11,7 +11,7 @@ fn pathological_open_delimiter_runs_are_treated_as_text() {
     ];
 
     for (name, src) in cases {
-        let parse_out = parse::parse_document(&src);
+        let parse_out = parse::parse_wiki(&src);
 
         // Ensure the pathological-run guard actually fired (and did not just happen
         // to return quickly for some other reason).

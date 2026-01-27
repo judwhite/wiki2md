@@ -830,7 +830,7 @@ mod tests {
     fn obsidian_replaces_single_literal_asterisk_in_text() {
         // defensively rewrite literal asterisks in normal text to a safer token.
         let src = "A * B\n";
-        let parsed = parse_document(src);
+        let parsed = parse_wiki(src);
         let md = render_doc(&parsed.document);
 
         assert!(
@@ -840,7 +840,7 @@ mod tests {
 
         // But we should still be able to emit Markdown emphasis markers elsewhere.
         let src2 = "''Italic''\n";
-        let parsed2 = parse_document(src2);
+        let parsed2 = parse_wiki(src2);
         let md2 = render_doc(&parsed2.document);
         assert!(
             md2.contains("*Italic*"),
@@ -874,7 +874,7 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
 <references />
 "#;
 
-        let parsed = parse_document(src);
+        let parsed = parse_wiki(src);
         let md = render_doc(&parsed.document);
 
         // asterisks in plain text become middots, but bold markers remain.
@@ -936,7 +936,6 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
             article_id: "Test".to_string(),
             source: SourceInfo {
                 path: None,
-                sha256: None,
                 byte_len: 0,
             },
             diagnostics: vec![],

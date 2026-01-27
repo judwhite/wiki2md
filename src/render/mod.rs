@@ -12,12 +12,12 @@ pub struct RenderOptions {
     /// a fenced code block.
     pub leading_space_as_blockquote: bool,
 
-    /// Obsidian's Markdown renderer can misinterpret multiple literal `*` characters
-    /// in normal text as emphasis, even when they are surrounded by spaces.
+    /// Obsidian's Markdown renderer can misinterpret literal `*` characters
+    /// in normal text as emphasis markers, even when surrounded by spaces.
     ///
-    /// When enabled, if a text block contains more than one literal `*` that
-    /// would otherwise be rendered as text (not bold/italic markup), each one is
-    /// replaced with `&middot;`.
+    /// When enabled, any literal `*` that would otherwise be rendered as text
+    /// (i.e., from plain text/Raw nodes, not the emphasis markers we emit for
+    /// Bold/Italic) is replaced with `obsidian_text_asterisk_replacement`.
     pub obsidian_text_asterisk_workaround: bool,
 
     /// Text to replace `*` with when `obsidian_text_asterisk_workaround` is true.
@@ -288,7 +288,7 @@ fn mediawiki_file_thumb_url(base: &str, filename: &str, width_px: u32) -> String
     let h1 = &hex[0..1];
     let h2 = &hex[0..2];
 
-    // Match common MediaWiki thumbnail URL format:
+    // match the common MediaWiki thumbnail URL format:
     // /images/thumb/<h1>/<h2>/<name>/<width>px-<name>
     if width_px > 0 {
         format!(
@@ -296,7 +296,7 @@ fn mediawiki_file_thumb_url(base: &str, filename: &str, width_px: u32) -> String
             base, h1, h2, name, width_px, name
         )
     } else {
-        // Fall back to original file URL.
+        // fallback to the original file URL.
         format!("{}/images/{}/{}/{}", base, h1, h2, name)
     }
 }
@@ -602,29 +602,13 @@ fn render_references(ctx: &mut RenderContext, opts: &RenderOptions, emit_heading
 }
 
 fn render_inlines(inlines: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
-    // Obsidian misinterprets multiple literal asterisks in normal text as
-    // emphasis markers, even when surrounded by spaces. apply a conservative
-    // workaround only when there are >1 literal `*` characters in the inline run.
-    let apply_star_workaround = if opts.obsidian_text_asterisk_workaround {
-        let mut count = 0usize;
-        for n in inlines {
-            match &n.kind {
-                InlineKind::Text { value } => {
-                    count += value.matches('*').count();
-                }
-                InlineKind::Raw { text } => {
-                    count += text.matches('*').count();
-                }
-                _ => {}
-            }
-            if count > 1 {
-                break;
-            }
-        }
-        count > 1
-    } else {
-        false
-    };
+    // Obsidian misinterprets multiple literal asterisks in normal text as emphasis
+    // markers, even when surrounded by spaces.
+    //
+    // when enabled, the code replaces `*` in plain text/Raw nodes with a safer token
+    // (default: `&middot;`). the code does not touch the `*` characters if they're
+    // emphasis or part of a list.
+    let apply_star_workaround = opts.obsidian_text_asterisk_workaround;
 
     let mut out = String::new();
     for node in inlines {
@@ -839,7 +823,30 @@ fn prefix_lines(text: &str, prefix: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    use crate::parse::*;
     use super::*;
+
+    #[test]
+    fn obsidian_replaces_single_literal_asterisk_in_text() {
+        // defensively rewrite literal asterisks in normal text to a safer token.
+        let src = "A * B\n";
+        let parsed = parse_document(src);
+        let md = render_doc(&parsed.document);
+
+        assert!(
+            md.contains("A &middot; B"),
+            "expected literal '*' in text to be replaced with '&middot;': {md}"
+        );
+
+        // But we should still be able to emit Markdown emphasis markers elsewhere.
+        let src2 = "''Italic''\n";
+        let parsed2 = parse_document(src2);
+        let md2 = render_doc(&parsed2.document);
+        assert!(
+            md2.contains("*Italic*"),
+            "expected italic markers to remain '*' (not replaced): {md2}"
+        );
+    }
 
     #[test]
     fn barend_swets_markdown_formatting_features() {
@@ -851,7 +858,7 @@ mod tests {
         // - reference placement and formatting
         let src = r#"'''[[Main Page|Home]] * [[People]] * Barend Swets'''
 
-[[FILE:BarendSwets.jpg|thumb|200px| Barend Swets <ref>Image from [[Barend Swets]] ('''1977'''). ''Computers in de opmars''.</ref>]]
+[[FILE:BarendSwets.jpg|border|right|thumb|200px| Barend Swets <ref>Image from [[Barend Swets]] ('''1977'''). ''Computers in de opmars''. Schakend Nederland 09-1977 (Dutch), [http://example.com pdf] hosted by [[Hein Veldhuis]]</ref> ]] 
 
 '''Barend Swets''',<br/>
 a Dutch engineer <ref>Bio ref</ref>.
@@ -867,8 +874,8 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
 <references />
 "#;
 
-        let parsed = crate::parse::parse_document(src);
-        let md = crate::render::render_doc(&parsed.document);
+        let parsed = parse_document(src);
+        let md = render_doc(&parsed.document);
 
         // asterisks in plain text become middots, but bold markers remain.
         assert!(md.contains("&middot;"), "expected Obsidian middot workaround in output: {md}");
@@ -881,7 +888,7 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
             "expected file link to render as an image figure: {md}"
         );
 
-        // top-of-document image gets a horizontal rule separator.
+        // the top-of-document image gets a horizontal rule separator.
         assert!(md.contains("\n\n---\n\n"), "expected horizontal rule after top image: {md}");
 
         // `<br/>` should force a newline and not leave a leading space.
@@ -906,9 +913,15 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
         // refs should not leak raw `<ref>` tags.
         assert!(!md.contains("<ref>"), "did not expect literal `<ref>` tags in Markdown: {md}");
 
-        // references section should be emitted and include the first ref from the image caption.
-        assert!(md.contains("# References"), "expected a references section: {md}");
+        // the references section should be emitted and include the first ref from the image caption.
+        // we also emit a `<br/>` spacer before the heading for readability in Obsidian.
+        assert!(
+            md.contains("\n\n<br/>\n\n# References"),
+            "expected a `<br/>` spacer before the references heading: {md}"
+        );
         assert!(md.contains("[^1]: Image from [Barend Swets](../b/Barend_Swets.md)"), "expected first reference to be the image caption ref: {md}");
+        assert!(md.contains("hosted by [Hein Veldhuis](../h/Hein_Veldhuis.md)"), "expected nested internal link inside the image ref to render: {md}");
+        assert!(md.contains("[pdf](http://example.com)"), "expected external link inside the image ref to render: {md}");
     }
 
     #[test]

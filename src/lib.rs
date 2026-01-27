@@ -102,7 +102,8 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
         }
 
         let ast = parse_file(path)?;
-        render::render_doc(&ast.document);
+        let md_content = render::render_doc(&ast.document);
+        fs::write(&md_path, &md_content)?;
 
         count += 1;
 

@@ -51,6 +51,9 @@ pub struct RenderOptions {
     /// If true, emit a `<br/>` line before the references heading to visually
     /// separate it from preceding content.
     pub emit_br_before_references: bool,
+
+    /// If true, render tables and table captions (above) centered using HTML.
+    pub center_tables_and_captions: bool,
 }
 
 impl Default for RenderOptions {
@@ -66,6 +69,7 @@ impl Default for RenderOptions {
             insert_hr_after_top_image: true,
             emit_references_heading: true,
             emit_br_before_references: true,
+            center_tables_and_captions: false,
         }
     }
 }
@@ -502,9 +506,119 @@ fn render_html_block(node: &HtmlBlock, ctx: &mut RenderContext, opts: &RenderOpt
     out
 }
 
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TableColumnAlign {
+    Left,
+    Center,
+    Right,
+}
+
+fn parse_text_align_from_attrs(attrs: &[HtmlAttr]) -> Option<TableColumnAlign> {
+    // look for explicit `align=` (common in older wikitext exports).
+    for a in attrs {
+        if a.name.eq_ignore_ascii_case("align")
+            && let Some(v) = a.value.as_deref() {
+                match v.trim().to_ascii_lowercase().as_str() {
+                    "left" => return Some(TableColumnAlign::Left),
+                    "center" => return Some(TableColumnAlign::Center),
+                    "right" => return Some(TableColumnAlign::Right),
+                    _ => {}
+                }
+            }
+    }
+
+    // parse a minimal subset of `style=` for `text-align: ...`.
+    for a in attrs {
+        if a.name.eq_ignore_ascii_case("style") {
+            let Some(style) = a.value.as_deref() else { continue; };
+            for decl in style.split(';') {
+                let decl = decl.trim();
+                if decl.is_empty() {
+                    continue;
+                }
+                let Some((k, v)) = decl.split_once(':') else { continue; };
+                if !k.trim().eq_ignore_ascii_case("text-align") {
+                    continue;
+                }
+                match v.trim().to_ascii_lowercase().as_str() {
+                    "left" => return Some(TableColumnAlign::Left),
+                    "center" => return Some(TableColumnAlign::Center),
+                    "right" => return Some(TableColumnAlign::Right),
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    None
+}
+
+/// Compute per-column alignment markers for a Markdown table.
+///
+/// Heuristics (designed for chessprogramming.org exports):
+/// - If every *data* cell (excluding the header row) in a column has `text-align:right`,
+///   align the whole column right.
+/// - If a column contains only header cells, align the whole column centered.
+/// - Otherwise, leave as default (left).
+fn compute_table_column_alignments(
+    table: &Table,
+    col_count: usize,
+    header_row_idx: usize,
+) -> Vec<TableColumnAlign> {
+    let mut out = vec![TableColumnAlign::Left; col_count];
+
+    for (i, tbl_col_align) in out.iter_mut().enumerate() {
+        let mut any_cell = false;
+
+        // "all headers" => center column (useful for row-header columns).
+        let mut all_headers = true;
+
+        // "all data right" => right column.
+        let mut any_data = false;
+        let mut all_data_right = true;
+
+        for (ri, row) in table.rows.iter().enumerate() {
+            let Some(cell) = row.cells.get(i) else { continue; };
+            any_cell = true;
+
+            if cell.kind != TableCellKind::Header {
+                all_headers = false;
+            }
+
+            if ri != header_row_idx && cell.kind == TableCellKind::Data {
+                any_data = true;
+                if parse_text_align_from_attrs(&cell.attrs) != Some(TableColumnAlign::Right) {
+                    all_data_right = false;
+                }
+            }
+        }
+
+        if any_data && all_data_right {
+            *tbl_col_align = TableColumnAlign::Right;
+        } else if any_cell && all_headers {
+            *tbl_col_align = TableColumnAlign::Center;
+        }
+    }
+
+    out
+}
+
 fn render_table(table: &Table, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
     // basic Markdown table rendering.
-    // we flatten cell blocks into a single line of text.
+    // - flatten cell blocks into a single line of text.
+    // - supports a limited amount of alignment inference from cell attributes.
+    // - render `|+` captions as a plain line above the table.
+    let mut out = String::new();
+
+    // caption (|+ ...)
+    let caption_text = table
+        .caption
+        .as_ref()
+        .map(|c| render_inlines(&c.content, ctx, opts))
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty());
+
     let mut rows: Vec<Vec<String>> = Vec::new();
     for row in &table.rows {
         let mut cols: Vec<String> = Vec::new();
@@ -515,7 +629,10 @@ fn render_table(table: &Table, ctx: &mut RenderContext, opts: &RenderOptions) ->
     }
 
     if rows.is_empty() {
-        return String::new();
+        if let Some(cap) = caption_text {
+            out.push_str(&cap);
+        }
+        return out.trim_end_matches('\n').to_string();
     }
 
     let col_count = rows.iter().map(|r| r.len()).max().unwrap_or(0);
@@ -525,41 +642,76 @@ fn render_table(table: &Table, ctx: &mut RenderContext, opts: &RenderOptions) ->
         }
     }
 
-    let mut out = String::new();
-    let header_row_idx = rows
+    // choose a header row. prefer the first row that contains at least one header cell.
+    let header_row_idx = table
+        .rows
         .iter()
-        .position(|_| true)
+        .position(|r| r.cells.iter().any(|c| c.kind == TableCellKind::Header))
         .unwrap_or(0);
-    let header = &rows[header_row_idx];
 
-    out.push('|');
+    let aligns = compute_table_column_alignments(table, col_count, header_row_idx);
+
+    // build the Markdown table into its own buffer so we can optionally
+    // wrap it in centering HTML.
+    let mut table_out = String::new();
+
+    let header = rows.get(header_row_idx).unwrap_or(&rows[0]);
+    table_out.push('|');
     for cell in header {
-        out.push(' ');
-        out.push_str(&escape_table_cell(cell));
-        out.push(' ');
-        out.push('|');
+        table_out.push(' ');
+        table_out.push_str(&escape_table_cell(cell));
+        table_out.push(' ');
+        table_out.push('|');
     }
-    out.push('\n');
+    table_out.push('\n');
 
-    out.push('|');
-    for _ in 0..col_count {
-        out.push_str(" --- |");
+    // write the cell alignment row below the header row.
+    // we intentionally keep it compact.
+    table_out.push('|');
+    for a in aligns {
+        match a {
+            TableColumnAlign::Left => table_out.push_str("---|"),
+            TableColumnAlign::Center => table_out.push_str(":---:|"),
+            TableColumnAlign::Right => table_out.push_str("----:|"),
+        }
     }
-    out.push('\n');
+    table_out.push('\n');
 
     for (ri, row) in rows.iter().enumerate() {
         if ri == header_row_idx {
             continue;
         }
-        out.push('|');
+        table_out.push('|');
         for cell in row {
-            out.push(' ');
-            out.push_str(&escape_table_cell(cell));
-            out.push(' ');
-            out.push('|');
+            table_out.push(' ');
+            table_out.push_str(&escape_table_cell(cell));
+            table_out.push(' ');
+            table_out.push('|');
         }
-        out.push('\n');
+        table_out.push('\n');
     }
+
+    let table_md = table_out.trim_end_matches('\n');
+
+    // optionally, center the caption + table using HTML.
+    if opts.center_tables_and_captions {
+        out.push_str("<div style=\"display:flex; flex-direction:column; align-items:center;\">\n\n");
+
+        if let Some(cap) = caption_text {
+            out.push_str(&cap);
+            out.push_str("\n\n");
+        }
+
+        out.push_str(table_md);
+        out.push_str("\n\n</div>");
+        return out.trim_end_matches('\n').to_string();
+    }
+
+    if let Some(cap) = caption_text {
+        out.push_str(&cap);
+        out.push_str("\n\n");
+    }
+    out.push_str(table_md);
 
     out.trim_end_matches('\n').to_string()
 }

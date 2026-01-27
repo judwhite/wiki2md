@@ -11,6 +11,15 @@ use walkdir::WalkDir;
 
 /// Single file mode: Fetch if needed, then convert.
 pub fn run(raw_title: &str, write_json: bool) -> Result<(), Box<dyn Error>> {
+    run_with_render_options(raw_title, write_json, &render::RenderOptions::default())
+}
+
+/// Single file mode: like [`run`], but allows callers to customize Markdown rendering.
+pub fn run_with_render_options(
+    raw_title: &str,
+    write_json: bool,
+    render_opts: &render::RenderOptions,
+) -> Result<(), Box<dyn Error>> {
     let article_id = sanitize_article_id(raw_title);
     let bucket = lower_first_letter_bucket(&article_id);
 
@@ -51,11 +60,11 @@ pub fn run(raw_title: &str, write_json: bool) -> Result<(), Box<dyn Error>> {
             write_json_ast_for_wiki(&article_id, &wiki_path, &ast, &json_path)?;
 
             // write .md
-            let md_content = render_markdown_from_json(&json_path, &md_path)?;
+            let md_content = render_markdown_from_json(&json_path, &md_path, render_opts)?;
             println!("{}", md_content);
         }
         false => {
-            let md_content = render::render_doc(&ast.document);
+            let md_content = render::render_doc_with_options(&ast.document, render_opts);
             fs::write(&md_path, &md_content)?;
             println!("{}", md_content);
         }
@@ -66,6 +75,13 @@ pub fn run(raw_title: &str, write_json: bool) -> Result<(), Box<dyn Error>> {
 
 /// Bulk mode: Walk ./docs/wiki and regenerate all corresponding .md files.
 pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
+    regenerate_all_with_render_options(&render::RenderOptions::default())
+}
+
+/// Bulk mode: like [`regenerate_all`], but allows callers to customize Markdown rendering.
+pub fn regenerate_all_with_render_options(
+    render_opts: &render::RenderOptions,
+) -> Result<(), Box<dyn Error>> {
     let start_time = Instant::now();
     let wiki_root = PathBuf::from("docs").join("wiki");
 
@@ -102,7 +118,7 @@ pub fn regenerate_all() -> Result<(), Box<dyn Error>> {
         }
 
         let ast = parse_file(path)?;
-        let md_content = render::render_doc(&ast.document);
+        let md_content = render::render_doc_with_options(&ast.document, render_opts);
         fs::write(&md_path, &md_content)?;
 
         count += 1;
@@ -171,10 +187,14 @@ fn write_json_ast_for_wiki(
     Ok(())
 }
 
-fn render_markdown_from_json(json_path: &Path, md_path: &Path) -> Result<String, Box<dyn Error>> {
+fn render_markdown_from_json(
+    json_path: &Path,
+    md_path: &Path,
+    render_opts: &render::RenderOptions,
+) -> Result<String, Box<dyn Error>> {
     let json_text = fs::read_to_string(json_path)?;
     let ast_file: ast::AstFile = serde_json::from_str(&json_text)?;
-    let md = render::render_doc_with_options(&ast_file.document, &render::RenderOptions::default());
+    let md = render::render_doc_with_options(&ast_file.document, render_opts);
     fs::write(md_path, &md)?;
     Ok(md)
 }

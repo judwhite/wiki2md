@@ -6,6 +6,7 @@
 //! - Optionally regenerate frontmatter, best-effort merge of preserved fields.
 
 use crate::ast::*;
+use deunicode::deunicode;
 use serde_yaml::Value;
 use std::path::Path;
 use std::{fs, io};
@@ -16,7 +17,6 @@ use time::{OffsetDateTime, macros::format_description};
 pub struct Frontmatter {
     pub wiki2md: Wiki2mdMeta,
     pub aliases: Vec<String>,
-    pub display_title: String,
     pub tags: Vec<String>,
 
     /// Reserved for future use. If empty/None, it is omitted from generated YAML.
@@ -56,11 +56,6 @@ impl Frontmatter {
         for a in &self.aliases {
             out.push_str(&format!("  - {}\n", yaml_quote(a)));
         }
-
-        out.push_str(&format!(
-            "display_title: {}\n",
-            yaml_quote(&self.display_title)
-        ));
 
         if let Some(summary) = self.summary.as_ref().filter(|s| !s.trim().is_empty()) {
             out.push_str(&format!("summary: {}\n", yaml_quote(summary)));
@@ -153,8 +148,7 @@ pub fn build_frontmatter(
 
     let last_fetched_date = wiki_file_mod_date(wiki_path)?;
 
-    let display_title = article_id.replace('_', " ");
-    let aliases = vec![display_title.clone()];
+    let aliases = vec![article_id.replace('_', " ")];
 
     let tags = extract_tags(doc, article_id);
 
@@ -167,7 +161,6 @@ pub fn build_frontmatter(
             schema_version: 1,
         },
         aliases,
-        display_title,
         tags,
         summary: None,
         extras_yaml: None,
@@ -207,7 +200,7 @@ pub fn merge_existing_frontmatter_for_regeneration(
     }
 
     // remove keys we manage.
-    for k in ["wiki2md", "aliases", "display_title", "tags", "summary"] {
+    for k in ["wiki2md", "aliases", "tags", "summary"] {
         map.remove(Value::String(k.to_string()));
     }
 
@@ -374,7 +367,13 @@ fn collect_internal_link_targets(nodes: &[InlineNode], out: &mut Vec<String>, sa
 /// - <= 50 chars
 /// - No `/` characters
 pub fn normalize_tag(raw: &str) -> Option<String> {
-    let s = raw.trim().to_ascii_lowercase();
+    let raw = raw.trim();
+    if raw.is_empty() {
+        return None;
+    }
+
+    // transliterate into the 26-letter English alphabet using `deunicode`.
+    let s = deunicode(raw).to_ascii_lowercase();
     if s.is_empty() {
         return None;
     }
@@ -387,10 +386,7 @@ pub fn normalize_tag(raw: &str) -> Option<String> {
             '/' => out.push('_'),
             ' ' | '\t' | '\n' | '\r' | ':' | '.' | ',' | ';' | '(' | ')' | '[' | ']' | '{'
             | '}' | '!' | '?' | '\'' | '"' | '&' | '+' | '=' | '#' => out.push('_'),
-            _ => {
-                // for non-ascii, keep conservative: treat as underscore
-                out.push('_');
-            }
+            _ => out.push('_'),
         }
     }
 

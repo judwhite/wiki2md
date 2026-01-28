@@ -7,7 +7,8 @@ use tempfile::tempdir;
 fn prints_existing_md_from_cache() {
     let dir = tempdir().unwrap();
 
-    // cache layout: ./docs/md/{lower_first_letter}/{article_id}.md
+    // cache layout: ./docs/md/{lower_first_letter}/{article title}.md
+    // (underscores from the article_id are converted to spaces)
     let md_path = dir
         .path()
         .join("docs")
@@ -49,10 +50,16 @@ fn generates_md_from_existing_wiki_cache() {
             .and(predicate::str::contains(
                 "source_url: https://www.chessprogramming.org/Test_Page",
             ))
-            .and(predicate::str::contains("display_title: \"Test Page\""))
+            .and(predicate::str::contains("aliases:\n  - \"Test Page\""))
             .and(predicate::str::contains("tags: []"))
-            .and(predicate::str::contains("# Title"))
-            .and(predicate::str::contains("See [link](../o/Other_Page.md).")),
+            // file title heading
+            .and(predicate::str::contains("# Test Page"))
+            // headings from the AST are demoted (H1 -> H2)
+            .and(predicate::str::contains("## Title"))
+            // internal links use aliases; no need for referencing the physical file.
+            .and(predicate::str::contains("See [[Other Page|link]]."))
+            // ensure we do not emit the removed display_title field
+            .and(predicate::str::contains("display_title:").not()),
     );
 
     // it should have written the .md cache.
@@ -61,11 +68,12 @@ fn generates_md_from_existing_wiki_cache() {
         .join("docs")
         .join("md")
         .join("t")
-        .join("Test_Page.md");
+        .join("Test Page.md");
     let md = fs::read_to_string(&md_path).unwrap();
     assert!(md.starts_with("---\nwiki2md:\n"), "{md}");
-    assert!(md.contains("# Title"), "{md}");
-    assert!(md.contains("See [link](../o/Other_Page.md)."), "{md}");
+    assert!(md.contains("# Test Page"), "{md}");
+    assert!(md.contains("## Title"), "{md}");
+    assert!(md.contains("See [[Other Page|link]]."), "{md}");
 }
 
 #[test]
@@ -92,7 +100,7 @@ fn regenerate_frontmatter_flag_overwrites_existing_frontmatter() {
         .join("docs")
         .join("md")
         .join("t")
-        .join("Test_Page.md");
+        .join("Test Page.md");
     fs::create_dir_all(md_path.parent().unwrap()).unwrap();
     fs::write(
         &md_path,

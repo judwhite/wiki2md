@@ -187,7 +187,11 @@ fn block_is_standalone_image_paragraph(block: &BlockNode, opts: &RenderOptions) 
     }
 }
 
-fn render_paragraph(content: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+fn render_paragraph(
+    content: &[InlineNode],
+    ctx: &mut RenderContext,
+    opts: &RenderOptions,
+) -> String {
     if opts.render_file_links_as_images
         && let Some(link) = extract_standalone_file_link(content)
         && matches!(link.namespace, FileNamespace::File | FileNamespace::Image)
@@ -272,13 +276,7 @@ fn render_file_figure(link: &FileLink, ctx: &mut RenderContext, opts: &RenderOpt
     }
 
     // keep the caption on the same line as the image using HTML.
-    format!(
-        "![{}]({})<br />*{}*{}",
-        alt.trim(),
-        url,
-        alt.trim(),
-        refs
-    )
+    format!("![{}]({})<br />*{}*{}", alt.trim(), url, alt.trim(), refs)
 }
 
 fn mediawiki_file_thumb_url(base: &str, filename: &str, width_px: u32) -> String {
@@ -353,7 +351,16 @@ fn file_param_is_option_like(p: &FileParam) -> bool {
     }
     matches!(
         t.as_str(),
-        "thumb" | "thumbnail" | "frame" | "frameless" | "border" | "right" | "left" | "center" | "none" | "upright"
+        "thumb"
+            | "thumbnail"
+            | "frame"
+            | "frameless"
+            | "border"
+            | "right"
+            | "left"
+            | "center"
+            | "none"
+            | "upright"
     ) || parse_px(&t).is_some()
 }
 
@@ -369,25 +376,34 @@ fn parse_px(s: &str) -> Option<u32> {
     s.parse::<u32>().ok().filter(|n| *n > 0 && *n <= 4096)
 }
 
-fn render_heading(level: u8, content: &[InlineNode], ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+fn render_heading(
+    level: u8,
+    content: &[InlineNode],
+    ctx: &mut RenderContext,
+    opts: &RenderOptions,
+) -> String {
     // special-case: leading <span id="..."></span> anchors are better emitted on their own line.
     let mut content_slice = content;
     let mut prefix = String::new();
     if let Some(first) = content.first()
         && let InlineKind::HtmlTag { node } = &first.kind
-            && node.name.eq_ignore_ascii_case("span")
-                && let Some(id_attr) = node
-                    .attrs
-                    .iter()
-                    .find(|a| a.name.eq_ignore_ascii_case("id"))
-                    .and_then(|a| a.value.as_ref())
-                {
-                    // emit a stable HTML anchor.
-                    prefix.push_str(&format!("<a name=\"{}\"></a>\n", id_attr));
-                    content_slice = &content[1..];
-                }
+        && node.name.eq_ignore_ascii_case("span")
+        && let Some(id_attr) = node
+            .attrs
+            .iter()
+            .find(|a| a.name.eq_ignore_ascii_case("id"))
+            .and_then(|a| a.value.as_ref())
+    {
+        // emit a stable HTML anchor.
+        prefix.push_str(&format!("<a name=\"{}\"></a>\n", id_attr));
+        content_slice = &content[1..];
+    }
 
-    let hashes = "#".repeat(level.max(1) as usize);
+    // render the article title as a top-level `# ...` heading.
+    // to keep the document hierarchy consistent, demote all headings coming from
+    // the AST by one level (H1 -> H2, etc.).
+    let shifted = level.saturating_add(1).clamp(2, 6);
+    let hashes = "#".repeat(shifted as usize);
     let title = render_inlines(content_slice, ctx, opts).trim().to_string();
     if prefix.is_empty() {
         format!("{} {}", hashes, title)
@@ -396,7 +412,12 @@ fn render_heading(level: u8, content: &[InlineNode], ctx: &mut RenderContext, op
     }
 }
 
-fn render_list(items: &[ListItem], ctx: &mut RenderContext, opts: &RenderOptions, indent: usize) -> String {
+fn render_list(
+    items: &[ListItem],
+    ctx: &mut RenderContext,
+    opts: &RenderOptions,
+    indent: usize,
+) -> String {
     let mut out = String::new();
     for (idx, item) in items.iter().enumerate() {
         if idx > 0 {
@@ -421,18 +442,27 @@ fn render_list(items: &[ListItem], ctx: &mut RenderContext, opts: &RenderOptions
                     for b in item.blocks.iter().skip(1) {
                         out.push('\n');
                         let rendered = render_block(b, ctx, opts);
-                        out.push_str(&prefix_lines(&rendered, &format!("{}  ", " ".repeat(indent))));
+                        out.push_str(&prefix_lines(
+                            &rendered,
+                            &format!("{}  ", " ".repeat(indent)),
+                        ));
                     }
                 }
                 _ => {
                     out.push_str(&prefix);
                     // no paragraph: render blocks on subsequent lines.
                     let rendered = render_block(first, ctx, opts);
-                    out.push_str(&prefix_lines(&rendered, &format!("{}  ", " ".repeat(indent))));
+                    out.push_str(&prefix_lines(
+                        &rendered,
+                        &format!("{}  ", " ".repeat(indent)),
+                    ));
                     for b in item.blocks.iter().skip(1) {
                         out.push('\n');
                         let rendered = render_block(b, ctx, opts);
-                        out.push_str(&prefix_lines(&rendered, &format!("{}  ", " ".repeat(indent))));
+                        out.push_str(&prefix_lines(
+                            &rendered,
+                            &format!("{}  ", " ".repeat(indent)),
+                        ));
                     }
                 }
             }
@@ -459,9 +489,10 @@ fn render_code_block(
             let mut out = String::new();
             out.push_str("```");
             if let Some(l) = lang
-                && !l.trim().is_empty() {
-                    out.push_str(l.trim());
-                }
+                && !l.trim().is_empty()
+            {
+                out.push_str(l.trim());
+            }
             out.push('\n');
             out.push_str(text.trim_end_matches('\n'));
             out.push_str("\n```");
@@ -506,7 +537,6 @@ fn render_html_block(node: &HtmlBlock, ctx: &mut RenderContext, opts: &RenderOpt
     out
 }
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum TableColumnAlign {
     Left,
@@ -518,26 +548,31 @@ fn parse_text_align_from_attrs(attrs: &[HtmlAttr]) -> Option<TableColumnAlign> {
     // look for explicit `align=` (common in older wikitext exports).
     for a in attrs {
         if a.name.eq_ignore_ascii_case("align")
-            && let Some(v) = a.value.as_deref() {
-                match v.trim().to_ascii_lowercase().as_str() {
-                    "left" => return Some(TableColumnAlign::Left),
-                    "center" => return Some(TableColumnAlign::Center),
-                    "right" => return Some(TableColumnAlign::Right),
-                    _ => {}
-                }
+            && let Some(v) = a.value.as_deref()
+        {
+            match v.trim().to_ascii_lowercase().as_str() {
+                "left" => return Some(TableColumnAlign::Left),
+                "center" => return Some(TableColumnAlign::Center),
+                "right" => return Some(TableColumnAlign::Right),
+                _ => {}
             }
+        }
     }
 
     // parse a minimal subset of `style=` for `text-align: ...`.
     for a in attrs {
         if a.name.eq_ignore_ascii_case("style") {
-            let Some(style) = a.value.as_deref() else { continue; };
+            let Some(style) = a.value.as_deref() else {
+                continue;
+            };
             for decl in style.split(';') {
                 let decl = decl.trim();
                 if decl.is_empty() {
                     continue;
                 }
-                let Some((k, v)) = decl.split_once(':') else { continue; };
+                let Some((k, v)) = decl.split_once(':') else {
+                    continue;
+                };
                 if !k.trim().eq_ignore_ascii_case("text-align") {
                     continue;
                 }
@@ -579,7 +614,9 @@ fn compute_table_column_alignments(
         let mut all_data_right = true;
 
         for (ri, row) in table.rows.iter().enumerate() {
-            let Some(cell) = row.cells.get(i) else { continue; };
+            let Some(cell) = row.cells.get(i) else {
+                continue;
+            };
             any_cell = true;
 
             if cell.kind != TableCellKind::Header {
@@ -695,7 +732,9 @@ fn render_table(table: &Table, ctx: &mut RenderContext, opts: &RenderOptions) ->
 
     // optionally, center the caption + table using HTML.
     if opts.center_tables_and_captions {
-        out.push_str("<div style=\"display:flex; flex-direction:column; align-items:center;\">\n\n");
+        out.push_str(
+            "<div style=\"display:flex; flex-direction:column; align-items:center;\">\n\n",
+        );
 
         if let Some(cap) = caption_text {
             out.push_str(&cap);
@@ -739,7 +778,8 @@ fn render_references(ctx: &mut RenderContext, opts: &RenderOptions, emit_heading
         out.push_str("<br/>\n\n");
     }
     if emit_heading && opts.emit_references_heading {
-        out.push_str("# References\n\n");
+        // the article title is rendered as H1, so references should be H2.
+        out.push_str("## References\n\n");
     }
     for (i, r) in ctx.refs.iter().enumerate() {
         let n = i + 1;
@@ -804,7 +844,9 @@ fn render_inline(node: &InlineNode, ctx: &mut RenderContext, opts: &RenderOption
         }
         InlineKind::Bold { content } => format!("**{}**", render_inlines(content, ctx, opts)),
         InlineKind::Italic { content } => format!("*{}*", render_inlines(content, ctx, opts)),
-        InlineKind::BoldItalic { content } => format!("***{}***", render_inlines(content, ctx, opts)),
+        InlineKind::BoldItalic { content } => {
+            format!("***{}***", render_inlines(content, ctx, opts))
+        }
         // emit a real newline after the HTML break so that Markdown renderers (e.g., Obsidian)
         // don't treat the following text as part of the same visual line.
         InlineKind::LineBreak => "<br/>\n".to_string(),
@@ -826,31 +868,62 @@ fn render_inline(node: &InlineNode, ctx: &mut RenderContext, opts: &RenderOption
     }
 }
 
-fn render_internal_link(link: &InternalLink, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+fn render_internal_link(
+    link: &InternalLink,
+    ctx: &mut RenderContext,
+    opts: &RenderOptions,
+) -> String {
     let label = match &link.text {
         Some(nodes) => render_inlines(nodes, ctx, opts),
         None => link.target.replace('_', " "),
     };
 
-    // in-page link
-    if link.target.is_empty() {
-        if let Some(anchor) = &link.anchor {
-            return format!("[{}](#{})", label.trim(), normalize_anchor(anchor));
+    let label_trim = label.trim();
+
+    // in-page anchor-only links.
+    if link.target.trim().is_empty() {
+        if let Some(anchor) = link
+            .anchor
+            .as_deref()
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+        {
+            if label_trim.is_empty() || label_trim.eq_ignore_ascii_case(anchor) {
+                return format!("[[#{}]]", anchor);
+            }
+            return format!("[[#{}|{}]]", anchor, label_trim);
         }
         return label;
     }
 
-    let article_id = crate::sanitize_article_id(&link.target);
-    let bucket = crate::lower_first_letter_bucket(&article_id);
-    let mut href = format!("../{}/{}.md", bucket, article_id);
-    if let Some(anchor) = &link.anchor {
-        href.push('#');
-        href.push_str(&normalize_anchor(anchor));
+    // convert `_` to spaces to match a known alias of the file
+    let target_title = link.target.replace('_', " ").trim().to_string();
+    let anchor = link
+        .anchor
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty());
+
+    if let Some(a) = anchor {
+        // include the anchor in the target part.
+        if label_trim.is_empty() || label_trim == target_title {
+            return format!("[[{}#{}]]", target_title, a);
+        }
+        return format!("[[{}#{}|{}]]", target_title, a, label_trim);
     }
-    format!("[{}]({})", label.trim(), href)
+
+    // simplest form: `[[Target]]` when label matches.
+    if label_trim.is_empty() || label_trim == target_title {
+        return format!("[[{}]]", target_title);
+    }
+    format!("[[{}|{}]]", target_title, label_trim)
 }
 
-fn render_external_link(link: &ExternalLink, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+fn render_external_link(
+    link: &ExternalLink,
+    ctx: &mut RenderContext,
+    opts: &RenderOptions,
+) -> String {
     match &link.text {
         Some(nodes) => {
             let label = render_inlines(nodes, ctx, opts);
@@ -880,7 +953,11 @@ fn render_file_link(link: &FileLink, ctx: &mut RenderContext, opts: &RenderOptio
     format!("[{}]({})", caption.trim(), file_page)
 }
 
-fn render_template(inv: &TemplateInvocation, ctx: &mut RenderContext, opts: &RenderOptions) -> String {
+fn render_template(
+    inv: &TemplateInvocation,
+    ctx: &mut RenderContext,
+    opts: &RenderOptions,
+) -> String {
     match inv.name.kind {
         TemplateNameKind::ParserFunction if inv.name.raw.eq_ignore_ascii_case("#evu") => {
             // {{#evu:URL|...}} => just emit the URL as a link.
@@ -923,13 +1000,13 @@ fn render_html_tag(tag: &HtmlTag, ctx: &mut RenderContext, opts: &RenderOptions)
             .iter()
             .find(|a| a.name.eq_ignore_ascii_case("id"))
             .and_then(|a| a.value.as_ref())
-        {
-            let inner = render_inlines(&tag.children, ctx, opts);
-            if inner.trim().is_empty() {
-                return format!("<a name=\"{}\"></a>", id);
-            }
-            return format!("<a name=\"{}\">{}</a>", id, inner);
+    {
+        let inner = render_inlines(&tag.children, ctx, opts);
+        if inner.trim().is_empty() {
+            return format!("<a name=\"{}\"></a>", id);
         }
+        return format!("<a name=\"{}\">{}</a>", id, inner);
+    }
     let mut out = String::new();
     out.push('<');
     out.push_str(&tag.name);
@@ -953,10 +1030,6 @@ fn render_html_tag(tag: &HtmlTag, ctx: &mut RenderContext, opts: &RenderOptions)
     out
 }
 
-fn normalize_anchor(anchor: &str) -> String {
-    anchor.trim().replace(' ', "_")
-}
-
 fn escape_table_cell(s: &str) -> String {
     s.replace('|', "\\|")
 }
@@ -975,8 +1048,8 @@ fn prefix_lines(text: &str, prefix: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::*;
     use super::*;
+    use crate::parse::*;
 
     #[test]
     fn obsidian_replaces_single_literal_asterisk_in_text() {
@@ -1030,7 +1103,10 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
         let md = render_doc(&parsed.document);
 
         // asterisks in plain text become middots, but bold markers remain.
-        assert!(md.contains("&middot;"), "expected Obsidian middot workaround in output: {md}");
+        assert!(
+            md.contains("&middot;"),
+            "expected Obsidian middot workaround in output: {md}"
+        );
 
         // file links become a figure-like Markdown image block.
         assert!(
@@ -1041,7 +1117,10 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
         );
 
         // the top-of-document image gets a horizontal rule separator.
-        assert!(md.contains("\n\n---\n\n"), "expected horizontal rule after top image: {md}");
+        assert!(
+            md.contains("\n\n---\n\n"),
+            "expected horizontal rule after top image: {md}"
+        );
 
         // `<br/>` should force a newline and not leave a leading space.
         assert!(
@@ -1050,8 +1129,14 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
         );
 
         // the quote should render as a Markdown blockquote, and the internal link inside should render.
-        assert!(md.contains("\n> Problem is, no one else"), "expected blockquote rendering: {md}");
-        assert!(md.contains("[1977](../w/WCCC_1977.md)"), "expected internal link rendering inside blockquote: {md}");
+        assert!(
+            md.contains("\n> Problem is, no one else"),
+            "expected blockquote rendering: {md}"
+        );
+        assert!(
+            md.contains("[[WCCC 1977|1977]]"),
+            "expected internal link in blockquote to render: {md}"
+        );
 
         // blank lines inside leading-space quotes should not terminate the quote.
         assert!(
@@ -1060,20 +1145,35 @@ By [[Robert Hyatt]], 1997 <ref>Quote ref</ref>:
         );
 
         // refs should attach without a preceding space.
-        assert!(md.contains("1997[^"), "expected ref marker to attach to preceding token: {md}");
+        assert!(
+            md.contains("1997[^"),
+            "expected ref marker to attach to preceding token: {md}"
+        );
 
         // refs should not leak raw `<ref>` tags.
-        assert!(!md.contains("<ref>"), "did not expect literal `<ref>` tags in Markdown: {md}");
+        assert!(
+            !md.contains("<ref>"),
+            "did not expect literal `<ref>` tags in Markdown: {md}"
+        );
 
         // the references section should be emitted and include the first ref from the image caption.
         // we also emit a `<br/>` spacer before the heading for readability in Obsidian.
         assert!(
-            md.contains("\n\n<br/>\n\n# References"),
+            md.contains("\n\n<br/>\n\n## References"),
             "expected a `<br/>` spacer before the references heading: {md}"
         );
-        assert!(md.contains("[^1]: Image from [Barend Swets](../b/Barend_Swets.md)"), "expected first reference to be the image caption ref: {md}");
-        assert!(md.contains("hosted by [Hein Veldhuis](../h/Hein_Veldhuis.md)"), "expected nested internal link inside the image ref to render: {md}");
-        assert!(md.contains("[pdf](http://example.com)"), "expected external link inside the image ref to render: {md}");
+        assert!(
+            md.contains("[^1]: Image from [[Barend Swets]]"),
+            "expected first reference to be the image caption ref: {md}"
+        );
+        assert!(
+            md.contains("hosted by [[Hein Veldhuis]]"),
+            "expected nested internal link inside the image ref to render: {md}"
+        );
+        assert!(
+            md.contains("[pdf](http://example.com)"),
+            "expected external link inside the image ref to render: {md}"
+        );
     }
 
     #[test]

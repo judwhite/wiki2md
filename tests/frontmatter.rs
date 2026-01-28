@@ -47,6 +47,17 @@ fn normalize_tag_rules() {
     assert_eq!(normalize_tag("Level 1"), Some("level_1".to_string()));
     assert_eq!(normalize_tag("Alpha/Beta"), Some("alpha_beta".to_string()));
 
+    // diacritics / latin-script transliteration
+    assert_eq!(
+        normalize_tag("Salvador Dalí"),
+        Some("salvador_dali".to_string())
+    );
+    assert_eq!(normalize_tag("François"), Some("francois".to_string()));
+    assert_eq!(normalize_tag("Gödel"), Some("godel".to_string()));
+    assert_eq!(normalize_tag("Łódź"), Some("lodz".to_string()));
+    assert_eq!(normalize_tag("Straße"), Some("strasse".to_string()));
+    assert_eq!(normalize_tag("Smørrebrød"), Some("smorrebrod".to_string()));
+
     // fully numeric must not remain numeric
     assert_eq!(normalize_tag("1984"), Some("y1984".to_string()));
     assert_eq!(normalize_tag("42"), Some("n42".to_string()));
@@ -91,7 +102,7 @@ fn generates_frontmatter_when_missing_and_extracts_tags() {
     )
     .unwrap();
 
-    let md_path = md_root.join("b").join("Barend_Swets.md");
+    let md_path = md_root.join("b").join("Barend Swets.md");
     let md = fs::read_to_string(&md_path).unwrap();
     assert!(md.starts_with("---\nwiki2md:\n"), "{md}");
     assert!(md.contains("article_id: Barend_Swets"), "{md}");
@@ -102,7 +113,7 @@ fn generates_frontmatter_when_missing_and_extracts_tags() {
     assert!(md.contains("generated_by: wiki2md"), "{md}");
     assert!(md.contains("schema_version: 1"), "{md}");
     assert!(md.contains("aliases:\n  - \"Barend Swets\""), "{md}");
-    assert!(md.contains("display_title: \"Barend Swets\""), "{md}");
+    assert!(!md.contains("display_title:"), "{md}");
 
     // do not emit `summary` unless it was already present and preserved.
     assert!(!md.contains("\nsummary:"), "{md}");
@@ -115,7 +126,12 @@ fn generates_frontmatter_when_missing_and_extracts_tags() {
 
     // last_fetched_date exists and is date-ish
     let (_, body) = split_yaml_frontmatter(&md).expect("frontmatter");
+    assert!(body.contains("# Barend Swets\n"), "{md}");
     assert!(body.contains("Some body."), "{md}");
+
+    // internal links must use wikilinks style and aliases instead of linking to physical files
+    assert!(body.contains("[[Level 1]]"), "{md}");
+    assert!(!body.contains("](../"), "{md}");
     let date_line = md
         .lines()
         .find(|l| l.trim_start().starts_with("last_fetched_date:"))
@@ -137,7 +153,7 @@ fn preserves_existing_frontmatter_verbatim_by_default() {
     fs::create_dir_all(wiki_path.parent().unwrap()).unwrap();
     fs::write(&wiki_path, "=Title=\nBody\n[[Category:Thing 1]]\n").unwrap();
 
-    let md_path = root.join("docs").join("md").join("t").join("Test_Page.md");
+    let md_path = root.join("docs").join("md").join("t").join("Test Page.md");
     fs::create_dir_all(md_path.parent().unwrap()).unwrap();
     let existing_fm = "---\ncustom: 123\nsummary: \"keep me\"\n---\n";
     fs::write(&md_path, format!("{}\nOLD BODY\n", existing_fm)).unwrap();
@@ -174,7 +190,7 @@ fn regenerate_frontmatter_flag_regenerates_but_preserves_summary_and_extras() {
     )
     .unwrap();
 
-    let md_path = root.join("docs").join("md").join("t").join("Test_Page.md");
+    let md_path = root.join("docs").join("md").join("t").join("Test Page.md");
     fs::create_dir_all(md_path.parent().unwrap()).unwrap();
     fs::write(
         &md_path,

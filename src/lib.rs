@@ -62,9 +62,9 @@ pub fn run_with_options(
 
     let wiki_path = wiki_dir.join(format!("{}.wiki", article_id));
     let json_path = json_dir.join(format!("{}.json", article_id));
-    let md_path = md_dir.join(format!("{}.md", article_id));
+    let md_path = md_dir.join(format!("{}.md", article_id.replace('_', " ")));
 
-    // does ./docs/md/{bucket}/{article_id}.md exist?
+    // does ./docs/md/{bucket}/{article id}.md exist?
     if md_path.exists() {
         let content = fs::read_to_string(&md_path)?;
         println!("{}", content);
@@ -168,8 +168,14 @@ pub fn regenerate_all_in_dirs(
         // determine relative path structure to maintain the same structure in the md/ directory.
         let relative = path.strip_prefix(wiki_root)?;
 
-        let mut md_path = md_root.join(relative);
-        md_path.set_extension("md");
+        // convert the filename from underscores to spaces for the destination `.md`
+        let parent_rel = relative.parent().unwrap_or(Path::new(""));
+        let stem = relative
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("Untitled");
+        let md_name = format!("{}.md", stem.replace('_', " "));
+        let md_path = md_root.join(parent_rel).join(md_name);
 
         // ensure the parent and bucket directory exists for the target .md file
         if let Some(parent) = md_path.parent() {
@@ -335,6 +341,12 @@ fn write_markdown_file(
         // blank line after frontmatter for readability.
         out.push('\n');
     }
+
+    // article title as the top-level heading.
+    let title = article_id.replace('_', " ");
+    out.push_str("# ");
+    out.push_str(title.trim());
+    out.push_str("\n\n");
 
     // avoid leading blank lines in the body to keep output stable.
     let body = md_body.trim_start_matches(['\n', '\r']);
